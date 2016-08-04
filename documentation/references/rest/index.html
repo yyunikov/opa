@@ -1,0 +1,962 @@
+<!DOCTYPE html> <html> <head> <meta charset="utf-8"> <meta http-equiv="x-ua-compatible" content="ie=edge"> <title>REST API | OPA</title> <meta name="description" content="OPA: An open source project to policy-enable your service."> <link type="text/css" rel="stylesheet" href="/assets/style.css"> </head> <body> <nav> <ul class="opa-nav-main--list"> <li class="opa-nav-main--home-item"> <a class="opa-nav-main--link" href="/">Open Policy Agent</a> </li> <li class="opa-nav-main--item"> <a class="opa-nav-main--link" href="/get-opa/">Get OPA</a> </li> <li class="opa-nav-main--item--selected"> Documentation </li> <li class="opa-nav-main--item"> <a class="opa-nav-main--link" href="/examples/working-with-the-opa-repl/">Examples</a> </li> <li class="opa-nav-main--item"> <a class="opa-nav-main--link" href="/community/">Community</a> </li> </ul> </nav> <header class="opa-header"> <p class="opa-header--fork-me"><a href="https://github.com/open-policy-agent/opa"><img src="/assets/github-corner-right.svg" alt="Fork me on GitHub" width="80" height="80"></a></p> <div class="opa-content"> <div class="opa-header--abstract"> <nav class="opa-header--abstract--nav"> <ul class="opa-header--abstract--nav-list"> <li class="opa-header--abstract--nav-item"> <a class="opa-header--abstract--nav-link" href="/documentation/what-is-policy-enablement/">What is Policy Enablement?</a> </li> <li class="opa-header--abstract--nav-item"> <a class="opa-header--abstract--nav-link" href="/documentation/how-does-opa-work/">How Does OPA Work?</a> </li> <li class="opa-header--abstract--nav-item"> <a class="opa-header--abstract--nav-link" href="/documentation/how-do-i-write-policies/">How Do I Write Policies?</a> </li> <li class="opa-header--abstract--nav-item--selected"> REST API </li> </ul> </nav> <h1>REST API</h1> <p>This document is the authoritative specification of the OPA REST API (v1). These APIs are the foundation for integrating with OPA using languages other than Go.</p> </div> </div> </header> <div class="opa-content"> <h2>Policy API</h2> <p>The Policy API exposes CRUD endpoints for managing policy modules. Policy modules can be added, removed, or updated at any time.</p> <p>The identifiers given to policy modules are only used for management purposes. They are not used outside of the Policy API.</p> <h3>List Policies</h3> <div class="highlighter-rouge"><pre class="highlight"><code>GET /v1/policies
+</code></pre> </div> <p>List policy modules.</p> <h4>Example Request</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="nf">GET</span> <span class="nn">/v1/policies</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</code></pre> </div> <h4>Example Response</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json</span>
+</code></pre> </div> <div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"ID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example2"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"Module"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"Package"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"Path"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+          </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+          </span><span class="p">},</span><span class="w">
+          </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"opa"</span><span class="w">
+          </span><span class="p">},</span><span class="w">
+          </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"examples"</span><span class="w">
+          </span><span class="p">}</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="nt">"Imports"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Path"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"servers"</span><span class="w">
+              </span><span class="p">}</span><span class="w">
+            </span><span class="p">]</span><span class="w">
+          </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nt">"Rules"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"violations"</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"Key"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"server"</span><span class="w">
+          </span><span class="p">},</span><span class="w">
+          </span><span class="nt">"Body"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Terms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                  </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                  </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"="</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                  </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                  </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"server"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                  </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                  </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"servers"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"$0"</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                  </span><span class="p">]</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+              </span><span class="p">]</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Terms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                  </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                  </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"="</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                  </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                  </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"server"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"protocols"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"$1"</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                  </span><span class="p">]</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                  </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                  </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http"</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+              </span><span class="p">]</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Terms"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"opa"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"examples"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"public_servers"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"server"</span><span class="w">
+                  </span><span class="p">}</span><span class="w">
+                </span><span class="p">]</span><span class="w">
+              </span><span class="p">}</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+          </span><span class="p">]</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"ID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example1"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"Module"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"Package"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"Path"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+          </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+          </span><span class="p">},</span><span class="w">
+          </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"opa"</span><span class="w">
+          </span><span class="p">},</span><span class="w">
+          </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"examples"</span><span class="w">
+          </span><span class="p">}</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="nt">"Imports"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Path"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"servers"</span><span class="w">
+              </span><span class="p">}</span><span class="w">
+            </span><span class="p">]</span><span class="w">
+          </span><span class="p">}</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Path"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"networks"</span><span class="w">
+              </span><span class="p">}</span><span class="w">
+            </span><span class="p">]</span><span class="w">
+          </span><span class="p">}</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Path"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ports"</span><span class="w">
+              </span><span class="p">}</span><span class="w">
+            </span><span class="p">]</span><span class="w">
+          </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nt">"Rules"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"public_servers"</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"Key"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"server"</span><span class="w">
+          </span><span class="p">},</span><span class="w">
+          </span><span class="nt">"Body"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Terms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                  </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                  </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"="</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                  </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                  </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"server"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                  </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                  </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"servers"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"$0"</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                  </span><span class="p">]</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+              </span><span class="p">]</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Terms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                  </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                  </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"="</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                  </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                  </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"server"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ports"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"$1"</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                  </span><span class="p">]</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                  </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                  </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ports"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"k"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"id"</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                  </span><span class="p">]</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+              </span><span class="p">]</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Terms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                  </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                  </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"="</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                  </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                  </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ports"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"k"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"networks"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"$2"</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                  </span><span class="p">]</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                  </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                  </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"networks"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"m"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"id"</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                  </span><span class="p">]</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+              </span><span class="p">]</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Terms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                  </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                  </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"="</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                  </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                  </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"networks"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"m"</span><span class="w">
+                    </span><span class="p">},</span><span class="w">
+                    </span><span class="p">{</span><span class="w">
+                      </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                      </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"public"</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                  </span><span class="p">]</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                  </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"boolean"</span><span class="p">,</span><span class="w">
+                  </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+              </span><span class="p">]</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+          </span><span class="p">]</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre> </div> <h4>Status Codes</h4> <ul> <li><strong>200</strong> - no error</li> <li><strong>500</strong> - server error</li> </ul> <h3>Get a Policy</h3> <div class="highlighter-rouge"><pre class="highlight"><code>GET /v1/policies/&lt;id&gt;
+</code></pre> </div> <p>Get a policy module.</p> <h4>Example Request</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="nf">GET</span> <span class="nn">/v1/policies/example1</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</code></pre> </div> <h4>Example Response</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json</span>
+</code></pre> </div> <div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"ID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example1"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"Module"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"Package"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"Path"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"opa"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"examples"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nt">"Imports"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"Path"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+              </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+              </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"servers"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+          </span><span class="p">]</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"Path"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+              </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+              </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"networks"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+          </span><span class="p">]</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"Path"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+              </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+              </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ports"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+          </span><span class="p">]</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nt">"Rules"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"Name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"public_servers"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"Key"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"server"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nt">"Body"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+          </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Terms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"="</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"server"</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"servers"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"$0"</span><span class="w">
+                  </span><span class="p">}</span><span class="w">
+                </span><span class="p">]</span><span class="w">
+              </span><span class="p">}</span><span class="w">
+            </span><span class="p">]</span><span class="w">
+          </span><span class="p">},</span><span class="w">
+          </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Terms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"="</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"server"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ports"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"$1"</span><span class="w">
+                  </span><span class="p">}</span><span class="w">
+                </span><span class="p">]</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ports"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"k"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"id"</span><span class="w">
+                  </span><span class="p">}</span><span class="w">
+                </span><span class="p">]</span><span class="w">
+              </span><span class="p">}</span><span class="w">
+            </span><span class="p">]</span><span class="w">
+          </span><span class="p">},</span><span class="w">
+          </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Terms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"="</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ports"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"k"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"networks"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"$2"</span><span class="w">
+                  </span><span class="p">}</span><span class="w">
+                </span><span class="p">]</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"networks"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"m"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"id"</span><span class="w">
+                  </span><span class="p">}</span><span class="w">
+                </span><span class="p">]</span><span class="w">
+              </span><span class="p">}</span><span class="w">
+            </span><span class="p">]</span><span class="w">
+          </span><span class="p">},</span><span class="w">
+          </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Terms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"="</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"networks"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"m"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"public"</span><span class="w">
+                  </span><span class="p">}</span><span class="w">
+                </span><span class="p">]</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"boolean"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+              </span><span class="p">}</span><span class="w">
+            </span><span class="p">]</span><span class="w">
+          </span><span class="p">}</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre> </div> <h4>Status Codes</h4> <ul> <li><strong>200</strong> - no error</li> <li><strong>404</strong> - not found</li> <li><strong>500</strong> - server error</li> </ul> <h3>Create or Update a Policy</h3> <div class="highlighter-rouge"><pre class="highlight"><code>PUT /v1/policies/&lt;id&gt;
+Content-Type: text/plain
+</code></pre> </div> <p>Create or update a policy module.</p> <p>If the policy module does not exist, it is created. If the policy module already exists, it is replaced.</p> <h4>Example Request</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="nf">PUT</span> <span class="nn">/v1/policies/example1</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">text/plain</span>
+</code></pre> </div> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">package</span> <span class="n">opa</span><span class="p">.</span><span class="nf">examples</span>
+
+<span class="n">import</span> <span class="n">data</span><span class="p">.</span><span class="nf">servers</span>
+<span class="n">import</span> <span class="n">data</span><span class="p">.</span><span class="nf">networks</span>
+<span class="n">import</span> <span class="n">data</span><span class="p">.</span><span class="nf">ports</span>
+
+<span class="n">public_servers</span><span class="p">[</span><span class="n">server</span><span class="p">]</span> <span class="p">:</span><span class="o">-</span>
+	<span class="n">server</span> <span class="o">=</span> <span class="n">servers</span><span class="p">[</span><span class="n">_</span><span class="p">],</span>
+	<span class="n">server</span><span class="p">.</span><span class="nf">ports</span><span class="p">[</span><span class="n">_</span><span class="p">]</span> <span class="o">=</span> <span class="n">ports</span><span class="p">[</span><span class="n">k</span><span class="p">].</span><span class="nf">id</span><span class="p">,</span>
+	<span class="n">ports</span><span class="p">[</span><span class="n">k</span><span class="p">].</span><span class="nf">networks</span><span class="p">[</span><span class="n">_</span><span class="p">]</span> <span class="o">=</span> <span class="n">networks</span><span class="p">[</span><span class="n">m</span><span class="p">].</span><span class="nf">id</span><span class="p">,</span>
+	<span class="n">networks</span><span class="p">[</span><span class="n">m</span><span class="p">].</span><span class="nf">public</span> <span class="o">=</span> <span class="kp">true</span>
+</code></pre> </div> <h4>Example Response</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json</span>
+</code></pre> </div> <div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"ID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example1"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"Module"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"Package"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"Path"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"opa"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"examples"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nt">"Imports"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"Path"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+              </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+              </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"servers"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+          </span><span class="p">]</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"Path"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+              </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+              </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"networks"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+          </span><span class="p">]</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"Path"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+              </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="p">{</span><span class="w">
+              </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+              </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ports"</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+          </span><span class="p">]</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nt">"Rules"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"Name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"public_servers"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"Key"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"server"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nt">"Body"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+          </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Terms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"="</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"server"</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"servers"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"$0"</span><span class="w">
+                  </span><span class="p">}</span><span class="w">
+                </span><span class="p">]</span><span class="w">
+              </span><span class="p">}</span><span class="w">
+            </span><span class="p">]</span><span class="w">
+          </span><span class="p">},</span><span class="w">
+          </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Terms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"="</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"server"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ports"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"$1"</span><span class="w">
+                  </span><span class="p">}</span><span class="w">
+                </span><span class="p">]</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ports"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"k"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"id"</span><span class="w">
+                  </span><span class="p">}</span><span class="w">
+                </span><span class="p">]</span><span class="w">
+              </span><span class="p">}</span><span class="w">
+            </span><span class="p">]</span><span class="w">
+          </span><span class="p">},</span><span class="w">
+          </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Terms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"="</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ports"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"k"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"networks"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"$2"</span><span class="w">
+                  </span><span class="p">}</span><span class="w">
+                </span><span class="p">]</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"networks"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"m"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"id"</span><span class="w">
+                  </span><span class="p">}</span><span class="w">
+                </span><span class="p">]</span><span class="w">
+              </span><span class="p">}</span><span class="w">
+            </span><span class="p">]</span><span class="w">
+          </span><span class="p">},</span><span class="w">
+          </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Terms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"="</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ref"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"data"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"networks"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"var"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"m"</span><span class="w">
+                  </span><span class="p">},</span><span class="w">
+                  </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"public"</span><span class="w">
+                  </span><span class="p">}</span><span class="w">
+                </span><span class="p">]</span><span class="w">
+              </span><span class="p">},</span><span class="w">
+              </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"boolean"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Value"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+              </span><span class="p">}</span><span class="w">
+            </span><span class="p">]</span><span class="w">
+          </span><span class="p">}</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre> </div> <h4>Status Codes</h4> <ul> <li><strong>200</strong> - no error</li> <li><strong>400</strong> - bad request</li> <li><strong>500</strong> - server error</li> </ul> <p>Before accepting the request, the server will parse, compile, and install the policy module. If any of these operations fail, all changes will be rolled back and the server will return 400. The error message that accompanies the response should indicate why the request failed.</p> <h3>Delete a Policy</h3> <div class="highlighter-rouge"><pre class="highlight"><code>DELETE /v1/policies/&lt;id&gt;
+</code></pre> </div> <p>Delete a policy module.</p> <h4>Example Request</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="nf">DELETE</span> <span class="nn">/v1/policies/example2</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</code></pre> </div> <h4>Example Response</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">204</span> <span class="ne">No Content</span>
+</code></pre> </div> <h4>Status Codes</h4> <ul> <li><strong>204</strong> - no content</li> <li><strong>400</strong> - bad request</li> <li><strong>404</strong> - not found</li> <li><strong>500</strong> - server error</li> </ul> <p>If other policy modules in the same package depend on rules in the module to be deleted, the server will return 400.</p> <h2>Data API</h2> <p>The Data API exposes endpoints for reading and writing documents in OPA. For an introduction to the different types of documents in OPA see <a href="../../how-does-opa-work/">How Does OPA Work?</a>.</p> <h3>Get a Document</h3> <div class="highlighter-rouge"><pre class="highlight"><code>GET /v1/data/{path:.+}
+</code></pre> </div> <p>Get a document.</p> <p>The path separator is used to access an object value by key or an array element by index. If the path accesses an array, OPA attempts to treat the path element as an integer.</p> <h4>Example Request</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="nf">GET</span> <span class="nn">/v1/data/opa/examples/public_servers</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</code></pre> </div> <h4>Example Response</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json</span>
+</code></pre> </div> <div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s1"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"app"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"ports"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="s2">"p1"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"p2"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"p3"</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nt">"protocols"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="s2">"https"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"ssh"</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s4"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dev"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"ports"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="s2">"p1"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"p2"</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nt">"protocols"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="s2">"http"</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre> </div> <h4>Query Parameters</h4> <ul> <li><strong>global</strong> - Provide an input document to the query. Format is <code class="highlighter-rouge">&lt;path&gt;:&lt;value&gt;</code> where <code class="highlighter-rouge">&lt;path&gt;</code> is the import path of the input document and <code class="highlighter-rouge">&lt;value&gt;</code> is the JSON serialized input document. The parameter may be specified multiple times but each instance should contain a unique <code class="highlighter-rouge">&lt;path&gt;</code>.</li> <li><strong>pretty</strong> - Return data with indented, human-readable formatting.</li> </ul> <h4>Status Codes</h4> <ul> <li><strong>200</strong> - no error</li> <li><strong>404</strong> - not found</li> <li><strong>500</strong> - server error</li> </ul> <p>The server returns 404 in two cases:</p> <ol> <li>The path refers to a non-existent document.</li> <li>The path refers to a Virtual Document that is undefined at the time of the query.</li> </ol> <p>In the second case, the response body will contain an object indicating the document is undefined.</p> <h4>Example Module</h4> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">package</span> <span class="n">opa</span><span class="p">.</span><span class="nf">examples</span>
+
+<span class="n">import</span> <span class="n">example</span><span class="p">.</span><span class="nf">flag</span>
+
+<span class="n">allow_request</span> <span class="p">:</span><span class="o">-</span> <span class="n">flag</span> <span class="o">=</span> <span class="kp">true</span>
+</code></pre> </div> <h4>Example Request with Global Parameter</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="nf">GET</span> <span class="nn">/v1/data/opa/examples/allow_request?global=example.flag:false</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</code></pre> </div> <h4>Example Response for Undefined Virtual Document</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">404</span> <span class="ne">Not Found</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json</span>
+</code></pre> </div> <div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"IsUndefined"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre> </div> <h3>Patch a Document</h3> <div class="highlighter-rouge"><pre class="highlight"><code>PATCH /v1/data/{path:.+}
+Content-Type: application/json-patch+json
+</code></pre> </div> <p>Update a document.</p> <p>The path separator is used to access an object value by key or an array element by index. If the path accesses an array, OPA attempts to treat the path element as an integer.</p> <p>OPA accepts updates encoded as JSON Patch operations. The message body of the request should contain a JSON encoded array containing one or more JSON Patch operations. Each operation specifies the operation type, path, and an optional value. For more information on JSON Patch, see <a href="https://tools.ietf.org/html/rfc6902">RFC 6902</a>.</p> <h4>Example Request</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="nf">PATCH</span> <span class="nn">/v1/data/servers</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json-patch+json</span>
+</code></pre> </div> <div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="nt">"op"</span><span class="p">:</span><span class="w"> </span><span class="s2">"add"</span><span class="p">,</span><span class="w">
+     </span><span class="nt">"path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"-"</span><span class="p">,</span><span class="w">
+     </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+         </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s5"</span><span class="p">,</span><span class="w">
+         </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"job"</span><span class="p">,</span><span class="w">
+         </span><span class="nt">"protocols"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"amqp"</span><span class="p">],</span><span class="w">
+         </span><span class="nt">"ports"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"p3"</span><span class="p">]</span><span class="w">
+     </span><span class="p">}}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre> </div> <h4>Example Response</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">204</span> <span class="ne">No Content</span>
+</code></pre> </div> <h4>Status Codes</h4> <ul> <li><strong>200</strong> - no content</li> <li><strong>404</strong> - not found</li> <li><strong>500</strong> - server error</li> </ul> <p>The effective path of the JSON Patch operation is obtained by joining the path portion of the URL with the path value from the operation(s) contained in the message body. In all cases, the parent of the effective path MUST refer to an existing document, otherwise the server returns 404. In the case of <strong>remove</strong> and <strong>replace</strong> operations, the effective path MUST refer to an existing document, otherwise the server returns 404.</p> <h2>Query API</h2> <h3>Execute a Query</h3> <div class="highlighter-rouge"><pre class="highlight"><code>GET /v1/query
+</code></pre> </div> <p>Execute an ad-hoc query and returns bindings for variables found in the query.</p> <h4>Example Request</h4> <div class="highlighter-rouge"><pre class="highlight"><code>GET /v1/query?q=data.servers[i].ports[_] = "p2", data.servers[i].name = name HTTP/1.1
+</code></pre> </div> <h4>Example Response</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json</span>
+</code></pre> </div> <div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"i"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dev"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"i"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"app"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre> </div> <h4>Query Parameters</h4> <ul> <li><strong>q</strong> - The ad-hoc query to execute. OPA will parse, compile, and execute the query represented by the parameter value. The value MUST be URL encoded.</li> <li><strong>pretty</strong> - Return data with indented, human-readable formatting.</li> </ul> <h4>Status Codes</h4> <ul> <li><strong>200</strong> - no error</li> <li><strong>400</strong> - bad request</li> <li><strong>500</strong> - server error</li> </ul> <h2>Errors</h2> <p>All of the API endpoints use standard HTTP error codes to indicate success or failure of an API call. If an API call fails, the response will contain a JSON encoded object that provides more detail:</p> <div class="highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"Code"</span><span class="p">:</span><span class="w"> </span><span class="mi">404</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"Message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"storage error (code: 1): module not found: test"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre> </div> </div> <footer class="opa-footer"> <p class="opa-footer--text"> <a class="opa-footer--github--link" href="https://github.com/open-policy-agent/opa"><img src="/assets/icon-github.svg" class="opa-footer--github--icon" width="16" height="16" alt="icon-github.svg">open-policy-agent/opa</a> <a href="https://travis-ci.org/open-policy-agent/opa"><img class="opa-footer--github--ci" width="90" height="20" src="https://travis-ci.org/open-policy-agent/opa.svg?branch=master" alt="Build Status"></a> </p> <p class="opa-footer--text"> Join the discussion on Slack (comming soon) or <a class="opa-footer--link" href="https://groups.google.com/forum/?hl=en#!forum/open-policy-agent">Google Groups</a>. Report a bug or request a feature using <a class="opa-footer--link" href="https://github.com/open-policy-agent/opa/issues">GitHub Issues</a>. </p> <p class="opa-footer--text"> © 2016 Open Policy Agent contributors. Licensed under the <a class="opa-footer--link" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>. For information about contributing, see <a class="opa-footer--link" href="https://github.com/open-policy-agent/opa/blob/master/CONTRIBUTING.md">CONTRIBUTING.md</a>. </p> </footer> <script>var OPA_COLLAPSE_CONFIG={classNames:"highlight",baseClassName:"opa-collapse",collapsedClassName:"opa-collapse--collapsed",ignoreClassName:"opa-collapse--ignore",maxHeight:320,targetClassName:"opa-collapse--target"};</script> <script type="text/javascript" src="/assets/dom.js"></script> <script type="text/javascript" src="/assets/collapse.js"></script> </body> </html>
