@@ -352,18 +352,49 @@ true
 <span class="kp">true</span>
 <span class="o">&gt;</span> <span class="n">re_match</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="s2">"us-east-2.dev"</span><span class="p">)</span>
 <span class="kp">false</span>
-</code></pre> </div> <h3>Strings</h3> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="o">&gt;</span> <span class="n">format_int</span><span class="p">(</span><span class="mi">15</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-<span class="o">+-----+</span>
-<span class="o">|</span>  <span class="n">x</span>  <span class="o">|</span>
-<span class="o">+-----+</span>
-<span class="o">|</span> <span class="s2">"f"</span> <span class="o">|</span>
-<span class="o">+-----+</span>
-<span class="o">&gt;</span> <span class="n">concat</span><span class="p">(</span><span class="s2">"/"</span><span class="p">,</span> <span class="p">[</span><span class="s2">""</span><span class="p">,</span> <span class="s2">"foo"</span><span class="p">,</span> <span class="s2">"bar"</span><span class="p">,</span> <span class="s2">"baz"</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span>
+</code></pre> </div> <h3>Strings</h3> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="o">&gt;</span> <span class="n">concat</span><span class="p">(</span><span class="s2">"/"</span><span class="p">,</span> <span class="p">[</span><span class="s2">""</span><span class="p">,</span> <span class="s2">"foo"</span><span class="p">,</span> <span class="s2">"bar"</span><span class="p">,</span> <span class="s2">"baz"</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span>
 <span class="o">+----------------+</span>
 <span class="o">|</span>       <span class="n">x</span>        <span class="o">|</span>
 <span class="o">+----------------+</span>
 <span class="o">|</span> <span class="s2">"/foo/bar/baz"</span> <span class="o">|</span>
 <span class="o">+----------------+</span>
+<span class="o">&gt;</span> <span class="n">contains</span><span class="p">(</span><span class="s2">"abcdef"</span><span class="p">,</span> <span class="s2">"cde"</span><span class="p">)</span>
+<span class="kp">true</span>
+<span class="o">&gt;</span> <span class="n">endswith</span><span class="p">(</span><span class="s2">"abcdef"</span><span class="p">,</span> <span class="s2">"def"</span><span class="p">)</span>
+<span class="kp">true</span>
+<span class="o">&gt;</span> <span class="n">format_int</span><span class="p">(</span><span class="mi">15</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="o">+-----+</span>
+<span class="o">|</span>  <span class="n">x</span>  <span class="o">|</span>
+<span class="o">+-----+</span>
+<span class="o">|</span> <span class="s2">"f"</span> <span class="o">|</span>
+<span class="o">+-----+</span>
+<span class="o">&gt;</span> <span class="n">indexof</span><span class="p">(</span><span class="s2">"abcdefg"</span><span class="p">,</span> <span class="s2">"cde"</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="o">+---+</span>
+<span class="o">|</span> <span class="n">x</span> <span class="o">|</span>
+<span class="o">+---+</span>
+<span class="o">|</span> <span class="mi">2</span> <span class="o">|</span>
+<span class="o">+---+</span>
+<span class="o">&gt;</span> <span class="n">lower</span><span class="p">(</span><span class="s2">"AbCdEf"</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="o">+----------+</span>
+<span class="o">|</span>    <span class="n">x</span>     <span class="o">|</span>
+<span class="o">+----------+</span>
+<span class="o">|</span> <span class="s2">"abcdef"</span> <span class="o">|</span>
+<span class="o">+----------+</span>
+<span class="o">&gt;</span> <span class="n">startswith</span><span class="p">(</span><span class="s2">"abcdef"</span><span class="p">,</span> <span class="s2">"abcd"</span><span class="p">)</span>
+<span class="kp">true</span>
+<span class="o">&gt;</span> <span class="n">substring</span><span class="p">(</span><span class="s2">"abcdef"</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="o">+-------+</span>
+<span class="o">|</span>   <span class="n">x</span>   <span class="o">|</span>
+<span class="o">+-------+</span>
+<span class="o">|</span> <span class="s2">"cde"</span> <span class="o">|</span>
+<span class="o">+-------+</span>
+<span class="o">&gt;</span> <span class="n">upper</span><span class="p">(</span><span class="s2">"AbCdEf"</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="o">+----------+</span>
+<span class="o">|</span>    <span class="n">x</span>     <span class="o">|</span>
+<span class="o">+----------+</span>
+<span class="o">|</span> <span class="s2">"ABCDEF"</span> <span class="o">|</span>
+<span class="o">+----------+</span>
+
 </code></pre> </div> <h2><a name="examples"></a> Examples</h2> <p>The rules below define the content of documents describing a simplistic deployment environment. These documents are referenced in other sections above.</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">sites</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">{</span>
         <span class="s2">"region"</span><span class="p">:</span> <span class="s2">"east"</span><span class="p">,</span>

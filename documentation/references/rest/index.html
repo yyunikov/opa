@@ -930,13 +930,386 @@ Content-Type: text/plain
     </span><span class="p">]</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
-</span></code></pre> </div> <h4>Query Parameters</h4> <ul> <li><strong>global</strong> - Provide an input document to the query. Format is <code class="highlighter-rouge">&lt;path&gt;:&lt;value&gt;</code> where <code class="highlighter-rouge">&lt;path&gt;</code> is the import path of the input document and <code class="highlighter-rouge">&lt;value&gt;</code> is the JSON serialized input document. The parameter may be specified multiple times but each instance should specify a unique <code class="highlighter-rouge">&lt;path&gt;</code>.</li> <li><strong>pretty</strong> - If parameter is <code class="highlighter-rouge">true</code>, response will formatted for humans.</li> <li><strong>explain</strong> - Return query explanation instead of normal result. Values: <strong>full</strong>, <strong>truth</strong>. See <a href="#explanations">Explanations</a> for how to interpret results.</li> </ul> <h4>Status Codes</h4> <ul> <li><strong>200</strong> - no error</li> <li><strong>400</strong> - bad request</li> <li><strong>404</strong> - not found</li> <li><strong>500</strong> - server error</li> </ul> <p>The server returns 400 if a global variable required for the query was not supplied.</p> <p>The server returns 404 in two cases:</p> <ul> <li>The path refers to a non-existent base document.</li> <li>The path refers to a Virtual Document that is undefined in the context of the query.</li> </ul> <h4>Example Module</h4> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">package</span> <span class="n">opa</span><span class="p">.</span><span class="nf">examples</span>
+</span></code></pre> </div> <h4>Query Parameters</h4> <ul> <li><strong>global</strong> - Provide an input document to the query. Format is <code class="highlighter-rouge">&lt;path&gt;:&lt;value&gt;</code> where <code class="highlighter-rouge">&lt;path&gt;</code> is the import path of the input document. The parameter may be specified multiple times but each instance should specify a unique <code class="highlighter-rouge">&lt;path&gt;</code>. The <code class="highlighter-rouge">&lt;value&gt;</code> may be a reference to a document in OPA. If <code class="highlighter-rouge">&lt;value&gt;</code> contains variables the response will contain a set of results instead of a single document.</li> <li><strong>pretty</strong> - If parameter is <code class="highlighter-rouge">true</code>, response will formatted for humans.</li> <li><strong>explain</strong> - Return query explanation instead of normal result. Values: <strong>full</strong>, <strong>truth</strong>. See <a href="#explanations">Explanations</a> for how to interpret results.</li> </ul> <h4>Status Codes</h4> <ul> <li><strong>200</strong> - no error</li> <li><strong>400</strong> - bad request</li> <li><strong>404</strong> - not found</li> <li><strong>500</strong> - server error</li> </ul> <p>The server returns 400 if a global variable required for the query was not supplied.</p> <p>The server returns 404 in two cases:</p> <ul> <li>The path refers to a non-existent base document.</li> <li>The path refers to a Virtual Document that is undefined in the context of the query.</li> </ul> <h4>Example Request With Global Parameter</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="nf">GET</span> <span class="nn">/v1/data/opa/examples/allow_request?global=example.flag:false</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</code></pre> </div> <h4>Example Response For Non-Existent Or Undefined Document</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">404</span> <span class="ne">Not Found</span>
+</code></pre> </div> <p>The example above assumes the following policy:</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">package</span> <span class="n">opa</span><span class="p">.</span><span class="nf">examples</span>
 
 <span class="n">import</span> <span class="n">example</span><span class="p">.</span><span class="nf">flag</span>
 
 <span class="n">allow_request</span> <span class="p">:</span><span class="o">-</span> <span class="n">flag</span> <span class="o">=</span> <span class="kp">true</span>
-</code></pre> </div> <h4>Example Request With Global Parameter</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="nf">GET</span> <span class="nn">/v1/data/opa/examples/allow_request?global=example.flag:false</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-</code></pre> </div> <h4>Example Response For Non-Existent Or Undefined Document</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">404</span> <span class="ne">Not Found</span>
+</code></pre> </div> <h4>Example Request For Result Set</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="nf">GET</span> <span class="nn">/v1/data/opa/examples/allow_container?global=data.containers[container_index]</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</code></pre> </div> <h4>Example Response For Result Set</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json</span>
+
+<span class="p">[</span><span class="w">
+  </span><span class="p">[</span><span class="w">
+    </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"container_index"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre> </div> <p>Result sets have the following schema:</p> <div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"array"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Result Set"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Set of results returned for a Data API query."</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"items"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"array"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"minItems"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"maxItems"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"items"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Value"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The value of the document referred to by the Data API path."</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"object"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Bindings"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The bindings of variables found in the Data API query input documents."</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre> </div> <p>The example above assumes the following data and policy:</p> <div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"containers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"Id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"a4288db7773ebb4f1b4d502712b87b241e3c28184cda6a1ad58f91ac6d89f052"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"Created"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-11-21T03:13:14.288557666Z"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"Path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sh"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"Args"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+        </span><span class="nt">"State"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"running"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Running"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Paused"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Restarting"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"OOMKilled"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Dead"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Pid"</span><span class="p">:</span><span class="w"> </span><span class="mi">12127</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"ExitCode"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Error"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"StartedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-11-21T03:13:14.915355869Z"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"FinishedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0001-01-01T00:00:00Z"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nt">"Image"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sha256:baa5d63471ead618ff91ddfacf1e2c81bf0612bfeb1daf00eb0843a41fbfade3"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"ResolvConfPath"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/var/lib/docker/containers/a4288db7773ebb4f1b4d502712b87b241e3c28184cda6a1ad58f91ac6d89f052/resolv.conf"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"HostnamePath"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/var/lib/docker/containers/a4288db7773ebb4f1b4d502712b87b241e3c28184cda6a1ad58f91ac6d89f052/hostname"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"HostsPath"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/var/lib/docker/containers/a4288db7773ebb4f1b4d502712b87b241e3c28184cda6a1ad58f91ac6d89f052/hosts"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"LogPath"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/var/lib/docker/containers/a4288db7773ebb4f1b4d502712b87b241e3c28184cda6a1ad58f91ac6d89f052/a4288db7773ebb4f1b4d502712b87b241e3c28184cda6a1ad58f91ac6d89f052-json.log"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"Name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/suspicious_brahmagupta"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"RestartCount"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"Driver"</span><span class="p">:</span><span class="w"> </span><span class="s2">"aufs"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"MountLabel"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"ProcessLabel"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"AppArmorProfile"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"ExecIDs"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"HostConfig"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Binds"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"ContainerIDFile"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"LogConfig"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"json-file"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Config"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nt">"NetworkMode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"default"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"PortBindings"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+            </span><span class="nt">"RestartPolicy"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"no"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"MaximumRetryCount"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nt">"AutoRemove"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"VolumeDriver"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"VolumesFrom"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CapAdd"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CapDrop"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Dns"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+            </span><span class="nt">"DnsOptions"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+            </span><span class="nt">"DnsSearch"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+            </span><span class="nt">"ExtraHosts"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"GroupAdd"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"IpcMode"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Cgroup"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Links"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"OomScoreAdj"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"PidMode"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Privileged"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"PublishAllPorts"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"ReadonlyRootfs"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"SecurityOpt"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"UTSMode"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"UsernsMode"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"ShmSize"</span><span class="p">:</span><span class="w"> </span><span class="mi">67108864</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Runtime"</span><span class="p">:</span><span class="w"> </span><span class="s2">"runc"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"ConsoleSize"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="mi">0</span><span class="p">,</span><span class="w">
+                </span><span class="mi">0</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nt">"Isolation"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CpuShares"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CgroupParent"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"BlkioWeight"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"BlkioWeightDevice"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"BlkioDeviceReadBps"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"BlkioDeviceWriteBps"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"BlkioDeviceReadIOps"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"BlkioDeviceWriteIOps"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CpuPeriod"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CpuQuota"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CpusetCpus"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CpusetMems"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Devices"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+            </span><span class="nt">"DiskQuota"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"KernelMemory"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"MemoryReservation"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"MemorySwap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"MemorySwappiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">-1</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"OomKillDisable"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"PidsLimit"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Ulimits"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CpuCount"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CpuPercent"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"IOMaximumIOps"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"IOMaximumBandwidth"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nt">"GraphDriver"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"aufs"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Data"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nt">"Mounts"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+        </span><span class="nt">"Config"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Hostname"</span><span class="p">:</span><span class="w"> </span><span class="s2">"a4288db7773e"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Domainname"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"User"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"AttachStdin"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"AttachStdout"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"AttachStderr"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Tty"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"OpenStdin"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"StdinOnce"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Env"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"no_proxy=*.local, 169.254/16"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nt">"Cmd"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"sh"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nt">"Image"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alpine:latest"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Volumes"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"WorkingDir"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Entrypoint"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"OnBuild"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Labels"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nt">"NetworkSettings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Bridge"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"SandboxID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2dadac1a8b18b7ae5658c4215637d998572c95bc0673bac2aceefbdd830d8860"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"HairpinMode"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"LinkLocalIPv6Address"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"LinkLocalIPv6PrefixLen"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Ports"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+            </span><span class="nt">"SandboxKey"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/var/run/docker/netns/2dadac1a8b18"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"SecondaryIPAddresses"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"SecondaryIPv6Addresses"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"EndpointID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"fb1af875e2f0e7643224b6505a2c713748175689b8e8edb7cc1496efa8cdcafd"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Gateway"</span><span class="p">:</span><span class="w"> </span><span class="s2">"172.17.0.1"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"GlobalIPv6Address"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"GlobalIPv6PrefixLen"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"IPAddress"</span><span class="p">:</span><span class="w"> </span><span class="s2">"172.17.0.3"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"IPPrefixLen"</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"IPv6Gateway"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"MacAddress"</span><span class="p">:</span><span class="w"> </span><span class="s2">"02:42:ac:11:00:03"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Networks"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"bridge"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"IPAMConfig"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Links"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Aliases"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"NetworkID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ad1022afa0af59671f2b701ff8cbd4607de24740b59484acd4a740fac4ad26f9"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"EndpointID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"fb1af875e2f0e7643224b6505a2c713748175689b8e8edb7cc1496efa8cdcafd"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Gateway"</span><span class="p">:</span><span class="w"> </span><span class="s2">"172.17.0.1"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"IPAddress"</span><span class="p">:</span><span class="w"> </span><span class="s2">"172.17.0.3"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"IPPrefixLen"</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"IPv6Gateway"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"GlobalIPv6Address"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"GlobalIPv6PrefixLen"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"MacAddress"</span><span class="p">:</span><span class="w"> </span><span class="s2">"02:42:ac:11:00:03"</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"Id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"6887a5168d0e2324b8c9544c4b30321bce4952f12698491f268c17bbe77e5218"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"Created"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-11-21T03:13:05.080079329Z"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"Path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sh"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"Args"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+        </span><span class="nt">"State"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"running"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Running"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Paused"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Restarting"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"OOMKilled"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Dead"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Pid"</span><span class="p">:</span><span class="w"> </span><span class="mi">12079</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"ExitCode"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Error"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"StartedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-11-21T03:13:05.718411107Z"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"FinishedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0001-01-01T00:00:00Z"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nt">"Image"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sha256:baa5d63471ead618ff91ddfacf1e2c81bf0612bfeb1daf00eb0843a41fbfade3"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"ResolvConfPath"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/var/lib/docker/containers/6887a5168d0e2324b8c9544c4b30321bce4952f12698491f268c17bbe77e5218/resolv.conf"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"HostnamePath"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/var/lib/docker/containers/6887a5168d0e2324b8c9544c4b30321bce4952f12698491f268c17bbe77e5218/hostname"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"HostsPath"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/var/lib/docker/containers/6887a5168d0e2324b8c9544c4b30321bce4952f12698491f268c17bbe77e5218/hosts"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"LogPath"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/var/lib/docker/containers/6887a5168d0e2324b8c9544c4b30321bce4952f12698491f268c17bbe77e5218/6887a5168d0e2324b8c9544c4b30321bce4952f12698491f268c17bbe77e5218-json.log"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"Name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/fervent_almeida"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"RestartCount"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"Driver"</span><span class="p">:</span><span class="w"> </span><span class="s2">"aufs"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"MountLabel"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"ProcessLabel"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"AppArmorProfile"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"ExecIDs"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"HostConfig"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Binds"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"ContainerIDFile"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"LogConfig"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"json-file"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"Config"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nt">"NetworkMode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"default"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"PortBindings"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+            </span><span class="nt">"RestartPolicy"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"Name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"no"</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"MaximumRetryCount"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nt">"AutoRemove"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"VolumeDriver"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"VolumesFrom"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CapAdd"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CapDrop"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Dns"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+            </span><span class="nt">"DnsOptions"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+            </span><span class="nt">"DnsSearch"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+            </span><span class="nt">"ExtraHosts"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"GroupAdd"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"IpcMode"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Cgroup"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Links"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"OomScoreAdj"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"PidMode"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Privileged"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"PublishAllPorts"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"ReadonlyRootfs"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"SecurityOpt"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"seccomp:unconfined"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nt">"UTSMode"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"UsernsMode"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"ShmSize"</span><span class="p">:</span><span class="w"> </span><span class="mi">67108864</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Runtime"</span><span class="p">:</span><span class="w"> </span><span class="s2">"runc"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"ConsoleSize"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="mi">0</span><span class="p">,</span><span class="w">
+                </span><span class="mi">0</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nt">"Isolation"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CpuShares"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Memory"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CgroupParent"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"BlkioWeight"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"BlkioWeightDevice"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"BlkioDeviceReadBps"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"BlkioDeviceWriteBps"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"BlkioDeviceReadIOps"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"BlkioDeviceWriteIOps"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CpuPeriod"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CpuQuota"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CpusetCpus"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CpusetMems"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Devices"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+            </span><span class="nt">"DiskQuota"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"KernelMemory"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"MemoryReservation"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"MemorySwap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"MemorySwappiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">-1</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"OomKillDisable"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"PidsLimit"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Ulimits"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CpuCount"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"CpuPercent"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"IOMaximumIOps"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"IOMaximumBandwidth"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nt">"GraphDriver"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"aufs"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Data"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nt">"Mounts"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+        </span><span class="nt">"Config"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Hostname"</span><span class="p">:</span><span class="w"> </span><span class="s2">"6887a5168d0e"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Domainname"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"User"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"AttachStdin"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"AttachStdout"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"AttachStderr"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Tty"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"OpenStdin"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"StdinOnce"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Env"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"no_proxy=*.local, 169.254/16"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nt">"Cmd"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"sh"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nt">"Image"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alpine:latest"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Volumes"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"WorkingDir"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Entrypoint"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"OnBuild"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Labels"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nt">"NetworkSettings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"Bridge"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"SandboxID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"580a6d3f8bebfb1647c8b34f7766dee1b86443752ef3e255d37517dfb35076ed"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"HairpinMode"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"LinkLocalIPv6Address"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"LinkLocalIPv6PrefixLen"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Ports"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+            </span><span class="nt">"SandboxKey"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/var/run/docker/netns/580a6d3f8beb"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"SecondaryIPAddresses"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"SecondaryIPv6Addresses"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"EndpointID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"a4340ac5857a79310cc7eaa344d4ff6771fdf6372f72447b91928c038d9ada7d"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Gateway"</span><span class="p">:</span><span class="w"> </span><span class="s2">"172.17.0.1"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"GlobalIPv6Address"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"GlobalIPv6PrefixLen"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"IPAddress"</span><span class="p">:</span><span class="w"> </span><span class="s2">"172.17.0.2"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"IPPrefixLen"</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"IPv6Gateway"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"MacAddress"</span><span class="p">:</span><span class="w"> </span><span class="s2">"02:42:ac:11:00:02"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"Networks"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"bridge"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"IPAMConfig"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Links"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Aliases"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"NetworkID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ad1022afa0af59671f2b701ff8cbd4607de24740b59484acd4a740fac4ad26f9"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"EndpointID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"a4340ac5857a79310cc7eaa344d4ff6771fdf6372f72447b91928c038d9ada7d"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"Gateway"</span><span class="p">:</span><span class="w"> </span><span class="s2">"172.17.0.1"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"IPAddress"</span><span class="p">:</span><span class="w"> </span><span class="s2">"172.17.0.2"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"IPPrefixLen"</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"IPv6Gateway"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"GlobalIPv6Address"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"GlobalIPv6PrefixLen"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"MacAddress"</span><span class="p">:</span><span class="w"> </span><span class="s2">"02:42:ac:11:00:02"</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">}]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre> </div> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">package</span> <span class="n">opa</span><span class="p">.</span><span class="nf">examples</span>
+
+<span class="n">import</span> <span class="n">container</span>
+
+<span class="n">allow_container</span> <span class="p">:</span><span class="o">-</span>
+  <span class="n">not</span> <span class="n">seccomp_unconfined</span>
+
+<span class="n">seccomp_unconfined</span> <span class="p">:</span><span class="o">-</span>
+  <span class="n">container</span><span class="o">.</span><span class="no">HostConfig</span><span class="o">.</span><span class="no">SecurityOpt</span><span class="p">[</span><span class="n">_</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"seccomp:unconfined"</span>
 </code></pre> </div> <h3>Create or Overwrite a Document</h3> <div class="highlighter-rouge"><pre class="highlight"><code>PUT /v1/data/{path:.+}
 Content-Type: application/json
 </code></pre> </div> <p>Create or overwrite a document.</p> <p>If the path does not refer to an existing document, the server will attempt to create all of the necessary containing documents. This behavior is similar in principle to the Unix command <code class="highlighter-rouge">mkdir -p</code>.</p> <p>The server will respect the <code class="highlighter-rouge">If-None-Match</code> header if it is set to <code class="highlighter-rouge">*</code>. In this case, the server will not ovewrite an existing document located at the path.</p> <h4>Example Request To Initialize Document With If-None-Match</h4> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="nf">PUT</span> <span class="nn">/v1/data/us-west/servers</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
