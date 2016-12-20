@@ -267,14 +267,24 @@ true
 
 <span class="n">pi</span> <span class="o">=</span> <span class="mi">3</span><span class="o">.</span><span class="mi">14159</span>
 </code></pre> </div> <p>The <code class="highlighter-rouge">pi</code> document can be queried via the Data API:</p> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="nf">GET</span> <span class="nn">https://example.com/v1/data/opa/examples/pi</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-</code></pre> </div> <h3><a name="imports"></a> Imports</h3> <p>Import statements declare dependencies that modules have on documents defined outside the package. By importing a document, the identifiers exported by that document can be referenced within the current module.</p> <p>All modules contain an implicit statement which imports the <code class="highlighter-rouge">data</code> document.</p> <p>Modules use the same syntax to declare dependencies on <a href="/docs/arch.html#data-model">Base Documents and Virtual Documents</a>.</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">package</span> <span class="n">opa</span><span class="p">.</span><span class="nf">examples</span>
+</code></pre> </div> <h3><a name="imports"></a> Imports</h3> <p>Import statements declare dependencies that modules have on documents defined outside the package. By importing a document, the identifiers exported by that document can be referenced within the current module.</p> <p>All modules contain implicit statements which import the <code class="highlighter-rouge">data</code> and <code class="highlighter-rouge">request</code> documents.</p> <p>Modules use the same syntax to declare dependencies on <a href="../how-does-opa-work#base-documents">Base Documents</a> and <a href="../how-does-opa-work#virtual-documents">Virtual Documents</a>.</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">package</span> <span class="n">opa</span><span class="p">.</span><span class="nf">examples</span>
 
 <span class="n">import</span> <span class="n">data</span><span class="p">.</span><span class="nf">servers</span>
 
 <span class="n">http_servers</span><span class="p">[</span><span class="n">server</span><span class="p">]</span> <span class="p">:</span><span class="o">-</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">servers</span><span class="p">[</span><span class="n">_</span><span class="p">]</span>
     <span class="n">server</span><span class="p">.</span><span class="nf">protocols</span><span class="p">[</span><span class="n">_</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"http"</span>
-</code></pre> </div> <p>Imports can include an optional <code class="highlighter-rouge">alias</code> statement to handle namespacing issues:</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">package</span> <span class="n">opa</span><span class="p">.</span><span class="nf">examples</span>
+</code></pre> </div> <p>Similarly, modules can declare dependencies on query arguments by specifying an import path that starts with request.</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">package</span> <span class="n">opa</span><span class="p">.</span><span class="nf">examples</span>
+
+<span class="n">import</span> <span class="n">request</span><span class="p">.</span><span class="nf">user</span>
+<span class="n">import</span> <span class="n">request</span><span class="p">.</span><span class="nf">method</span>
+
+<span class="c1"># allow alice to perform any operation.</span>
+<span class="n">allow</span> <span class="p">:</span><span class="o">-</span> <span class="n">user</span> <span class="o">=</span> <span class="s2">"alice"</span>
+
+<span class="c1"># allow bob to perform read-only operations.</span>
+<span class="n">allow</span> <span class="p">:</span><span class="o">-</span> <span class="n">user</span> <span class="o">=</span> <span class="s2">"bob"</span><span class="p">,</span> <span class="nb">method</span> <span class="o">=</span> <span class="s2">"GET"</span>
+</code></pre> </div> <p>Imports can include an optional <code class="highlighter-rouge">as</code> keyword to handle namespacing issues:</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">package</span> <span class="n">opa</span><span class="p">.</span><span class="nf">examples</span>
 
 <span class="n">import</span> <span class="n">data</span><span class="p">.</span><span class="nf">servers</span> <span class="n">as</span> <span class="n">my_servers</span>
 
