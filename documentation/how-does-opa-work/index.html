@@ -100,18 +100,18 @@
 <span class="n">import</span> <span class="n">data</span><span class="p">.</span><span class="nf">opa</span><span class="p">.</span><span class="nf">examples</span><span class="p">.</span><span class="nf">violations</span>            <span class="c1"># Virtual document</span>
 </code></pre> </div> <p>or as a URI component in an HTTP request:</p> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="nf">GET</span> <span class="nn">https://example.com/v1/data/servers</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 </code></pre> </div> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="nf">GET</span> <span class="nn">https://example.com/v1/data/opa/examples/violations</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-</code></pre> </div> <h3>The request Document</h3> <p>In some cases, to evaluate a policy, the query must specify additional documents as arguments.</p> <p>Query arguments are nested under a built-in root document named request (similar to data).</p> <div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"request"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+</code></pre> </div> <h3><a name="the-input-document"></a> The input Document</h3> <p>In some cases, to evaluate a policy, the query must specify additional documents as arguments.</p> <p>Query arguments are nested under a built-in root document named input (similar to data).</p> <div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"input"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
       </span><span class="nt">"method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w">
       </span><span class="nt">"path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/servers/s2"</span><span class="p">,</span><span class="w">
       </span><span class="nt">"user"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alice"</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre> </div> <p>Query arguments can be accessed hierarchically starting from the root request node:</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">allow</span> <span class="p">:</span><span class="o">-</span> <span class="n">request</span><span class="p">.</span><span class="nf">user</span> <span class="o">=</span> <span class="s2">"alice"</span>
+</span></code></pre> </div> <p>Query arguments can be accessed hierarchically starting from the root input node:</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">allow</span> <span class="p">:</span><span class="o">-</span> <span class="n">input</span><span class="p">.</span><span class="nf">user</span> <span class="o">=</span> <span class="s2">"alice"</span>
 </code></pre> </div> <p>Just like state stored in OPA, documents supplied with the query can be aliased:</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">package</span> <span class="n">opa</span><span class="p">.</span><span class="nf">examples</span>
 
-<span class="n">import</span> <span class="n">request</span><span class="p">.</span><span class="nf">method</span>
-<span class="n">import</span> <span class="n">request</span><span class="p">.</span><span class="nf">user</span>
+<span class="n">import</span> <span class="n">input</span><span class="p">.</span><span class="nf">method</span>
+<span class="n">import</span> <span class="n">input</span><span class="p">.</span><span class="nf">user</span>
 
 <span class="c1"># allow "bob" to perform read-only operations</span>
 <span class="n">allow</span> <span class="p">:</span><span class="o">-</span> <span class="n">user</span> <span class="o">=</span> <span class="s2">"bob"</span><span class="p">,</span> <span class="nb">method</span> <span class="o">=</span> <span class="s2">"GET"</span>
@@ -204,53 +204,55 @@
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre> </div> <p>When the data is published, we can use OPA’s API to inspect base documents like servers:</p> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="nf">GET</span> <span class="nn">https://example.com/v1/data/servers</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-</code></pre> </div> <p>The response is an array of all servers:</p> <div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">[</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s1"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"app"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"protocols"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-      </span><span class="s2">"https"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"ssh"</span><span class="w">
-    </span><span class="p">],</span><span class="w">
-    </span><span class="nt">"ports"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-      </span><span class="s2">"p1"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"p2"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"p3"</span><span class="w">
-    </span><span class="p">]</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s2"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"db"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"protocols"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-      </span><span class="s2">"mysql"</span><span class="w">
-    </span><span class="p">],</span><span class="w">
-    </span><span class="nt">"ports"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-      </span><span class="s2">"p3"</span><span class="w">
-    </span><span class="p">]</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s3"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cache"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"protocols"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-      </span><span class="s2">"memcache"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"http"</span><span class="w">
-    </span><span class="p">],</span><span class="w">
-    </span><span class="nt">"ports"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-      </span><span class="s2">"p3"</span><span class="w">
-    </span><span class="p">]</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s4"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dev"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"protocols"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-      </span><span class="s2">"http"</span><span class="w">
-    </span><span class="p">],</span><span class="w">
-    </span><span class="nt">"ports"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-      </span><span class="s2">"p1"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"p2"</span><span class="w">
-    </span><span class="p">]</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span><span class="p">]</span><span class="w">
+</code></pre> </div> <p>The response is an object that contains the array of servers:</p> <div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"result"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s1"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"app"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"protocols"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"https"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"ssh"</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nt">"ports"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"p1"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"p2"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"p3"</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s2"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"db"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"protocols"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"mysql"</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nt">"ports"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"p3"</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s3"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cache"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"protocols"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"memcache"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"http"</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nt">"ports"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"p3"</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s4"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dev"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"protocols"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"http"</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nt">"ports"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"p1"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"p2"</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
 </span></code></pre> </div> <p>Now let’s write a policy that enumerates servers that are connected to public networks and that are using HTTP. These servers are violating a business rule that states that all public servers must use HTTPS.</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="c1"># This policy module belongs the opa.example package.</span>
 <span class="n">package</span> <span class="n">opa</span><span class="p">.</span><span class="nf">examples</span>
 
@@ -333,19 +335,21 @@
 </span></code></pre> </div> <p>If we use OPA’s API to inspect the violations virtual document…</p> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="nf">GET</span> <span class="nn">https://example.com/v1/data/opa/examples/violations</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 </code></pre> </div> <p>…the response is the subset of the servers base document that use HTTP and are connected to a public network:</p> <div class="language-http highlighter-rouge"><pre class="highlight"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
 <span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json</span>
-</code></pre> </div> <div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">[</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s4"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dev"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"protocols"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-      </span><span class="s2">"http"</span><span class="w">
-    </span><span class="p">],</span><span class="w">
-    </span><span class="nt">"ports"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-      </span><span class="s2">"p1"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"p2"</span><span class="w">
-    </span><span class="p">]</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span><span class="p">]</span><span class="w">
+</code></pre> </div> <div class="language-json highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"result"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s4"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dev"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"protocols"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"http"</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nt">"ports"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"p1"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"p2"</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
 </span></code></pre> </div> <h2>Future Features</h2> <p>OPA is under active development. The following features are planned but not yet implemented.</p> <h3>Triggers</h3> <p>Your service and its users can register to be notified when the system exits the expected state so that violations can be remediated automatically.</p> <p>Any rule can be used as the trigger for a notification. For example, let’s assume that you want to migrate containers to a new host if their current host shuts down. You need a rule to detect when there are containers assigned to hosts that are no longer running.</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="c1"># All production containers are running if...</span>
 <span class="n">containers_to_migrate</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="p">:</span><span class="o">-</span>
     <span class="c1"># ...the container exists</span>
