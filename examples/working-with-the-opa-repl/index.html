@@ -25,8 +25,8 @@
 <span class="o">&gt;</span> <span class="n">pi</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="o">&gt;</span> <span class="n">pi</span>
 <span class="mi">3</span>
-</code></pre> </div> <p>In addition to running queries, the REPL also lets you define rules:</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="o">&gt;</span> <span class="nb">p</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="p">:</span><span class="o">-</span> <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
-<span class="o">&gt;</span> <span class="nb">p</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">1</span>
+</code></pre> </div> <p>In addition to running queries, the REPL also lets you define rules:</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="o">&gt;</span> <span class="nb">p</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="p">{</span> <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">];</span> <span class="n">a</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="p">}</span>
+<span class="o">&gt;</span> <span class="nb">p</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span>
 <span class="o">+---+</span>
 <span class="o">|</span> <span class="n">x</span> <span class="o">|</span>
 <span class="o">+---+</span>
@@ -62,11 +62,12 @@ import data.servers
 import data.networks
 import data.ports
 
-public_servers[s] :-
-    s = servers[_],
-    s.ports[_] = ports[i].id,
-    ports[i].networks[_] = networks[j].id,
+public_servers[s] {
+    s = servers[_]
+    s.ports[_] = ports[i].id
+    ports[i].networks[_] = networks[j].id
     networks[j].public = true
+}
 EOF
 </span></code></pre> </div> <h3>3. Run the REPL with the data file and policy module as input.</h3> <div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>opa run data.json example.rego
 </code></pre> </div> <p>You can now run queries against the various documents:</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="o">&gt;</span> <span class="n">data</span><span class="p">.</span><span class="nf">servers</span><span class="p">[</span><span class="n">_</span><span class="p">].</span><span class="nf">id</span>
@@ -111,7 +112,7 @@ EOF
 <span class="o">|</span> <span class="mi">3</span> <span class="o">|</span> <span class="p">{</span><span class="s2">"id"</span><span class="ss">:"s4"</span><span class="p">,</span><span class="s2">"name"</span><span class="ss">:"dev"</span><span class="p">,</span><span class="s2">"ports"</span><span class="p">:[</span><span class="s2">"p1"</span><span class="p">,</span><span class="s2">"p2"</span><span class="p">],</span><span class="s2">"protocols"</span><span class="p">:[</span><span class="s2">"http"</span><span class="p">]}</span>             <span class="o">|</span>
 <span class="o">+---+-------------------------------------------------------------------------------+</span>
 </code></pre> </div> <h3>4. Import and export documents.</h3> <p>The REPL also understands the <a href="/documentation/how-do-i-write-policies/#modules">Import and Package</a> directives.</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="o">&gt;</span> <span class="n">import</span> <span class="n">data</span><span class="p">.</span><span class="nf">servers</span>
-<span class="o">&gt;</span> <span class="n">servers</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="nf">ports</span><span class="p">[</span><span class="n">_</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"p2"</span><span class="p">,</span> <span class="n">servers</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="nf">id</span> <span class="o">=</span> <span class="nb">id</span>
+<span class="o">&gt;</span> <span class="n">servers</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="nf">ports</span><span class="p">[</span><span class="n">_</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"p2"</span><span class="p">;</span> <span class="n">servers</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="nf">id</span> <span class="o">=</span> <span class="nb">id</span>
 <span class="o">+---+------+</span>
 <span class="o">|</span> <span class="n">i</span> <span class="o">|</span>  <span class="nb">id</span>  <span class="o">|</span>
 <span class="o">+---+------+</span>
@@ -119,17 +120,19 @@ EOF
 <span class="o">|</span> <span class="mi">3</span> <span class="o">|</span> <span class="s2">"s4"</span> <span class="o">|</span>
 <span class="o">+---+------+</span>
 </code></pre> </div> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="o">&gt;</span> <span class="n">package</span> <span class="n">opa</span><span class="p">.</span><span class="nf">example</span>
-<span class="o">&gt;</span> <span class="n">public_servers</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">x</span><span class="p">.</span><span class="nf">protocols</span><span class="p">[</span><span class="n">_</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"http"</span>
+<span class="o">&gt;</span> <span class="n">public_servers</span><span class="p">[</span><span class="n">x</span><span class="p">].</span><span class="nf">protocols</span><span class="p">[</span><span class="n">_</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"http"</span>
 <span class="o">+-------------------------------------------------------------------+</span>
 <span class="o">|</span>                                 <span class="n">x</span>                                 <span class="o">|</span>
 <span class="o">+-------------------------------------------------------------------+</span>
 <span class="o">|</span> <span class="p">{</span><span class="s2">"id"</span><span class="ss">:"s4"</span><span class="p">,</span><span class="s2">"name"</span><span class="ss">:"dev"</span><span class="p">,</span><span class="s2">"ports"</span><span class="p">:[</span><span class="s2">"p1"</span><span class="p">,</span><span class="s2">"p2"</span><span class="p">],</span><span class="s2">"protocols"</span><span class="p">:[</span><span class="s2">"http"</span><span class="p">]}</span> <span class="o">|</span>
 <span class="o">+-------------------------------------------------------------------+</span>
 </code></pre> </div> <h3>5. Define a rule to identify servers in violation of our security policy.</h3> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="o">&gt;</span> <span class="n">import</span> <span class="n">data</span><span class="p">.</span><span class="nf">servers</span>
-<span class="o">&gt;</span> <span class="n">violations</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="p">:</span><span class="o">-</span>
-  <span class="n">s</span> <span class="o">=</span> <span class="n">servers</span><span class="p">[</span><span class="n">_</span><span class="p">],</span>
-  <span class="n">s</span><span class="p">.</span><span class="nf">protocols</span><span class="p">[</span><span class="n">_</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"http"</span><span class="p">,</span>
+<span class="o">&gt;</span> <span class="n">violations</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="p">{</span>
+  <span class="n">s</span> <span class="o">=</span> <span class="n">servers</span><span class="p">[</span><span class="n">_</span><span class="p">]</span>
+  <span class="n">s</span><span class="p">.</span><span class="nf">protocols</span><span class="p">[</span><span class="n">_</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"http"</span>
   <span class="n">public_servers</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+<span class="p">}</span>
+
 <span class="o">&gt;</span> <span class="n">violations</span><span class="p">[</span><span class="n">server</span><span class="p">]</span>
 <span class="o">+-------------------------------------------------------------------+</span>
 <span class="o">|</span>                              <span class="n">server</span>                               <span class="o">|</span>
