@@ -1,0 +1,70 @@
+<!DOCTYPE html> <html> <head> <meta charset="utf-8"> <meta http-equiv="x-ua-compatible" content="ie=edge"> <title>HTTP API Authorization | OPA</title> <meta name="description" content="OPA: An open source project to policy-enable your service."> <link type="text/css" rel="stylesheet" href="/assets/style.css"> </head> <body> <nav> <ul class="opa-nav-main--list"> <li class="opa-nav-main--home-item"> <a class="opa-nav-main--link" href="/">Open Policy Agent</a> </li> <li class="opa-nav-main--item"> <a class="opa-nav-main--link" href="/get-opa/">Get OPA</a> </li> <li class="opa-nav-main--item"> <a class="opa-nav-main--link" href="/documentation/what-is-policy-enablement/">Documentation</a> </li> <li class="opa-nav-main--item--selected"> Tutorials </li> <li class="opa-nav-main--item"> <a class="opa-nav-main--link" href="/community/">Community</a> </li> <li class="opa-nav-main--item"> <a class="opa-nav-main--link" href="https://blog.openpolicyagent.org">Blog</a> </li> </ul> </nav> <header class="opa-header"> <p class="opa-header--fork-me"><a href="https://github.com/open-policy-agent/opa"><img src="/assets/github-corner-right.svg" alt="Fork me on GitHub" width="80" height="80"></a></p> <div class="opa-content"> <div class="opa-header--abstract"> <nav class="opa-header--abstract--nav"> <ul class="opa-header--abstract--nav-list"> <li class="opa-header--abstract--nav-item"> <a class="opa-header--abstract--nav-link" href="/tutorials/working-with-the-opa-repl/">Working with the OPA REPL</a> </li> <li class="opa-header--abstract--nav-item"> <a class="opa-header--abstract--nav-link" href="/tutorials/docker-authorization/">Docker Authorization</a> </li> <li class="opa-header--abstract--nav-item--selected"> HTTP API Authorization </li> <li class="opa-header--abstract--nav-item"> <a class="opa-header--abstract--nav-link" href="/tutorials/ssh-sudo-authorization/">SSH and sudo Authorization</a> </li> </ul> </nav> <h1>HTTP API Authorization</h1> <p>Anything that exposes an HTTP API (whether an individual microservice or an application as a whole) needs to control who can run those APIs and when. OPA makes it easy to write fine-grained, context-aware policies to implement API authorization.</p> </div> </div> </header> <div class="opa-content"> <h2>Goals</h2> <p>In this tutorial, you’ll use a simple HTTP web server that accepts any HTTP GET request that you issue and echoes the OPA decision back as text. Both OPA and the web server will be run as containers.</p> <p>For this tutorial, our desired policy is:</p> <ul> <li>People can see their own salaries (<code class="highlighter-rouge">GET /finance/salary/{user}</code> is permitted for <code class="highlighter-rouge"><span class="p">{</span><span class="err">user</span><span class="p">}</span></code>)</li> <li>A manager can see their direct reports’ salaries (<code class="highlighter-rouge">GET /finance/salary/{user}</code> is permitted for <code class="highlighter-rouge"><span class="p">{</span><span class="err">user</span><span class="p">}</span></code>’s manager)</li> </ul> <h2>Prerequisites</h2> <p>This tutorial requires <a href="https://docs.docker.com/compose/install/">Docker Compose</a> to run a demo web server along with OPA.</p> <h2>Steps</h2> <h3>1. Bootstrap the tutorial environment using Docker Compose.</h3> <p>First, create a docker-compose.yml file that runs OPA and the demo web server.</p> <div class="language-shell opa-collapse--ignore highlighter-rouge"><pre class="highlight"><code>cat &gt;docker-compose.yml <span class="sh">&lt;&lt;EOF
+version: '2'
+services:
+  opa:
+    image: openpolicyagent/opa:0.4.8
+    ports:
+      - 8181:8181
+    command:
+      - "run"
+      - "--server"
+      - "--log-level=debug"
+  api_server:
+    image: openpolicyagent/demo-restful-api:latest
+    ports:
+      - 5000:5000
+    environment:
+      - OPA_ADDR=http://opa:8181
+      - POLICY_PATH=/v1/data/httpapi/authz
+EOF
+</span></code></pre> </div> <p>Then run <code class="highlighter-rouge">docker-compose</code> to pull and run the containers.</p> <div class="language-shell highlighter-rouge"><pre class="highlight"><code>docker-compose -f docker-compose.yml up
+</code></pre> </div> <h3>2. Load a simple policy into OPA.</h3> <p>In another terminal, create a simple policy. The policy below allows users to request their own salary as well as the salary of their direct subordinates.</p> <div class="language-shell opa-collapse--ignore highlighter-rouge"><pre class="highlight"><code>cat &gt;example.rego <span class="sh">&lt;&lt;EOF
+package httpapi.authz
+
+default allow = false
+
+# Allow users to get their own salaries.
+allow {
+  input.method = "GET"
+  input.path = ["finance", "salary", user]
+  user = input.user
+}
+
+# Allow managers to get their subordinates' salaries.
+allow {
+  input.method = "GET"
+  input.path = ["finance", "salary", user]
+  manager_of[user] = input.user
+}
+
+# Manager of alice is bob...
+# Manager of charlie is betty...
+manager_of = {"alice": "bob", "charlie": "betty"}
+EOF
+</span></code></pre> </div> <p>Then load the policy via OPA’s REST API.</p> <div class="language-shell highlighter-rouge"><pre class="highlight"><code>curl -X PUT --data-binary @example.rego <span class="se">\</span>
+  localhost:8181/v1/policies/example
+</code></pre> </div> <h3>3. Check that <code class="highlighter-rouge">alice</code> can see her own salary.</h3> <p>The following command will succeed.</p> <div class="language-shell highlighter-rouge"><pre class="highlight"><code>curl --user alice:password localhost:5000/finance/salary/alice
+</code></pre> </div> <h3>4. Check that <code class="highlighter-rouge">bob</code> can see <code class="highlighter-rouge">alice</code>’s salary (because <code class="highlighter-rouge">bob</code> is <code class="highlighter-rouge">alice</code>’s manager.)</h3> <div class="language-shell highlighter-rouge"><pre class="highlight"><code>curl --user bob:password localhost:5000/finance/salary/alice
+</code></pre> </div> <h3>5. Check that <code class="highlighter-rouge">bob</code> CANNOT see <code class="highlighter-rouge">charlie</code>’s salary.</h3> <p><code class="highlighter-rouge">bob</code> is not <code class="highlighter-rouge">charlie</code>’s manager, so the following command will fail.</p> <div class="language-shell highlighter-rouge"><pre class="highlight"><code>curl --user bob:password localhost:5000/finance/salary/charlie
+</code></pre> </div> <h3>6. Change the policy.</h3> <p>Suppose the organization now includes an HR department. The organization wants members of HR to be able to see any salary. Let’s extend the policy to handle this.</p> <div class="language-shell opa-collapse--ignore highlighter-rouge"><pre class="highlight"><code>cat &gt;example-hr.rego <span class="sh">&lt;&lt;EOF
+package httpapi.authz
+
+# Allow HR members to get anyone's salary.
+allow {
+  input.method = "GET"
+  input.path = ["finance", "salary", _]
+  hr[_] = input.user
+}
+
+# Frank is the only member of HR.
+hr = [
+  "frank",
+]
+EOF
+</span></code></pre> </div> <p>Upload the new policy to OPA.</p> <div class="language-shell highlighter-rouge"><pre class="highlight"><code>curl -X PUT --data-binary @example-hr.rego <span class="se">\</span>
+  http://localhost:8181/v1/policies/example-hr
+</code></pre> </div> <p>For the sake of the tutorial we included <code class="highlighter-rouge">manager_of</code> and <code class="highlighter-rouge">hr</code> data directly inside the policies. In real-world scenarios that information would be imported from external data sources.</p> <h3>7. Check that the new policy works.</h3> <p>Check that <code class="highlighter-rouge">frank</code> can see anyone’s salary.</p> <div class="language-shell highlighter-rouge"><pre class="highlight"><code>curl --user frank:password localhost:5000/finance/salary/alice
+curl --user frank:password localhost:5000/finance/salary/bob
+curl --user frank:password localhost:5000/finance/salary/charlie
+curl --user frank:password localhost:5000/finance/salary/frank
+</code></pre> </div> <h2>Wrap Up</h2> <p>Congratulations for finishing the tutorial!</p> <p>You learned a number of things about API authorization with OPA:</p> <ul> <li>OPA gives you fine-grained policy control over APIs once you set up the server to ask OPA for authorization.</li> <li>You write allow/deny policies to control which APIs can be executed by whom.</li> <li>You can import external data into OPA and write policies that depend on that data.</li> </ul> <p>The code for this tutorial can be found in the <a href="https://github.com/open-policy-agent/contrib">open-policy-agent/contrib</a> repository.</p> </div> <footer class="opa-footer"> <p class="opa-footer--text"> <a class="opa-footer--github--link" href="https://github.com/open-policy-agent/opa"><img src="/assets/icon-github.svg" class="opa-footer--github--icon" width="16" height="16" alt="icon-github.svg">open-policy-agent/opa</a> <a href="https://travis-ci.org/open-policy-agent/opa"><img class="opa-footer--github--ci" width="90" height="20" src="https://travis-ci.org/open-policy-agent/opa.svg?branch=master" alt="Build Status"></a> </p> <p class="opa-footer--text"> Join the discussion on <a class="opa-footer--link" href="http://slack.openpolicyagent.org">Slack</a> or <a class="opa-footer--link" href="https://groups.google.com/forum/?hl=en#!forum/open-policy-agent">Google Groups</a>. Report a bug or request a feature using <a class="opa-footer--link" href="https://github.com/open-policy-agent/opa/issues">GitHub Issues</a>. </p> <p class="opa-footer--text"> © 2016 Open Policy Agent contributors. Licensed under the <a class="opa-footer--link" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>. For information about contributing, see <a class="opa-footer--link" href="https://github.com/open-policy-agent/opa/blob/master/CONTRIBUTING.md">CONTRIBUTING.md</a>. </p> </footer> <script>var OPA_COLLAPSE_CONFIG={classNames:"highlight",baseClassName:"opa-collapse",collapsedClassName:"opa-collapse--collapsed",ignoreClassName:"opa-collapse--ignore",maxHeight:320,targetClassName:"opa-collapse--target"};</script> <script>!function(e,t,a,n,c,s,o){e.GoogleAnalyticsObject=c,e[c]=e[c]||function(){(e[c].q=e[c].q||[]).push(arguments)},e[c].l=1*new Date,s=t.createElement(a),o=t.getElementsByTagName(a)[0],s.async=1,s.src=n,o.parentNode.insertBefore(s,o)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-84550302-1","auto"),ga("send","pageview");</script> <script type="text/javascript" src="/assets/dom.js"></script> <script type="text/javascript" src="/assets/collapse.js"></script> </body> </html>
