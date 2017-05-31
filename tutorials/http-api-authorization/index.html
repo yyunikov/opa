@@ -2,7 +2,7 @@
 version: '2'
 services:
   opa:
-    image: openpolicyagent/opa:0.4.9
+    image: openpolicyagent/opa:0.4.10
     ports:
       - 8181:8181
     command:
@@ -21,25 +21,27 @@ EOF
 </code></pre> </div> <h3>2. Load a simple policy into OPA.</h3> <p>In another terminal, create a simple policy. The policy below allows users to request their own salary as well as the salary of their direct subordinates.</p> <div class="language-shell opa-collapse--ignore highlighter-rouge"><pre class="highlight"><code>cat &gt;example.rego <span class="sh">&lt;&lt;EOF
 package httpapi.authz
 
+# bob is alice's manager, and betty is charlie's.
+subordinates = {"alice": [], "charlie": [], "bob": ["alice"], "betty": ["charlie"]}
+
+# HTTP API request
+import input as http_api
+
 default allow = false
 
 # Allow users to get their own salaries.
 allow {
-  input.method = "GET"
-  input.path = ["finance", "salary", user]
-  user = input.user
+  http_api.method = "GET"
+  http_api.path = ["finance", "salary", username]
+  username = http_api.user
 }
 
 # Allow managers to get their subordinates' salaries.
 allow {
-  input.method = "GET"
-  input.path = ["finance", "salary", user]
-  manager_of[user] = input.user
+  http_api.method = "GET"
+  http_api.path = ["finance", "salary", username]
+  subordinates[http_api.user][_] = username
 }
-
-# Manager of alice is bob...
-# Manager of charlie is betty...
-manager_of = {"alice": "bob", "charlie": "betty"}
 EOF
 </span></code></pre> </div> <p>Then load the policy via OPA’s REST API.</p> <div class="language-shell highlighter-rouge"><pre class="highlight"><code>curl -X PUT --data-binary @example.rego <span class="se">\</span>
   localhost:8181/v1/policies/example
@@ -49,22 +51,75 @@ EOF
 </code></pre> </div> <h3>6. Change the policy.</h3> <p>Suppose the organization now includes an HR department. The organization wants members of HR to be able to see any salary. Let’s extend the policy to handle this.</p> <div class="language-shell opa-collapse--ignore highlighter-rouge"><pre class="highlight"><code>cat &gt;example-hr.rego <span class="sh">&lt;&lt;EOF
 package httpapi.authz
 
+import input as http_api
+
 # Allow HR members to get anyone's salary.
 allow {
-  input.method = "GET"
-  input.path = ["finance", "salary", _]
-  hr[_] = input.user
+  http_api.method = "GET"
+  http_api.path = ["finance", "salary", _]
+  hr[_] = http_api.user
 }
 
-# Frank is the only member of HR.
+# David is the only member of HR.
 hr = [
-  "frank",
+  "david",
 ]
 EOF
 </span></code></pre> </div> <p>Upload the new policy to OPA.</p> <div class="language-shell highlighter-rouge"><pre class="highlight"><code>curl -X PUT --data-binary @example-hr.rego <span class="se">\</span>
   http://localhost:8181/v1/policies/example-hr
-</code></pre> </div> <p>For the sake of the tutorial we included <code class="highlighter-rouge">manager_of</code> and <code class="highlighter-rouge">hr</code> data directly inside the policies. In real-world scenarios that information would be imported from external data sources.</p> <h3>7. Check that the new policy works.</h3> <p>Check that <code class="highlighter-rouge">frank</code> can see anyone’s salary.</p> <div class="language-shell highlighter-rouge"><pre class="highlight"><code>curl --user frank:password localhost:5000/finance/salary/alice
-curl --user frank:password localhost:5000/finance/salary/bob
-curl --user frank:password localhost:5000/finance/salary/charlie
-curl --user frank:password localhost:5000/finance/salary/frank
-</code></pre> </div> <h2>Wrap Up</h2> <p>Congratulations for finishing the tutorial!</p> <p>You learned a number of things about API authorization with OPA:</p> <ul> <li>OPA gives you fine-grained policy control over APIs once you set up the server to ask OPA for authorization.</li> <li>You write allow/deny policies to control which APIs can be executed by whom.</li> <li>You can import external data into OPA and write policies that depend on that data.</li> </ul> <p>The code for this tutorial can be found in the <a href="https://github.com/open-policy-agent/contrib">open-policy-agent/contrib</a> repository.</p> </div> <footer class="opa-footer"> <p class="opa-footer--text"> <a class="opa-footer--github--link" href="https://github.com/open-policy-agent/opa"><img src="/assets/icon-github.svg" class="opa-footer--github--icon" width="16" height="16" alt="icon-github.svg">open-policy-agent/opa</a> <a href="https://travis-ci.org/open-policy-agent/opa"><img class="opa-footer--github--ci" width="90" height="20" src="https://travis-ci.org/open-policy-agent/opa.svg?branch=master" alt="Build Status"></a> </p> <p class="opa-footer--text"> Join the discussion on <a class="opa-footer--link" href="http://slack.openpolicyagent.org">Slack</a> or <a class="opa-footer--link" href="https://groups.google.com/forum/?hl=en#!forum/open-policy-agent">Google Groups</a>. Report a bug or request a feature using <a class="opa-footer--link" href="https://github.com/open-policy-agent/opa/issues">GitHub Issues</a>. </p> <p class="opa-footer--text"> © 2016 Open Policy Agent contributors. Licensed under the <a class="opa-footer--link" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>. For information about contributing, see <a class="opa-footer--link" href="https://github.com/open-policy-agent/opa/blob/master/CONTRIBUTING.md">CONTRIBUTING.md</a>. </p> </footer> <script>var OPA_COLLAPSE_CONFIG={classNames:"highlight",baseClassName:"opa-collapse",collapsedClassName:"opa-collapse--collapsed",ignoreClassName:"opa-collapse--ignore",maxHeight:320,targetClassName:"opa-collapse--target"};</script> <script>!function(e,t,a,n,c,s,o){e.GoogleAnalyticsObject=c,e[c]=e[c]||function(){(e[c].q=e[c].q||[]).push(arguments)},e[c].l=1*new Date,s=t.createElement(a),o=t.getElementsByTagName(a)[0],s.async=1,s.src=n,o.parentNode.insertBefore(s,o)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-84550302-1","auto"),ga("send","pageview");</script> <script type="text/javascript" src="/assets/dom.js"></script> <script type="text/javascript" src="/assets/collapse.js"></script> </body> </html>
+</code></pre> </div> <p>For the sake of the tutorial we included <code class="highlighter-rouge">manager_of</code> and <code class="highlighter-rouge">hr</code> data directly inside the policies. In real-world scenarios that information would be imported from external data sources.</p> <h3>7. Check that the new policy works.</h3> <p>Check that <code class="highlighter-rouge">david</code> can see anyone’s salary.</p> <div class="language-shell highlighter-rouge"><pre class="highlight"><code>curl --user david:password localhost:5000/finance/salary/alice
+curl --user david:password localhost:5000/finance/salary/bob
+curl --user david:password localhost:5000/finance/salary/charlie
+curl --user david:password localhost:5000/finance/salary/david
+</code></pre> </div> <h3>8. (Optional) Use JSON Web Tokens to communicate policy data.</h3> <p>OPA supports the parsing of JSON Web Tokens via the builtin function <code class="highlighter-rouge">io.jwt.decode</code>. To get a sense of one way the subordinate and HR data might be communicated in the real world, let’s try a similar exercise utilizing the JWT utilities of OPA.</p> <p>Shut down your <code class="highlighter-rouge">docker-compose</code> instance from before with <code class="highlighter-rouge">^C</code> and then restart it to ensure you are working with a fresh instance of OPA.</p> <p>Then update the policy:</p> <div class="language-shell highlighter-rouge"><pre class="highlight"><code>cat &gt;example.rego <span class="sh">&lt;&lt;EOF
+package httpapi.authz
+
+import input as http_api
+
+# io.jwt.decode takes one argument (the encoded token) and has three outputs:
+# the decoded header, payload and signature, in that order. Our policy only
+# cares about the payload, so we ignore the others.
+token = {"payload": payload} { io.jwt.decode(http_api.token, _, payload, _) }
+
+# Ensure that the token was issued to the user supplying it.
+user_owns_token { http_api.user = token.payload.azp }
+
+default allow = false
+
+# Allow users to get their own salaries.
+allow {
+  http_api.method = "GET"
+  http_api.path = ["finance", "salary", username]
+  username = token.payload.user
+  user_owns_token
+}
+
+# Allow managers to get their subordinate' salaries.
+allow {
+  http_api.method = "GET"
+  http_api.path = ["finance", "salary", username]
+  token.payload.subordinates[_] = username
+  user_owns_token
+}
+
+# Allow HR members to get anyone's salary.
+allow {
+  http_api.method = "GET"
+  http_api.path = ["finance", "salary", _]
+  token.payload.hr = true
+  user_owns_token
+}
+EOF
+</span></code></pre> </div> <p>And load it into OPA:</p> <div class="language-shell highlighter-rouge"><pre class="highlight"><code>curl -X PUT --data-binary @example.rego <span class="se">\</span>
+  localhost:8181/v1/policies/example
+</code></pre> </div> <p>For convenience, we’ll want to store user tokens in environment variables (they’re really long).</p> <div class="language-shell highlighter-rouge"><pre class="highlight"><code><span class="nb">export </span><span class="nv">ALICE_TOKEN</span><span class="o">=</span><span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYWxpY2UiLCJhenAiOiJhbGljZSIsInN1Ym9yZGluYXRlcyI6W10sImhyIjpmYWxzZX0.rz3jTY033z-NrKfwrK89_dcLF7TN4gwCMj-fVBDyLoM"</span>
+<span class="nb">export </span><span class="nv">BOB_TOKEN</span><span class="o">=</span><span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYm9iIiwiYXpwIjoiYm9iIiwic3Vib3JkaW5hdGVzIjpbImFsaWNlIl0sImhyIjpmYWxzZX0.n_lXN4H8UXGA_fXTbgWRx8b40GXpAGQHWluiYVI9qf0"</span>
+<span class="nb">export </span><span class="nv">CHARLIE_TOKEN</span><span class="o">=</span><span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiY2hhcmxpZSIsImF6cCI6ImNoYXJsaWUiLCJzdWJvcmRpbmF0ZXMiOltdLCJociI6ZmFsc2V9.EZd_y_RHUnrCRMuauY7y5a1yiwdUHKRjm9xhVtjNALo"</span>
+<span class="nb">export </span><span class="nv">BETTY_TOKEN</span><span class="o">=</span><span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYmV0dHkiLCJhenAiOiJiZXR0eSIsInN1Ym9yZGluYXRlcyI6WyJjaGFybGllIl0sImhyIjpmYWxzZX0.TGCS6pTzjrs3nmALSOS7yiLO9Bh9fxzDXEDiq1LIYtE"</span>
+<span class="nb">export </span><span class="nv">DAVID_TOKEN</span><span class="o">=</span><span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZGF2aWQiLCJhenAiOiJkYXZpZCIsInN1Ym9yZGluYXRlcyI6W10sImhyIjp0cnVlfQ.Q6EiWzU1wx1g6sdWQ1r4bxT1JgSHUpVXpINMqMaUDMU"</span>
+</code></pre> </div> <p>These tokens encode the same information as the policies we did before (<code class="highlighter-rouge">bob</code> is <code class="highlighter-rouge">alice</code>’s manager, <code class="highlighter-rouge">betty</code> is <code class="highlighter-rouge">charlie</code>’s, <code class="highlighter-rouge">david</code> is the only HR member, etc). If you want to inspect their contents, start up the OPA REPL and execute <code class="highlighter-rouge">io.jwt.decode(&lt;token here&gt;, header, payload, signature)</code>.</p> <p>Let’s try a few queries (note: you may need to escape the <code class="highlighter-rouge">?</code> characters in the queries for your shell):</p> <p>Check that <code class="highlighter-rouge">charlie</code> can’t see <code class="highlighter-rouge">bob</code>’s salary.</p> <div class="language-shell highlighter-rouge"><pre class="highlight"><code>curl --user charlie:password localhost:5000/finance/salary/bob?token<span class="o">=</span><span class="nv">$CHARLIE_TOKEN</span>
+</code></pre> </div> <p>Check that <code class="highlighter-rouge">charlie</code> can’t pretend to be <code class="highlighter-rouge">bob</code> to see <code class="highlighter-rouge">alice</code>’s salary.</p> <div class="language-shell highlighter-rouge"><pre class="highlight"><code>curl --user charlie:password localhost:5000/finance/salary/alice?token<span class="o">=</span><span class="nv">$BOB_TOKEN</span>
+</code></pre> </div> <p>Check that <code class="highlighter-rouge">david</code> can see <code class="highlighter-rouge">betty</code>’s salary.</p> <div class="language-shell highlighter-rouge"><pre class="highlight"><code>curl --user david:password localhost:5000/finance/salary/betty?token<span class="o">=</span><span class="nv">$DAVID_TOKEN</span>
+</code></pre> </div> <p>Check that <code class="highlighter-rouge">bob</code> can see <code class="highlighter-rouge">alice</code>’s salary.</p> <div class="language-shell highlighter-rouge"><pre class="highlight"><code>curl --user bob:password localhost:5000/finance/salary/alice?token<span class="o">=</span><span class="nv">$BOB_TOKEN</span>
+</code></pre> </div> <p>Check that <code class="highlighter-rouge">alice</code> can see her own salary.</p> <div class="language-shell highlighter-rouge"><pre class="highlight"><code>curl --user alice:password localhost:5000/finance/salary/alice?token<span class="o">=</span><span class="nv">$ALICE_TOKEN</span>
+</code></pre> </div> <h2>Wrap Up</h2> <p>Congratulations for finishing the tutorial!</p> <p>You learned a number of things about API authorization with OPA:</p> <ul> <li>OPA gives you fine-grained policy control over APIs once you set up the server to ask OPA for authorization.</li> <li>You write allow/deny policies to control which APIs can be executed by whom.</li> <li>You can import external data into OPA and write policies that depend on that data.</li> <li>You can use OPA data structures to define abstractions over your data.</li> </ul> <p>The code for this tutorial can be found in the <a href="https://github.com/open-policy-agent/contrib">open-policy-agent/contrib</a> repository.</p> </div> <footer class="opa-footer"> <p class="opa-footer--text"> <a class="opa-footer--github--link" href="https://github.com/open-policy-agent/opa"><img src="/assets/icon-github.svg" class="opa-footer--github--icon" width="16" height="16" alt="icon-github.svg">open-policy-agent/opa</a> <a href="https://travis-ci.org/open-policy-agent/opa"><img class="opa-footer--github--ci" width="90" height="20" src="https://travis-ci.org/open-policy-agent/opa.svg?branch=master" alt="Build Status"></a> </p> <p class="opa-footer--text"> Join the discussion on <a class="opa-footer--link" href="http://slack.openpolicyagent.org">Slack</a> or <a class="opa-footer--link" href="https://groups.google.com/forum/?hl=en#!forum/open-policy-agent">Google Groups</a>. Report a bug or request a feature using <a class="opa-footer--link" href="https://github.com/open-policy-agent/opa/issues">GitHub Issues</a>. </p> <p class="opa-footer--text"> © 2016 Open Policy Agent contributors. Licensed under the <a class="opa-footer--link" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>. For information about contributing, see <a class="opa-footer--link" href="https://github.com/open-policy-agent/opa/blob/master/CONTRIBUTING.md">CONTRIBUTING.md</a>. </p> </footer> <script>var OPA_COLLAPSE_CONFIG={classNames:"highlight",baseClassName:"opa-collapse",collapsedClassName:"opa-collapse--collapsed",ignoreClassName:"opa-collapse--ignore",maxHeight:320,targetClassName:"opa-collapse--target"};</script> <script>!function(e,t,a,n,c,s,o){e.GoogleAnalyticsObject=c,e[c]=e[c]||function(){(e[c].q=e[c].q||[]).push(arguments)},e[c].l=1*new Date,s=t.createElement(a),o=t.getElementsByTagName(a)[0],s.async=1,s.src=n,o.parentNode.insertBefore(s,o)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-84550302-1","auto"),ga("send","pageview");</script> <script type="text/javascript" src="/assets/dom.js"></script> <script type="text/javascript" src="/assets/collapse.js"></script> </body> </html>

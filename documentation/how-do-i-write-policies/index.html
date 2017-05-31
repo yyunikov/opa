@@ -369,7 +369,23 @@ max_memory: eval_conflict_error: completely defined rules must produce exactly o
 </code></pre> </div> <p>When the <code class="highlighter-rouge">allow</code> document is queried, the return value will be either <code class="highlighter-rouge">true</code> or <code class="highlighter-rouge">false</code>.</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="o">&gt;</span> <span class="n">allow</span> <span class="n">with</span> <span class="n">input</span><span class="p">.</span><span class="nf">user</span> <span class="n">as</span> <span class="s2">"bob"</span> <span class="n">with</span> <span class="n">input</span><span class="p">.</span><span class="nf">method</span> <span class="n">as</span> <span class="s2">"POST"</span>
 <span class="kp">false</span>
 </code></pre> </div> <p>Without the default definition, the <code class="highlighter-rouge">allow</code> document would simply be undefined for the same input.</p> <p>When the <code class="highlighter-rouge">default</code> keyword is used, the rule syntax is restricted to:</p> <div class="highlighter-rouge"><pre class="highlight"><code>default &lt;name&gt; = &lt;term&gt;
-</code></pre> </div> <p>The term may be any scalar, composite, or comprehension value but it may not be a variable or reference. If the value is a composite then it may not contain variables or references.</p> <h2><a name="operators"></a> Operators</h2> <h3><a name="equality"></a> Equality</h3> <p>The equality operator (<code class="highlighter-rouge">=</code>) is used to define expressions that assert that two values are the same. If the expression is defined in terms of one or more variables then the expression will evaluate to true if one of the variables is unbound. If the neither operand is an unbound variable, the expression is evaluated by comparing the <em>values</em> referenced by the operands.</p> <p>OPA attempts to <em>bind</em> variables to values when it encounters unbound variables in equality expressions. Binding a variable affects subsequent evaluation of expressions such that the variable will be treated as a constant (with the bound value) instead of a variable.</p> <h3><a name="inequality"></a> Inequality</h3> <p>The following inequality operators are supported:</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">a</span>  <span class="o">!=</span>  <span class="n">b</span>  <span class="c1">#  `a` is not equal to `b`.</span>
+</code></pre> </div> <p>The term may be any scalar, composite, or comprehension value but it may not be a variable or reference. If the value is a composite then it may not contain variables or references.</p> <h2><a name="else"></a> Else Keyword</h2> <p>The <code class="highlighter-rouge">else</code> keyword is a basic control flow construct that gives you control over rule evaluation order.</p> <p>Rules grouped together with the <code class="highlighter-rouge">else</code> keyword are evaluated until a match is found. Once a match is found, rule evaluation does not proceed to rules further in the chain.</p> <p>The <code class="highlighter-rouge">else</code> keyword is useful if you are porting policies into Rego from an order-sensitive system like IPTables.</p> <div class="highlighter-rouge"><pre class="highlight"><code># Service queries "authorize" and intreprets result ("allow" or "deny")
+authorize = "allow" {
+    input.user = "superuser"
+}
+
+# Check if caller is from outside network.
+else = "deny" {
+    input.path[0] = "admin"
+    input.source_network = "external"
+}
+
+# Check if caller is from inside network.
+else = "allow" {
+    input.path[0] = "admin"
+    input.source_network = "internal"
+} # ... more rules
+</code></pre> </div> <h2><a name="operators"></a> Operators</h2> <h3><a name="equality"></a> Equality</h3> <p>The equality operator (<code class="highlighter-rouge">=</code>) is used to define expressions that assert that two values are the same. If the expression is defined in terms of one or more variables then the expression will evaluate to true if one of the variables is unbound. If the neither operand is an unbound variable, the expression is evaluated by comparing the <em>values</em> referenced by the operands.</p> <p>OPA attempts to <em>bind</em> variables to values when it encounters unbound variables in equality expressions. Binding a variable affects subsequent evaluation of expressions such that the variable will be treated as a constant (with the bound value) instead of a variable.</p> <h3><a name="inequality"></a> Inequality</h3> <p>The following inequality operators are supported:</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">a</span>  <span class="o">!=</span>  <span class="n">b</span>  <span class="c1">#  `a` is not equal to `b`.</span>
 <span class="n">a</span>  <span class="o">&lt;</span>   <span class="n">b</span>  <span class="c1">#  `a` is less than `b`.</span>
 <span class="n">a</span>  <span class="o">&lt;=</span>  <span class="n">b</span>  <span class="c1">#  `a` is less than or equal to `b`.</span>
 <span class="n">a</span>  <span class="o">&gt;</span>   <span class="n">b</span>  <span class="c1">#  `a` is greater than `b`.</span>
@@ -429,6 +445,12 @@ max_memory: eval_conflict_error: completely defined rules must produce exactly o
 <span class="o">+---+</span>
 <span class="o">|</span> <span class="mi">3</span> <span class="o">|</span>
 <span class="o">+---+</span>
+<span class="o">&gt;</span> <span class="n">min</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span>
+<span class="o">+---+</span>
+<span class="o">|</span> <span class="n">x</span> <span class="o">|</span>
+<span class="o">+---+</span>
+<span class="o">|</span> <span class="mi">1</span> <span class="o">|</span>
+<span class="o">+---+</span>
 </code></pre> </div> <h3>Casting</h3> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="o">&gt;</span> <span class="n">to_number</span><span class="p">(</span><span class="s2">"3.14"</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 <span class="o">+------+</span>
 <span class="o">|</span>  <span class="n">x</span>   <span class="o">|</span>
@@ -486,6 +508,24 @@ max_memory: eval_conflict_error: completely defined rules must produce exactly o
 <span class="o">+----------+</span>
 <span class="o">|</span> <span class="s2">"abcdef"</span> <span class="o">|</span>
 <span class="o">+----------+</span>
+<span class="o">&gt;</span> <span class="n">replace</span><span class="p">(</span><span class="s2">"foobar, "</span><span class="n">oo</span><span class="s2">", "</span><span class="n">xx</span><span class="s2">", x)
++----------+
+|    x     |
++----------+
+| "</span><span class="n">fxxbar</span><span class="s2">" |
++----------+
+&gt; split("</span><span class="n">foo</span><span class="p">.</span><span class="nf">bar</span><span class="p">.</span><span class="nf">baz</span><span class="s2">", "</span><span class="o">.</span><span class="s2">", [x, "</span><span class="n">bar</span><span class="s2">", y])
++-------+-------+
+|   x   |   y   |
++-------+-------+
+| "</span><span class="n">foo</span><span class="s2">" | "</span><span class="n">baz</span><span class="s2">" |
++-------+-------+
+&gt; sprintf("</span><span class="n">some</span> <span class="ss">numbers: </span><span class="sx">%s, %s",</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="o">.</span><span class="mi">14</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span>
+<span class="o">+-------------------------+</span>
+<span class="o">|</span>            <span class="n">x</span>            <span class="o">|</span>
+<span class="o">+-------------------------+</span>
+<span class="o">|</span> <span class="s2">"some numbers: 5, 3.14"</span> <span class="o">|</span>
+<span class="o">+-------------------------+</span>
 <span class="o">&gt;</span> <span class="n">startswith</span><span class="p">(</span><span class="s2">"abcdef"</span><span class="p">,</span> <span class="s2">"abcd"</span><span class="p">)</span>
 <span class="kp">true</span>
 <span class="o">&gt;</span> <span class="n">substring</span><span class="p">(</span><span class="s2">"abcdef"</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
@@ -494,24 +534,48 @@ max_memory: eval_conflict_error: completely defined rules must produce exactly o
 <span class="o">+-------+</span>
 <span class="o">|</span> <span class="s2">"cde"</span> <span class="o">|</span>
 <span class="o">+-------+</span>
+<span class="o">&gt;</span> <span class="n">trim</span><span class="p">(</span><span class="s2">"...foo.bar.bazz"</span><span class="p">,</span> <span class="s2">".z"</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="o">+--------------+</span>
+<span class="o">|</span>      <span class="n">x</span>       <span class="o">|</span>
+<span class="o">+--------------+</span>
+<span class="o">|</span> <span class="s2">"foo.bar.ba"</span> <span class="o">|</span>
+<span class="o">+--------------+</span>
 <span class="o">&gt;</span> <span class="n">upper</span><span class="p">(</span><span class="s2">"AbCdEf"</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 <span class="o">+----------+</span>
 <span class="o">|</span>    <span class="n">x</span>     <span class="o">|</span>
 <span class="o">+----------+</span>
 <span class="o">|</span> <span class="s2">"ABCDEF"</span> <span class="o">|</span>
 <span class="o">+----------+</span>
-</code></pre> </div> <h3>Encoding</h3> <div class="highlighter-rouge"><pre class="highlight"><code>&gt; json_marshal([1,2,3], x)
+</code></pre> </div> <h3>Encoding</h3> <div class="highlighter-rouge"><pre class="highlight"><code>&gt; base64url.encode("opa", x)
++--------+
+|   x    |
++--------+
+| "b3Bh" |
++--------+
+&gt; base64url.decode("b3Bh", x)
++-------+
+|   x   |
++-------+
+| "opa" |
++-------+
+&gt; json.marshal([1,2,3], x)
 +-----------+
 |     x     |
 +-----------+
 | "[1,2,3]" |
 +-----------+
-&gt; json_unmarshal("[1,2,3]", x)
+&gt; json.unmarshal("[1,2,3]", x)
 +---------+
 |    x    |
 +---------+
 | [1,2,3] |
 +---------+
+</code></pre> </div> <h3>Tokens</h3> <div class="highlighter-rouge"><pre class="highlight"><code>&gt; io.jwt.decode("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwIiwiaXNzIjoib3BhIn0.XmVoLoHI3pxMtMO_WRONMSJzGUDP9pDjy8Jp0_tdRXY", header, payload, signature)
++-----------------------------+-------------------------+--------------------------------------------------------------------+
+|           header            |         payload         |                             signature                              |
++-----------------------------+-------------------------+--------------------------------------------------------------------+
+| {"alg":"HS256","typ":"JWT"} | {"iss":"opa","sub":"0"} | "5e65682e81c8de9c4cb4c3bf59138d3122731940cff690e3cbc269d3fb5d4576" |
++-----------------------------+-------------------------+--------------------------------------------------------------------+
 </code></pre> </div> <h2><a name="examples"></a> Examples</h2> <p>The rules below define the content of documents describing a simplistic deployment environment. These documents are referenced in other sections above.</p> <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">sites</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">{</span>
         <span class="s2">"region"</span><span class="p">:</span> <span class="s2">"east"</span><span class="p">,</span>
