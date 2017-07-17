@@ -597,6 +597,32 @@
             
         </li>
     
+        <li class="chapter " data-level="1.3.8.2" data-path="how-do-i-write-policies.html">
+            
+                <a href="how-do-i-write-policies.html#object-comprehensions">
+            
+                    
+                    Object Comprehensions
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.8.3" data-path="how-do-i-write-policies.html">
+            
+                <a href="how-do-i-write-policies.html#set-comprehensions">
+            
+                    
+                    Set Comprehensions
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -1225,10 +1251,23 @@
     
         <li class="chapter " data-level="1.5.3.1" data-path="rest-api.html">
             
-                <a href="rest-api.html#execute-a-quer">
+                <a href="rest-api.html#execute-a-simple-query">
             
                     
-                    Execute a Query
+                    Execute a Simple Query
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.3.2" data-path="rest-api.html">
+            
+                <a href="rest-api.html#execute-an-ad-hoc-query">
+            
+                    
+                    Execute an Ad-hoc Query
             
                 </a>
             
@@ -3030,7 +3069,48 @@ Content-Type: application/json-patch+json
 </ul>
 <p>The effective path of the JSON Patch operation is obtained by joining the path portion of the URL with the path value from the operation(s) contained in the message body. In all cases, the parent of the effective path MUST refer to an existing document, otherwise the server returns 404. In the case of <strong>remove</strong> and <strong>replace</strong> operations, the effective path MUST refer to an existing document, otherwise the server returns 404.</p>
 <h2 id="query-api"><a name="query-api"></a> Query API</h2>
-<h3 id="execute-a-query"><a name="execute-a-query">Execute a Query</a></h3>
+<h3 id="execute-a-simple-query"><a name="execute-a-simple-query">Execute a Simple Query</a></h3>
+<pre><code>POST /
+Content-Type: application/json
+</code></pre><p>Execute a simple query.</p>
+<p>OPA serves POST requests without a URL path by querying for the document at
+path <code>/data/system/main</code>. The content of that document defines the response
+entirely. The example below shows how to define a rule that will produce a
+value for the <code>/data/system/main</code> document.</p>
+<p>The request message body is mapped to the <a href="how-does-opa-work.html#the-input-document">Input Document</a>.</p>
+<pre><code class="lang-ruby">package system
+
+main = msg {
+  sprintf(<span class="hljs-string">&quot;hello, %v&quot;</span>, input.user, msg)
+}
+</code></pre>
+<h4 id="example-request">Example Request</h4>
+<pre><code class="lang-http">POST /
+Content-Type: application/json
+</code></pre>
+<pre><code class="lang-json">{
+  <span class="hljs-string">&quot;user&quot;</span>: <span class="hljs-string">&quot;alice&quot;</span>
+}
+</code></pre>
+<h4 id="example-response">Example Response</h4>
+<pre><code class="lang-http">HTTP/1.1 <span class="hljs-number">200</span> OK
+<span class="hljs-attribute">Content-Type</span>: application/json
+</code></pre>
+<pre><code class="lang-json"><span class="hljs-string">&quot;hello, alice&quot;</span>
+</code></pre>
+<h4 id="query-parameters">Query Parameters</h4>
+<ul>
+<li><strong>pretty</strong> - If parameter is <code>true</code>, response will formatted for humans.</li>
+</ul>
+<h4 id="status-codes">Status Codes</h4>
+<ul>
+<li><strong>200</strong> - no error</li>
+<li><strong>400</strong> - bad request</li>
+<li><strong>404</strong> - not found</li>
+<li><strong>500</strong> - server error</li>
+</ul>
+<p>If the <code>/data/system/main</code> document is undefined (e.g., because the administrator has not defined one) the server returns 404.</p>
+<h3 id="execute-an-ad-hoc-query"><a name="execute-an-ad-hoc-query">Execute an Ad-hoc Query</a></h3>
 <pre><code>GET /v1/query
 </code></pre><p>Execute an ad-hoc query and return bindings for variables found in the query.</p>
 <h4 id="example-request">Example Request</h4>
@@ -3264,7 +3344,7 @@ restarts, a <strong>Redo</strong> Trace Event is emitted.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"REST API","level":"1.5","depth":1,"next":{"title":"Policy API","level":"1.5.1","depth":2,"anchor":"#policy-api","path":"rest-api.md","ref":"rest-api.md#policy-api","articles":[{"title":"List Policies","level":"1.5.1.1","depth":3,"anchor":"#list-policies","path":"rest-api.md","ref":"rest-api.md#list-policies","articles":[]},{"title":"Get a Policy","level":"1.5.1.2","depth":3,"anchor":"#get-a-policy","path":"rest-api.md","ref":"rest-api.md#get-a-policy","articles":[]},{"title":"Create or Update a Policy","level":"1.5.1.3","depth":3,"anchor":"#create-or-update-a-policy","path":"rest-api.md","ref":"rest-api.md#create-or-update-a-policy","articles":[]},{"title":"Delete a Policy","level":"1.5.1.4","depth":3,"anchor":"#delete-a-policy","path":"rest-api.md","ref":"rest-api.md#delete-a-policy","articles":[]}]},"previous":{"title":"Grammar","level":"1.4.3","depth":2,"anchor":"#grammar","path":"language-reference.md","ref":"language-reference.md#grammar","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"rest-api.md","mtime":"2017-07-10T17:57:35.422Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-10T17:58:34.642Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"REST API","level":"1.5","depth":1,"next":{"title":"Policy API","level":"1.5.1","depth":2,"anchor":"#policy-api","path":"rest-api.md","ref":"rest-api.md#policy-api","articles":[{"title":"List Policies","level":"1.5.1.1","depth":3,"anchor":"#list-policies","path":"rest-api.md","ref":"rest-api.md#list-policies","articles":[]},{"title":"Get a Policy","level":"1.5.1.2","depth":3,"anchor":"#get-a-policy","path":"rest-api.md","ref":"rest-api.md#get-a-policy","articles":[]},{"title":"Create or Update a Policy","level":"1.5.1.3","depth":3,"anchor":"#create-or-update-a-policy","path":"rest-api.md","ref":"rest-api.md#create-or-update-a-policy","articles":[]},{"title":"Delete a Policy","level":"1.5.1.4","depth":3,"anchor":"#delete-a-policy","path":"rest-api.md","ref":"rest-api.md#delete-a-policy","articles":[]}]},"previous":{"title":"Grammar","level":"1.4.3","depth":2,"anchor":"#grammar","path":"language-reference.md","ref":"language-reference.md#grammar","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"rest-api.md","mtime":"2017-07-17T18:21:59.484Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-17T18:23:09.272Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

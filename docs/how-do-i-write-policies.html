@@ -597,6 +597,32 @@
             
         </li>
     
+        <li class="chapter " data-level="1.3.8.2" data-path="how-do-i-write-policies.html">
+            
+                <a href="how-do-i-write-policies.html#object-comprehensions">
+            
+                    
+                    Object Comprehensions
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.8.3" data-path="how-do-i-write-policies.html">
+            
+                <a href="how-do-i-write-policies.html#set-comprehensions">
+            
+                    
+                    Set Comprehensions
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -1225,10 +1251,23 @@
     
         <li class="chapter " data-level="1.5.3.1" data-path="rest-api.html">
             
-                <a href="rest-api.html#execute-a-quer">
+                <a href="rest-api.html#execute-a-simple-query">
             
                     
-                    Execute a Query
+                    Execute a Simple Query
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.3.2" data-path="rest-api.html">
+            
+                <a href="rest-api.html#execute-an-ad-hoc-query">
+            
+                    
+                    Execute an Ad-hoc Query
             
                 </a>
             
@@ -1964,7 +2003,50 @@ names = [site.name <span class="hljs-keyword">for</span> site <span class="hljs-
 | <span class="hljs-string">&quot;mongodb&quot;</span> | [<span class="hljs-string">&quot;oxygen&quot;</span>]                                           |
 +-----------+------------------------------------------------------+
 </code></pre>
-<p>In the future, Rego will support Set and Object comprehensions.</p>
+<h3 id="object-comprehensions"><a name="object-comprehensions"></a> Object Comprehensions</h3>
+<p>Object Comprehensions build object values out of sub-queries. Object Comprehensions have the form:</p>
+<pre><code class="lang-ruby">{ &lt;key&gt;<span class="hljs-symbol">:</span> &lt;term&gt; | &lt;body&gt; }
+</code></pre>
+<p>We can use Object Comprehensions to write the rule from above as a comprehension instead:</p>
+<pre><code class="lang-ruby">app_to_hostnames = {app.<span class="hljs-symbol">name:</span> hostnames |
+    apps[<span class="hljs-number">_</span>] = app
+    hostnames = [hostname |
+                    name = app.servers[<span class="hljs-number">_</span>]
+                    sites[<span class="hljs-number">_</span>].servers[<span class="hljs-number">_</span>] = s
+                    s.name = name
+                    hostname = s.hostname]
+}
+</code></pre>
+<p>The result is the same:</p>
+<pre><code class="lang-ruby">&gt; app_to_hostnames[app]
++-----------+------------------------------------------------------+
+|    app    |                app_to_hostnames[app]                 |
++-----------+------------------------------------------------------+
+| <span class="hljs-string">&quot;web&quot;</span>     | [<span class="hljs-string">&quot;hydrogen&quot;</span>,<span class="hljs-string">&quot;helium&quot;</span>,<span class="hljs-string">&quot;beryllium&quot;</span>,<span class="hljs-string">&quot;boron&quot;</span>,<span class="hljs-string">&quot;nitrogen&quot;</span>] |
+| <span class="hljs-string">&quot;mysql&quot;</span>   | [<span class="hljs-string">&quot;lithium&quot;</span>,<span class="hljs-string">&quot;carbon&quot;</span>]                                 |
+| <span class="hljs-string">&quot;mongodb&quot;</span> | [<span class="hljs-string">&quot;oxygen&quot;</span>]                                           |
++-----------+------------------------------------------------------+
+</code></pre>
+<p>Object comprehensions are not allowed to have conflicting entries, similar to rules:</p>
+<pre><code class="lang-ruby">&gt; {<span class="hljs-string">&quot;foo&quot;</span><span class="hljs-symbol">:</span> y | y = z[<span class="hljs-number">_</span>]; z = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]}
+{<span class="hljs-string">&quot;foo&quot;</span><span class="hljs-symbol">:</span> y | y = z[<span class="hljs-number">_</span>]; z = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]}<span class="hljs-symbol">:</span> <span class="hljs-symbol">eval_conflict_error:</span> object comprehension produces conflicting outputs
+</code></pre>
+<h3 id="set-comprehensions"><a name="set-comprehensions"></a> Set Comprehensions</h3>
+<p>Set Comprehensions build set values out of sub-queries. Set Comprehensions have the form:</p>
+<pre><code class="lang-ruby">{ &lt;term&gt; | &lt;body&gt; }
+</code></pre>
+<p>For example, to construct a set from an array:</p>
+<pre><code class="lang-ruby">&gt; a = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>]
+&gt; b = {x | x = a[<span class="hljs-number">_</span>]}
+&gt; b
+[
+  <span class="hljs-number">1</span>,
+  <span class="hljs-number">2</span>,
+  <span class="hljs-number">3</span>,
+  <span class="hljs-number">4</span>,
+  <span class="hljs-number">5</span>
+]
+</code></pre>
 <h2 id="rules"><a name="rules"></a> Rules</h2>
 <p>Rules define the content of <a href="how-does-opa-work.html#virtual-documents">Virtual Documents</a> in
 OPA. When OPA evaluates a rule, we say OPA <em>generates</em> the content of the
@@ -2538,7 +2620,7 @@ containers = [
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"How Do I Write Policies?","level":"1.3","depth":1,"next":{"title":"What is Rego?","level":"1.3.1","depth":2,"anchor":"#what-is-rego","path":"how-do-i-write-policies.md","ref":"how-do-i-write-policies.md#what-is-rego","articles":[]},"previous":{"title":"Future Features","level":"1.2.5","depth":2,"anchor":"#future-features","path":"how-does-opa-work.md","ref":"how-does-opa-work.md#future-features","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"how-do-i-write-policies.md","mtime":"2017-07-10T17:57:35.422Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-10T17:58:34.642Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"How Do I Write Policies?","level":"1.3","depth":1,"next":{"title":"What is Rego?","level":"1.3.1","depth":2,"anchor":"#what-is-rego","path":"how-do-i-write-policies.md","ref":"how-do-i-write-policies.md#what-is-rego","articles":[]},"previous":{"title":"Future Features","level":"1.2.5","depth":2,"anchor":"#future-features","path":"how-does-opa-work.md","ref":"how-does-opa-work.md#future-features","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"how-do-i-write-policies.md","mtime":"2017-07-17T18:21:59.484Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-17T18:23:09.272Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
