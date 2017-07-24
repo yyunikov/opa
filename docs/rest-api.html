@@ -1370,6 +1370,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.5.8" data-path="rest-api.html">
+            
+                <a href="rest-api.html#watches">
+            
+                    
+                    Watches
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -1555,6 +1568,19 @@
             
                     
                     SSH and sudo Authorization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="kubernetes-admission-control.html">
+            
+                <a href="kubernetes-admission-control.html">
+            
+                    
+                    Kubernetes Admission Control
             
                 </a>
             
@@ -2873,12 +2899,209 @@ seccomp_unconfined {
   container.HostConfig.SecurityOpt[<span class="hljs-number">_</span>] = <span class="hljs-string">&quot;seccomp:unconfined&quot;</span>
 }
 </code></pre>
+<h4 id="example-watch-request">Example Watch Request</h4>
+<p>If we make the following GET request:</p>
+<pre><code class="lang-http"><span class="hljs-keyword">GET</span> <span class="hljs-string">/v1/data/servers?watch&amp;pretty=true</span> HTTP/1.1
+</code></pre>
+<p>Followed by these PATCH requests:</p>
+<pre><code class="lang-http"><span class="hljs-keyword">PATCH</span> <span class="hljs-string">/v1/data/servers</span> HTTP/1.1
+<span class="hljs-attribute">Content-Type</span>: application/json-patch+json
+</code></pre>
+<pre><code class="lang-json">[
+    {<span class="hljs-string">&quot;op&quot;</span>: <span class="hljs-string">&quot;add&quot;</span>,
+     <span class="hljs-string">&quot;path&quot;</span>: <span class="hljs-string">&quot;-&quot;</span>,
+     <span class="hljs-string">&quot;value&quot;</span>: {
+         <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;s5&quot;</span>,
+         <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;job&quot;</span>,
+         <span class="hljs-string">&quot;protocols&quot;</span>: [<span class="hljs-string">&quot;amqp&quot;</span>],
+         <span class="hljs-string">&quot;ports&quot;</span>: [<span class="hljs-string">&quot;p3&quot;</span>]
+     }}
+]
+</code></pre>
+<pre><code class="lang-http"><span class="hljs-keyword">PATCH</span> <span class="hljs-string">/v1/data/servers</span> HTTP/1.1
+<span class="hljs-attribute">Content-Type</span>: application/json-patch+json
+</code></pre>
+<pre><code class="lang-json">[
+    {
+     <span class="hljs-string">&quot;op&quot;</span>: <span class="hljs-string">&quot;remove&quot;</span>,
+     <span class="hljs-string">&quot;path&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>
+    }
+]
+</code></pre>
+<h4 id="example-watch-response">Example Watch Response</h4>
+<p>The response below represents the response <em>after</em> the chunked encoding has been processed.
+It is not complete, as further changes to <code>/data/servers</code> would cause more notifications to be streamed.</p>
+<pre><code class="lang-http">HTTP/1.1 <span class="hljs-number">200</span> OK
+<span class="hljs-attribute">Content-Type</span>: application/json
+<span class="hljs-attribute">Transfer-Encoding</span>: chunked
+</code></pre>
+<pre><code class="lang-json">{
+  <span class="hljs-string">&quot;result&quot;</span>: [
+    {
+      <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;s1&quot;</span>,
+      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;app&quot;</span>,
+      <span class="hljs-string">&quot;ports&quot;</span>: [
+        <span class="hljs-string">&quot;p1&quot;</span>,
+        <span class="hljs-string">&quot;p2&quot;</span>,
+        <span class="hljs-string">&quot;p3&quot;</span>
+      ],
+      <span class="hljs-string">&quot;protocols&quot;</span>: [
+        <span class="hljs-string">&quot;https&quot;</span>,
+        <span class="hljs-string">&quot;ssh&quot;</span>
+      ]
+    },
+    {
+      <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;s2&quot;</span>,
+      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;db&quot;</span>,
+      <span class="hljs-string">&quot;ports&quot;</span>: [
+        <span class="hljs-string">&quot;p3&quot;</span>
+      ],
+      <span class="hljs-string">&quot;protocols&quot;</span>: [
+        <span class="hljs-string">&quot;mysql&quot;</span>
+      ]
+    },
+    {
+      <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;s3&quot;</span>,
+      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;cache&quot;</span>,
+      <span class="hljs-string">&quot;ports&quot;</span>: [
+        <span class="hljs-string">&quot;p3&quot;</span>
+      ],
+      <span class="hljs-string">&quot;protocols&quot;</span>: [
+        <span class="hljs-string">&quot;memcache&quot;</span>,
+        <span class="hljs-string">&quot;http&quot;</span>
+      ]
+    },
+    {
+      <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;s4&quot;</span>,
+      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;dev&quot;</span>,
+      <span class="hljs-string">&quot;ports&quot;</span>: [
+        <span class="hljs-string">&quot;p1&quot;</span>,
+        <span class="hljs-string">&quot;p2&quot;</span>
+      ],
+      <span class="hljs-string">&quot;protocols&quot;</span>: [
+        <span class="hljs-string">&quot;http&quot;</span>
+      ]
+    }
+  ]
+}
+
+{
+  <span class="hljs-string">&quot;result&quot;</span>: [
+    {
+      <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;s1&quot;</span>,
+      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;app&quot;</span>,
+      <span class="hljs-string">&quot;ports&quot;</span>: [
+        <span class="hljs-string">&quot;p1&quot;</span>,
+        <span class="hljs-string">&quot;p2&quot;</span>,
+        <span class="hljs-string">&quot;p3&quot;</span>
+      ],
+      <span class="hljs-string">&quot;protocols&quot;</span>: [
+        <span class="hljs-string">&quot;https&quot;</span>,
+        <span class="hljs-string">&quot;ssh&quot;</span>
+      ]
+    },
+    {
+      <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;s2&quot;</span>,
+      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;db&quot;</span>,
+      <span class="hljs-string">&quot;ports&quot;</span>: [
+        <span class="hljs-string">&quot;p3&quot;</span>
+      ],
+      <span class="hljs-string">&quot;protocols&quot;</span>: [
+        <span class="hljs-string">&quot;mysql&quot;</span>
+      ]
+    },
+    {
+      <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;s3&quot;</span>,
+      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;cache&quot;</span>,
+      <span class="hljs-string">&quot;ports&quot;</span>: [
+        <span class="hljs-string">&quot;p3&quot;</span>
+      ],
+      <span class="hljs-string">&quot;protocols&quot;</span>: [
+        <span class="hljs-string">&quot;memcache&quot;</span>,
+        <span class="hljs-string">&quot;http&quot;</span>
+      ]
+    },
+    {
+      <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;s4&quot;</span>,
+      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;dev&quot;</span>,
+      <span class="hljs-string">&quot;ports&quot;</span>: [
+        <span class="hljs-string">&quot;p1&quot;</span>,
+        <span class="hljs-string">&quot;p2&quot;</span>
+      ],
+      <span class="hljs-string">&quot;protocols&quot;</span>: [
+        <span class="hljs-string">&quot;http&quot;</span>
+      ]
+    },
+    {
+      <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;s5&quot;</span>,
+      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;job&quot;</span>,
+      <span class="hljs-string">&quot;ports&quot;</span>: [
+        <span class="hljs-string">&quot;p3&quot;</span>
+      ],
+      <span class="hljs-string">&quot;protocols&quot;</span>: [
+        <span class="hljs-string">&quot;amqp&quot;</span>
+      ]
+    }
+  ]
+}
+
+{
+  <span class="hljs-string">&quot;result&quot;</span>: [
+    {
+      <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;s1&quot;</span>,
+      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;app&quot;</span>,
+      <span class="hljs-string">&quot;ports&quot;</span>: [
+        <span class="hljs-string">&quot;p1&quot;</span>,
+        <span class="hljs-string">&quot;p2&quot;</span>,
+        <span class="hljs-string">&quot;p3&quot;</span>
+      ],
+      <span class="hljs-string">&quot;protocols&quot;</span>: [
+        <span class="hljs-string">&quot;https&quot;</span>,
+        <span class="hljs-string">&quot;ssh&quot;</span>
+      ]
+    },
+    {
+      <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;s3&quot;</span>,
+      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;cache&quot;</span>,
+      <span class="hljs-string">&quot;ports&quot;</span>: [
+        <span class="hljs-string">&quot;p3&quot;</span>
+      ],
+      <span class="hljs-string">&quot;protocols&quot;</span>: [
+        <span class="hljs-string">&quot;memcache&quot;</span>,
+        <span class="hljs-string">&quot;http&quot;</span>
+      ]
+    },
+    {
+      <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;s4&quot;</span>,
+      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;dev&quot;</span>,
+      <span class="hljs-string">&quot;ports&quot;</span>: [
+        <span class="hljs-string">&quot;p1&quot;</span>,
+        <span class="hljs-string">&quot;p2&quot;</span>
+      ],
+      <span class="hljs-string">&quot;protocols&quot;</span>: [
+        <span class="hljs-string">&quot;http&quot;</span>
+      ]
+    },
+    {
+      <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;s5&quot;</span>,
+      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;job&quot;</span>,
+      <span class="hljs-string">&quot;ports&quot;</span>: [
+        <span class="hljs-string">&quot;p3&quot;</span>
+      ],
+      <span class="hljs-string">&quot;protocols&quot;</span>: [
+        <span class="hljs-string">&quot;amqp&quot;</span>
+      ]
+    }
+  ]
+}
+</code></pre>
 <h4 id="query-parameters">Query Parameters</h4>
 <ul>
 <li><strong>input</strong> - Provide an input document. Format is <code>[[&lt;path&gt;]:]&lt;value&gt;</code> where <code>&lt;path&gt;</code> is the import path of the input document. The parameter may be specified multiple times but each instance should specify a unique <code>&lt;path&gt;</code>. The <code>&lt;path&gt;</code> may be empty (in which case, the entire input will be set to the <code>&lt;value&gt;</code>). The <code>&lt;value&gt;</code> may be a reference to a document in OPA. If <code>&lt;value&gt;</code> contains variables the response will contain a set of results instead of a single document. In most cases, input should be provided using the POST method, see <a href="#get-a-document-with-input">Get a Document (with Input)</a>.</li>
 <li><strong>pretty</strong> - If parameter is <code>true</code>, response will formatted for humans.</li>
 <li><strong>explain</strong> - Return query explanation in addition to result. Values: <strong>full</strong>, <strong>truth</strong>.</li>
 <li><strong>metrics</strong> - Return query performance metrics in addition to result. See <a href="#performance-metrics">Performance Metrics</a> for more detail.</li>
+<li><strong>watch</strong> - Set a watch on the data reference if the parameter is present. See <a href="#watches">Watches</a> for more detail.</li>
 </ul>
 <h4 id="status-codes">Status Codes</h4>
 <ul>
@@ -3138,12 +3361,15 @@ Content-Type: application/json
 <li><strong>pretty</strong> - If parameter is <code>true</code>, response will formatted for humans.</li>
 <li><strong>explain</strong> - Return query explanation in addition to result. Values: <strong>full</strong>, <strong>truth</strong>.</li>
 <li><strong>metrics</strong> - Return query performance metrics in addition to result. See <a href="#performance-metrics">Performance Metrics</a> for more detail.</li>
+<li><strong>watch</strong> - Set a watch on the query if the parameter is present. See <a href="#watches">Watches</a> for more detail.</li>
 </ul>
 <h4 id="status-codes">Status Codes</h4>
 <ul>
 <li><strong>200</strong> - no error</li>
 <li><strong>400</strong> - bad request</li>
+<li><strong>404</strong> - watch ID not found</li>
 <li><strong>500</strong> - server error</li>
+<li><strong>501</strong> - streaming not implemented</li>
 </ul>
 <h2 id="authentication"><a name="authentication"></a> Authentication</h2>
 <p>The API is secured via <a href="documentation/references/security">HTTPS, Authentication, and
@@ -3301,6 +3527,34 @@ restarts, a <strong>Redo</strong> Trace Event is emitted.</p>
 <li><strong>timer_rego_query_compile_ns</strong>: time taken (in nanonseconds) to compile the query.</li>
 <li><strong>timer_rego_query_eval_ns</strong>: time taken (in nanonseconds) to evaluate the query.</li>
 </ul>
+<h2 id="watches"><a name="watches"></a> Watches</h2>
+<p>OPA can set watches on queries and report whenever the result of evaluating the query has changed. When a watch is set on a query, the requesting connection will be maintained as the query results are streamed back in HTTP Chunked Encoding format. A notification reflecting a certain change to the query results will be delivered <em>at most once</em>. That is, if a watch is set on <code>data.x</code>, and then multiple writes are made to <code>data.x</code>, say <code>1</code>, <code>2</code> and <code>3</code>, only the notification reflecting <code>data.x=3</code> is always seen eventually (assuming the watch is not ended, there are no connection problems, etc). The notifications reflecting <code>data.x=1</code> and <code>data.x=2</code> <em>might</em> be seen. However, the notifications sent are guaranteed to be in order (<code>data.x=2</code> will always come after <code>data.x=1</code>, if it comes).</p>
+<p>The notification stream will not be delimited by any value; the client is expected to be able to parse JSON values from the stream one by one, recognizing where one ends and the next begins.</p>
+<p>The notification stream is a stream of JSON objects, each of which has the following structure:</p>
+<pre><code>{
+    &quot;result&quot;: &lt;result&gt;,
+    &quot;error&quot;: &lt;error&gt;,
+    &quot;metrics&quot;: &lt;metrics&gt;,
+    &quot;explanation&quot;: &lt;explanation&gt;,
+}
+</code></pre><p>The <code>error</code> field is optional; it is omitted when no errors occur. If it is present, it is an <a href="#errors">Error</a> describing any errors encountered while evaluating the query the watch was set on. If the policies on the server are changed such that the query no longer compiles, the contents of the error&apos;s <code>message</code> field will start with the text &quot;watch invalidated:&quot; and will be followed with the reason for invalidation. The watch will be ended by the server and the stream closed.</p>
+<p>The <code>metrics</code> field represents <a href="#performance-metrics">Performance Metrics</a> for the evaluation of the query. It will only be present if metrics were requested in the API call that started the watch.</p>
+<p>The <code>explanation</code> field represents an <a href="#explanations">Explanation</a> of how the query answer was found. It will only be present if explanations were requested in the API call that started the watch.</p>
+<p>If there are no errors, the <code>result</code> field will be a JSON array of the results of evaluating the query. The format of a result is:</p>
+<pre><code>{
+    &quot;expressions&quot;: [
+        {
+            &quot;value&quot;: true,
+            &quot;text&quot;: &quot;a = data.x&quot;,
+            &quot;location&quot;:{&quot;row&quot;:1,&quot;col&quot;:1}
+        },
+        ...
+    ],
+    &quot;bindings&quot;: {...}
+}
+</code></pre><p>The <code>expressions</code> field is an array of the results of evaluating each of the expressions in the query. <code>value</code> is the expression&apos;s value, <code>text</code> is the actual expression, and <code>location</code> describes the location of the expression within the query. The values above are examples.</p>
+<p>The <code>bindings</code> field is a JSON object mapping <code>string</code>s to JSON values that describe the variable bindings resulting from evaluating the query.</p>
+<p>If the watch was set on a data reference instead of a query, the <code>result</code> field will simply be the value of the document requested, instead of an array of values.</p>
 
                                 
                                 </section>
@@ -3344,7 +3598,7 @@ restarts, a <strong>Redo</strong> Trace Event is emitted.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"REST API","level":"1.5","depth":1,"next":{"title":"Policy API","level":"1.5.1","depth":2,"anchor":"#policy-api","path":"rest-api.md","ref":"rest-api.md#policy-api","articles":[{"title":"List Policies","level":"1.5.1.1","depth":3,"anchor":"#list-policies","path":"rest-api.md","ref":"rest-api.md#list-policies","articles":[]},{"title":"Get a Policy","level":"1.5.1.2","depth":3,"anchor":"#get-a-policy","path":"rest-api.md","ref":"rest-api.md#get-a-policy","articles":[]},{"title":"Create or Update a Policy","level":"1.5.1.3","depth":3,"anchor":"#create-or-update-a-policy","path":"rest-api.md","ref":"rest-api.md#create-or-update-a-policy","articles":[]},{"title":"Delete a Policy","level":"1.5.1.4","depth":3,"anchor":"#delete-a-policy","path":"rest-api.md","ref":"rest-api.md#delete-a-policy","articles":[]}]},"previous":{"title":"Grammar","level":"1.4.3","depth":2,"anchor":"#grammar","path":"language-reference.md","ref":"language-reference.md#grammar","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"rest-api.md","mtime":"2017-07-17T18:21:59.484Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-17T18:23:09.272Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"REST API","level":"1.5","depth":1,"next":{"title":"Policy API","level":"1.5.1","depth":2,"anchor":"#policy-api","path":"rest-api.md","ref":"rest-api.md#policy-api","articles":[{"title":"List Policies","level":"1.5.1.1","depth":3,"anchor":"#list-policies","path":"rest-api.md","ref":"rest-api.md#list-policies","articles":[]},{"title":"Get a Policy","level":"1.5.1.2","depth":3,"anchor":"#get-a-policy","path":"rest-api.md","ref":"rest-api.md#get-a-policy","articles":[]},{"title":"Create or Update a Policy","level":"1.5.1.3","depth":3,"anchor":"#create-or-update-a-policy","path":"rest-api.md","ref":"rest-api.md#create-or-update-a-policy","articles":[]},{"title":"Delete a Policy","level":"1.5.1.4","depth":3,"anchor":"#delete-a-policy","path":"rest-api.md","ref":"rest-api.md#delete-a-policy","articles":[]}]},"previous":{"title":"Grammar","level":"1.4.3","depth":2,"anchor":"#grammar","path":"language-reference.md","ref":"language-reference.md#grammar","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"rest-api.md","mtime":"2017-07-24T15:16:30.847Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-24T15:17:46.163Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

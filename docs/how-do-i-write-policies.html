@@ -1370,6 +1370,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.5.8" data-path="rest-api.html">
+            
+                <a href="rest-api.html#watches">
+            
+                    
+                    Watches
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -1562,6 +1575,19 @@
             
         </li>
     
+        <li class="chapter " data-level="2.5" data-path="kubernetes-admission-control.html">
+            
+                <a href="kubernetes-admission-control.html">
+            
+                    
+                    Kubernetes Admission Control
+            
+                </a>
+            
+
+            
+        </li>
+    
 
     
 
@@ -1735,7 +1761,7 @@ walks through each part of the language in more detail.</p>
 <p>For a concise reference, see the <a href="documentation/references/language">Language
 Reference</a> document.</p>
 <h2 id="scalar-values"><a name="scalar-values"></a> Scalar Values</h2>
-<p>Scalar values are the simplest type of term in Rego. Scalar values can be strings, numbers, booleans, or null.</p>
+<p>Scalar values are the simplest type of term in Rego. Scalar values can be <a href="#strings">Strings</a>, numbers, booleans, or null.</p>
 <p>Documents can be defined solely in terms of scalar values. This is useful for defining constants that are referenced in multiple places. For example:</p>
 <pre><code class="lang-ruby">greeting   = <span class="hljs-string">&quot;Hello&quot;</span>
 max_height = <span class="hljs-number">42</span>
@@ -1755,6 +1781,16 @@ sentinel   = null
 &gt; sentinel
 null
 </code></pre>
+<h2 id="strings"><a name="strings"></a> Strings</h2>
+<p>Rego supports two different types of syntax for declaring strings. The first is likely to be the most familiar: characters surrounded by double quotes.
+In such strings, certain characters must be escaped to appear in the string, such as double quotes themselves, backslashes, etc. See the <a href="documentation/references/language">Language
+Reference</a> for a formal definition.</p>
+<p>The other type of string declaration is a raw string declaration. These are made of characters surrounded by backticks (<code>` </code>), with the exception
+that raw strings may not contain backticks themselves. Raw strings are what they sound like: escape sequences are not interpreted, but instead taken
+as the literal text inside the backticks. For example, the raw string <code>`hello\there` </code> will be the text &quot;hello\there&quot;, not &quot;hello&quot; and &quot;here&quot;
+separated by a tab.  Raw strings are particularly useful when constructing regular expressions for matching, as it eliminates the need to double
+escape special characters.</p>
+<p>A simple example is a regex to match a valid Rego variable. With a regular string, the regex is <code>&quot;[a-zA-Z_]\\w*&quot;</code>, but with raw strings, it becomes <code>`[a-zA-Z_]\w*` </code>.</p>
 <h2 id="composite-values"><a name="composite-values"></a> Composite Values</h2>
 <p>Composite values define collections. In simple cases, composite values can be treated as constants like <a href="#scalar-values">Scalar Values</a>:</p>
 <pre><code class="lang-ruby">cube = {<span class="hljs-string">&quot;width&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-number">3</span>, <span class="hljs-string">&quot;height&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-number">4</span>, <span class="hljs-string">&quot;depth&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-number">5</span>}
@@ -2620,7 +2656,7 @@ containers = [
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"How Do I Write Policies?","level":"1.3","depth":1,"next":{"title":"What is Rego?","level":"1.3.1","depth":2,"anchor":"#what-is-rego","path":"how-do-i-write-policies.md","ref":"how-do-i-write-policies.md#what-is-rego","articles":[]},"previous":{"title":"Future Features","level":"1.2.5","depth":2,"anchor":"#future-features","path":"how-does-opa-work.md","ref":"how-does-opa-work.md#future-features","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"how-do-i-write-policies.md","mtime":"2017-07-17T18:21:59.484Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-17T18:23:09.272Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"How Do I Write Policies?","level":"1.3","depth":1,"next":{"title":"What is Rego?","level":"1.3.1","depth":2,"anchor":"#what-is-rego","path":"how-do-i-write-policies.md","ref":"how-do-i-write-policies.md#what-is-rego","articles":[]},"previous":{"title":"Future Features","level":"1.2.5","depth":2,"anchor":"#future-features","path":"how-does-opa-work.md","ref":"how-does-opa-work.md#future-features","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"how-do-i-write-policies.md","mtime":"2017-07-24T15:16:30.847Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-24T15:17:46.163Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>HTTP API Authorization &#xB7; GitBook</title>
+        <title>Kubernetes Admission Control &#xB7; GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.2">
@@ -58,10 +58,8 @@
     <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="ssh-and-sudo-authorization.html">
     
-    
-    <link rel="prev" href="docker-authorization.html">
+    <link rel="prev" href="ssh-and-sudo-authorization.html">
     
 
     </head>
@@ -1549,7 +1547,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="2.3" data-path="http-api-authorization.html">
+        <li class="chapter " data-level="2.3" data-path="http-api-authorization.html">
             
                 <a href="http-api-authorization.html">
             
@@ -1575,7 +1573,7 @@
             
         </li>
     
-        <li class="chapter " data-level="2.5" data-path="kubernetes-admission-control.html">
+        <li class="chapter active" data-level="2.5" data-path="kubernetes-admission-control.html">
             
                 <a href="kubernetes-admission-control.html">
             
@@ -1618,7 +1616,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".">HTTP API Authorization</a>
+        <a href=".">Kubernetes Admission Control</a>
     </h1>
 </div>
 
@@ -1633,215 +1631,249 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="http-api-authorization">HTTP API Authorization</h1>
-<p>Anything that exposes an HTTP API (whether an individual microservice or an application as a whole) needs to control who can run those APIs and when.  OPA makes it easy to write fine-grained, context-aware policies to implement API authorization.</p>
+                                <h1 id="kubernetes-admission-control">Kubernetes Admission Control</h1>
+<p>Kubernetes <a href="https://kubernetes.io/docs/admin/admission-controllers/" target="_blank">Admission Controllers</a> perform <em>semantic validation</em> of resources during create, update, and delete operations. In Kubernetes 1.7, you can use OPA to enforce custom policies without recompiling or reconfiguring the Kubernetes API server by leveraging <a href="https://kubernetes.io/docs/admin/extensible-admission-controllers/#external-admission-webhooks" target="_blank">External Admission Webhooks</a>.</p>
 <h2 id="goals">Goals</h2>
-<p>In this tutorial, you&apos;ll use a simple HTTP web server that accepts any HTTP GET
-request that you issue and echoes the OPA decision back as text. Both OPA and
-the web server will be run as containers.</p>
-<p>For this tutorial, our desired policy is:</p>
-<ul>
-<li>People can see their own salaries (<code>GET /finance/salary/{user}</code> is permitted for <code>{user}</code>)</li>
-<li>A manager can see their direct reports&apos; salaries (<code>GET /finance/salary/{user}</code> is permitted for <code>{user}</code>&apos;s manager)</li>
-</ul>
+<p>This tutorial shows how to use OPA to enforce custom policies on resources in
+Kubernetes. For the purpose of this tutorial, you will define a policy that
+prevents users from running <code>kubectl exec</code> on &quot;privileged&quot; containers in the
+&quot;production&quot; namespace.</p>
 <h2 id="prerequisites">Prerequisites</h2>
-<p>This tutorial requires <a href="https://docs.docker.com/compose/install/" target="_blank">Docker Compose</a> to run a demo web server along with OPA.</p>
+<p>This tutorial requires a Kubernetes 1.7 (or later) cluster. To test Kubernetes locally, we recommend using <a href="https://kubernetes.io/docs/getting-started-guides/minikube/" target="_blank">minikube</a>. Keep in mind that External Admission Webhook support in Kubernetes is currently in <strong>alpha</strong>.</p>
 <h2 id="steps">Steps</h2>
-<h3 id="1-bootstrap-the-tutorial-environment-using-docker-compose">1. Bootstrap the tutorial environment using Docker Compose.</h3>
-<p>First, create a docker-compose.yml file that runs OPA and the demo web server.</p>
-<pre><code class="lang-shell">cat &gt;docker-compose.yml &lt;&lt;EOF
-version: &apos;2&apos;
-services:
-  opa:
-    image: openpolicyagent/opa:0.5.3
-    ports:
-      - 8181:8181
-    command:
-      - &quot;run&quot;
-      - &quot;--server&quot;
-      - &quot;--log-level=debug&quot;
-  api_server:
-    image: openpolicyagent/demo-restful-api:latest
-    ports:
-      - 5000:5000
-    environment:
-      - OPA_ADDR=http://opa:8181
-      - POLICY_PATH=/v1/data/httpapi/authz
-EOF
+<h3 id="1-start-kubernetes-with-external-admission-webhooks-enabled">1. Start Kubernetes with External Admission Webhooks enabled</h3>
+<p>External Admission Controllers must be secured with TLS. See <a href="https://github.com/open-policy-agent/kube-mgmt#generating-tls-certificates" target="_blank">Generating TLS Certificates</a> for steps to generate a CA and client/server credentials for test purposes.</p>
+<p>Start minikube with the <code>GenericAdmissionWebhook</code> enabled and include the
+client-side credentials via command line arguments.</p>
+<pre><code class="lang-bash"><span class="hljs-comment"># Set to directory containing generated TLS certificates.</span>
+CERT_DIR=&lt;path/to/directory/containing/certificates&gt;
+
+<span class="hljs-comment"># Set to admission controllers to include. This example uses the default set of</span>
+<span class="hljs-comment"># admission controllers enabled in the Kubernetes API server plus the</span>
+<span class="hljs-comment"># GenericAdmissionWebhook admission controller.</span>
+ADMISSION_CONTROLLERS=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,ResourceQuota,DefaultTolerationSeconds,GenericAdmissionWebhook
+
+minikube start --kubernetes-version v1.7.0 \
+    --extra-config=apiserver.Admission.PluginNames=<span class="hljs-variable">$ADMISSION_CONTROLLERS</span>
+    --extra-config=apiserver.ProxyClientCertFile=<span class="hljs-variable">$CERT_DIR</span>/client.crt
+    --extra-config=apiserver.ProxyClientKeyFile=<span class="hljs-variable">$CERT_DIR</span>/client.key
 </code></pre>
-<p>Then run <code>docker-compose</code> to pull and run the containers.</p>
-<pre><code class="lang-shell">docker-compose -f docker-compose.yml up
+<blockquote>
+<p><code>minikube</code> automatically mounts your home directory into the VM. Storing the
+TLS certificates under your home directory makes them easy to reference in the
+<code>--extra-config</code> arguments.</p>
+</blockquote>
+<h3 id="1-deploy-opa-on-top-of-kubernetes">1. Deploy OPA on top of Kubernetes</h3>
+<p>First, create a namespace to deploy OPA into.</p>
+<pre><code class="lang-bash">kubectl create namespace opa
 </code></pre>
-<h3 id="2-load-a-simple-policy-into-opa">2. Load a simple policy into OPA.</h3>
-<p>In another terminal, create a simple policy. The policy below allows users to
-request their own salary as well as the salary of their direct subordinates.</p>
-<pre><code class="lang-shell">cat &gt;example.rego &lt;&lt;EOF
-package httpapi.authz
+<p>Create a <code>kubectl</code> context for this namespace.</p>
+<pre><code class="lang-bash">kubectl config <span class="hljs-built_in">set</span>-context opa-tutorial --user minikube --cluster minikube --namespace opa
+kubectl config use-context opa-tutorial
+</code></pre>
+<p>Create a Service to expose the OPA API. The Kubernetes API server will lookup
+the Service and execute webhook requests against it.</p>
+<p><strong>opa-admission-controller-service.yaml</strong>:</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">kind:</span> Service
+<span class="hljs-attr">apiVersion:</span> v1
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  name:</span> opa
+<span class="hljs-attr">spec:</span>
+<span class="hljs-attr">  clusterIP:</span> <span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.222</span>
+<span class="hljs-attr">  selector:</span>
+<span class="hljs-attr">    app:</span> opa
+<span class="hljs-attr">  ports:</span>
+<span class="hljs-attr">  - name:</span> https
+<span class="hljs-attr">    protocol:</span> TCP
+<span class="hljs-attr">    port:</span> <span class="hljs-number">443</span>
+<span class="hljs-attr">    targetPort:</span> <span class="hljs-number">443</span>
+</code></pre>
+<pre><code class="lang-bash">kubectl create <span class="hljs-_">-f</span> opa-admission-controller-service.yaml
+</code></pre>
+<p>The Service&apos;s <code>clusterIP</code> must match the subjectAltName in the server-side TLS
+credentials.</p>
+<p>Next, create Secrets containing the TLS credentials for OPA:</p>
+<pre><code class="lang-bash">kubectl create secret generic opa-ca --from-file=ca.crt
+kubectl create secret tls opa-server --cert=server.crt --key=server.key
+</code></pre>
+<p>Finally, create the Deployment to run OPA as an Admission Controller.</p>
+<p><strong>opa-admission-controller-deployment.yaml</strong>:</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> extensions/v1beta1
+<span class="hljs-attr">kind:</span> Deployment
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  labels:</span>
+<span class="hljs-attr">    app:</span> opa
+<span class="hljs-attr">  name:</span> opa
+<span class="hljs-attr">spec:</span>
+<span class="hljs-attr">  replicas:</span> <span class="hljs-number">1</span>
+<span class="hljs-attr">  template:</span>
+<span class="hljs-attr">    metadata:</span>
+<span class="hljs-attr">      labels:</span>
+<span class="hljs-attr">        app:</span> opa
+<span class="hljs-attr">      name:</span> opa
+<span class="hljs-attr">    spec:</span>
+<span class="hljs-attr">      containers:</span>
+<span class="hljs-attr">        - name:</span> opa
+<span class="hljs-attr">          image:</span> openpolicyagent/opa:<span class="hljs-number">0.5</span><span class="hljs-number">.3</span>
+<span class="hljs-attr">          args:</span>
+<span class="hljs-bullet">            -</span> <span class="hljs-string">&quot;run&quot;</span>
+<span class="hljs-bullet">            -</span> <span class="hljs-string">&quot;--server&quot;</span>
+<span class="hljs-bullet">            -</span> <span class="hljs-string">&quot;--tls-cert-file=/certs/tls.crt&quot;</span>
+<span class="hljs-bullet">            -</span> <span class="hljs-string">&quot;--tls-private-key-file=/certs/tls.key&quot;</span>
+<span class="hljs-bullet">            -</span> <span class="hljs-string">&quot;--addr=0.0.0.0:443&quot;</span>
+<span class="hljs-bullet">            -</span> <span class="hljs-string">&quot;--insecure-addr=127.0.0.1:8181&quot;</span>
+<span class="hljs-attr">          volumeMounts:</span>
+<span class="hljs-attr">            - readOnly:</span> <span class="hljs-literal">true</span>
+<span class="hljs-attr">              mountPath:</span> /certs
+<span class="hljs-attr">              name:</span> opa-server
+<span class="hljs-attr">        - name:</span> kube-mgmt
+<span class="hljs-attr">          image:</span> openpolicyagent/kube-mgmt:<span class="hljs-number">0.4</span>
+<span class="hljs-attr">          args:</span>
+<span class="hljs-bullet">            -</span> <span class="hljs-string">&quot;--replicate=v1/pods&quot;</span>
+<span class="hljs-bullet">            -</span> <span class="hljs-string">&quot;--register-admission-controller&quot;</span>
+<span class="hljs-bullet">            -</span> <span class="hljs-string">&quot;--admission-controller-ca-cert-file=/certs/ca.crt&quot;</span>
+<span class="hljs-bullet">            -</span> <span class="hljs-string">&quot;--admission-controller-service-name=opa&quot;</span>
+<span class="hljs-bullet">            -</span> <span class="hljs-string">&quot;--admission-controller-service-namespace=$(MY_POD_NAMESPACE)&quot;</span>
+<span class="hljs-attr">          volumeMounts:</span>
+<span class="hljs-attr">            - readOnly:</span> <span class="hljs-literal">true</span>
+<span class="hljs-attr">              mountPath:</span> /certs
+<span class="hljs-attr">              name:</span> opa-ca
+<span class="hljs-attr">          env:</span>
+<span class="hljs-attr">            - name:</span> MY_POD_NAMESPACE
+<span class="hljs-attr">              valueFrom:</span>
+<span class="hljs-attr">                fieldRef:</span>
+<span class="hljs-attr">                  fieldPath:</span> metadata.namespace
+<span class="hljs-attr">      volumes:</span>
+<span class="hljs-attr">        - name:</span> opa-server
+<span class="hljs-attr">          secret:</span>
+<span class="hljs-attr">            secretName:</span> opa-server
+<span class="hljs-attr">        - name:</span> opa-ca
+<span class="hljs-attr">          secret:</span>
+<span class="hljs-attr">            secretName:</span> opa-ca
+</code></pre>
+<pre><code class="lang-bash">kubectl create <span class="hljs-_">-f</span> opa-admission-controller-deployment.yaml
+</code></pre>
+<p>When OPA starts, the sidecar (<code>kube-mgmt</code>) will register it as an External
+Admission Controller. To verify that registration succeeded, run <code>kubectl proxy</code>
+in another terminal and then query the Kubernetes API for the list of External
+Admission Controllers.</p>
+<pre><code class="lang-bash">curl localhost:8001/apis/admissionregistration.k8s.io/v1alpha1/externaladmissionhookconfigurations
+</code></pre>
+<p>Finally, you can follow the OPA logs to see the webhook requests being issued
+by the Kubernetes API server:</p>
+<pre><code>kubectl logs -l app=opa -c opa
+</code></pre><h3 id="2-define-a-policy-and-load-it-into-opa-via-kubernetes">2. Define a policy and load it into OPA via Kubernetes</h3>
+<p>To test admission control, create a policy that restricts exec access on
+privileged pods:</p>
+<p><strong>privileged-exec.rego</strong>:</p>
+<pre><code class="lang-ruby">package system
 
-# bob is alice&apos;s manager, and betty is charlie&apos;s.
-subordinates = {&quot;alice&quot;: [], &quot;charlie&quot;: [], &quot;bob&quot;: [&quot;alice&quot;], &quot;betty&quot;: [&quot;charlie&quot;]}
+import data.kubernetes.break_glass
 
-# HTTP API request
-import input as http_api
-
-default allow = false
-
-# Allow users to get their own salaries.
-allow {
-  http_api.method = &quot;GET&quot;
-  http_api.path = [&quot;finance&quot;, &quot;salary&quot;, username]
-  username = http_api.user
+main = {
+    <span class="hljs-string">&quot;apiVersion&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;admission.k8s.io/v1alpha1&quot;</span>,
+    <span class="hljs-string">&quot;kind&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;AdmissionReview&quot;</span>,
+    <span class="hljs-string">&quot;status&quot;</span><span class="hljs-symbol">:</span> status,
 }
 
-# Allow managers to get their subordinates&apos; salaries.
-allow {
-  http_api.method = &quot;GET&quot;
-  http_api.path = [&quot;finance&quot;, &quot;salary&quot;, username]
-  subordinates[http_api.user][_] = username
-}
-EOF
-</code></pre>
-<p>Then load the policy via OPA&apos;s REST API.</p>
-<pre><code class="lang-shell">curl -X PUT --data-binary @example.rego \
-  localhost:8181/v1/policies/example
-</code></pre>
-<h3 id="3-check-that-alice-can-see-her-own-salary">3. Check that <code>alice</code> can see her own salary.</h3>
-<p>The following command will succeed.</p>
-<pre><code class="lang-shell">curl --user alice:password localhost:5000/finance/salary/alice
-</code></pre>
-<h3 id="4-check-that-bob-can-see-alices-salary-because-bob-is-alices-manager">4. Check that <code>bob</code> can see <code>alice</code>&apos;s salary (because <code>bob</code> is <code>alice</code>&apos;s manager.)</h3>
-<pre><code class="lang-shell">curl --user bob:password localhost:5000/finance/salary/alice
-</code></pre>
-<h3 id="5-check-that-bob-cannot-see-charlies-salary">5. Check that <code>bob</code> CANNOT see <code>charlie</code>&apos;s salary.</h3>
-<p><code>bob</code> is not <code>charlie</code>&apos;s manager, so the following command will fail.</p>
-<pre><code class="lang-shell">curl --user bob:password localhost:5000/finance/salary/charlie
-</code></pre>
-<h3 id="6-change-the-policy">6. Change the policy.</h3>
-<p>Suppose the organization now includes an HR department. The organization wants
-members of HR to be able to see any salary. Let&apos;s extend the policy to handle
-this.</p>
-<pre><code class="lang-shell">cat &gt;example-hr.rego &lt;&lt;EOF
-package httpapi.authz
+default status = {<span class="hljs-string">&quot;allowed&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-keyword">true</span>}
 
-import input as http_api
-
-# Allow HR members to get anyone&apos;s salary.
-allow {
-  http_api.method = &quot;GET&quot;
-  http_api.path = [&quot;finance&quot;, &quot;salary&quot;, _]
-  hr[_] = http_api.user
+status = {
+    <span class="hljs-string">&quot;allowed&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-keyword">false</span>,
+    <span class="hljs-string">&quot;status&quot;</span><span class="hljs-symbol">:</span> {
+        <span class="hljs-string">&quot;reason&quot;</span><span class="hljs-symbol">:</span> reason,
+    },
+} {
+    concat(<span class="hljs-string">&quot;, &quot;</span>, blacklist, reason)
+    reason != <span class="hljs-string">&quot;&quot;</span>
 }
 
-# David is the only member of HR.
-hr = [
-  &quot;david&quot;,
-]
-EOF
-</code></pre>
-<p>Upload the new policy to OPA.</p>
-<pre><code class="lang-shell">curl -X PUT --data-binary @example-hr.rego \
-  http://localhost:8181/v1/policies/example-hr
-</code></pre>
-<p>For the sake of the tutorial we included <code>manager_of</code> and <code>hr</code> data directly
-inside the policies. In real-world scenarios that information would be imported
-from external data sources.</p>
-<h3 id="7-check-that-the-new-policy-works">7. Check that the new policy works.</h3>
-<p>Check that <code>david</code> can see anyone&apos;s salary.</p>
-<pre><code class="lang-shell">curl --user david:password localhost:5000/finance/salary/alice
-curl --user david:password localhost:5000/finance/salary/bob
-curl --user david:password localhost:5000/finance/salary/charlie
-curl --user david:password localhost:5000/finance/salary/david
-</code></pre>
-<h3 id="8-optional-use-json-web-tokens-to-communicate-policy-data">8. (Optional) Use JSON Web Tokens to communicate policy data.</h3>
-<p>OPA supports the parsing of JSON Web Tokens via the builtin function <code>io.jwt.decode</code>.
-To get a sense of one way the subordinate and HR data might be communicated in the
-real world, let&apos;s try a similar exercise utilizing the JWT utilities of OPA.</p>
-<p>Shut down your <code>docker-compose</code> instance from before with <code>^C</code> and then restart it to
-ensure you are working with a fresh instance of OPA.</p>
-<p>Then update the policy:</p>
-<pre><code class="lang-shell">cat &gt;example.rego &lt;&lt;EOF
-package httpapi.authz
-
-import input as http_api
-
-# io.jwt.decode takes one argument (the encoded token) and has three outputs:
-# the decoded header, payload and signature, in that order. Our policy only
-# cares about the payload, so we ignore the others.
-token = {&quot;payload&quot;: payload} { io.jwt.decode(http_api.token, _, payload, _) }
-
-# Ensure that the token was issued to the user supplying it.
-user_owns_token { http_api.user = token.payload.azp }
-
-default allow = false
-
-# Allow users to get their own salaries.
-allow {
-  http_api.method = &quot;GET&quot;
-  http_api.path = [&quot;finance&quot;, &quot;salary&quot;, username]
-  username = token.payload.user
-  user_owns_token
+blacklist[<span class="hljs-string">&quot;cannot exec into privileged container in production namespace&quot;</span>] {
+    input.spec.operation = <span class="hljs-string">&quot;CONNECT&quot;</span>
+    input.spec.namespace = <span class="hljs-string">&quot;production&quot;</span>
+    is_privileged(input.spec.namespace, input.spec.name, <span class="hljs-keyword">true</span>)
+    <span class="hljs-keyword">not</span> break_glass
 }
 
-# Allow managers to get their subordinate&apos; salaries.
-allow {
-  http_api.method = &quot;GET&quot;
-  http_api.path = [&quot;finance&quot;, &quot;salary&quot;, username]
-  token.payload.subordinates[_] = username
-  user_owns_token
+is_privileged(namespace, name) {
+    pod = data.kubernetes.pods[namespace][name]
+    container = pod.spec.containers[<span class="hljs-number">_</span>]
+    container.securityContext.privileged
 }
+</code></pre>
+<p>Store the policy in Kubernetes as a ConfigMap.</p>
+<pre><code class="lang-bash">kubectl create configmap privileged-exec --from-file=privileged-exec.rego
+</code></pre>
+<p>The OPA sidecar will notice the ConfigMap and automatically load the contained
+policy into OPA.</p>
+<h3 id="3-exercise-the-policy">3. Exercise the policy</h3>
+<p>To verify that your policy is working, create separate test Pods in the <code>production</code> namespace.</p>
+<p><strong>nginx-pod.yaml</strong>:</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">kind:</span> Pod
+<span class="hljs-attr">version:</span> v1
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  name:</span> nginx
+<span class="hljs-attr">  labels:</span>
+<span class="hljs-attr">    app:</span> nginx
+<span class="hljs-attr">spec:</span>
+<span class="hljs-attr">  containers:</span>
+<span class="hljs-attr">  - image:</span> nginx
+<span class="hljs-attr">    name:</span> nginx
+</code></pre>
+<p><strong>nginx-privileged-pod.yaml</strong>:</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">kind:</span> Pod
+<span class="hljs-attr">version:</span> v1
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  name:</span> nginx-privileged
+<span class="hljs-attr">  labels:</span>
+<span class="hljs-attr">    app:</span> nginx
+<span class="hljs-attr">spec:</span>
+<span class="hljs-attr">  containers:</span>
+<span class="hljs-attr">  - image:</span> nginx
+<span class="hljs-attr">    name:</span> nginx
+<span class="hljs-attr">    securityContext:</span>
+<span class="hljs-attr">      privileged:</span> <span class="hljs-literal">true</span>
+</code></pre>
+<pre><code class="lang-bash">kubectl create namespace production
+kubectl -n production create <span class="hljs-_">-f</span> nginx-pod.yaml
+kubectl -n production create <span class="hljs-_">-f</span> nginx-privileged-pod.yaml
+</code></pre>
+<p>Verify that you can exec into non-privileged container:</p>
+<pre><code>kubectl -n production exec -i -t nginx bash
+</code></pre><p>Verify that you cannot exec into the privileged container:</p>
+<pre><code>kubectl -n production exec -i -t nginx-privileged bash
+</code></pre><h3 id="4-modify-the-policy-and-exercise-the-changes">4. Modify the policy and exercise the changes</h3>
+<p>OPA allows you to modify policies on-the-fly without recompiling any of the
+services that offload policy decisions to it.</p>
+<p>The original policy you created denies <code>kubectl exec</code> access unless the
+<code>data.kubernetes.break_glass</code> value is <em>defined</em> (and not false). If you create
+a new policy that defines this value, <code>kubectl exec</code> access will be granted.</p>
+<p><strong>break-glass.rego</strong>:</p>
+<pre><code class="lang-ruby">package kubernetes
 
-# Allow HR members to get anyone&apos;s salary.
-allow {
-  http_api.method = &quot;GET&quot;
-  http_api.path = [&quot;finance&quot;, &quot;salary&quot;, _]
-  token.payload.hr = true
-  user_owns_token
-}
-EOF
+break_glass = <span class="hljs-keyword">true</span>
 </code></pre>
-<p>And load it into OPA:</p>
-<pre><code class="lang-shell">curl -X PUT --data-binary @example.rego \
-  localhost:8181/v1/policies/example
+<pre><code class="lang-bash">kubectl create configmap <span class="hljs-built_in">break</span>-glass --from-file=<span class="hljs-built_in">break</span>-glass.rego
 </code></pre>
-<p>For convenience, we&apos;ll want to store user tokens in environment variables (they&apos;re really long).</p>
-<pre><code class="lang-shell">export ALICE_TOKEN=&quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYWxpY2UiLCJhenAiOiJhbGljZSIsInN1Ym9yZGluYXRlcyI6W10sImhyIjpmYWxzZX0.rz3jTY033z-NrKfwrK89_dcLF7TN4gwCMj-fVBDyLoM&quot;
-export BOB_TOKEN=&quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYm9iIiwiYXpwIjoiYm9iIiwic3Vib3JkaW5hdGVzIjpbImFsaWNlIl0sImhyIjpmYWxzZX0.n_lXN4H8UXGA_fXTbgWRx8b40GXpAGQHWluiYVI9qf0&quot;
-export CHARLIE_TOKEN=&quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiY2hhcmxpZSIsImF6cCI6ImNoYXJsaWUiLCJzdWJvcmRpbmF0ZXMiOltdLCJociI6ZmFsc2V9.EZd_y_RHUnrCRMuauY7y5a1yiwdUHKRjm9xhVtjNALo&quot;
-export BETTY_TOKEN=&quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYmV0dHkiLCJhenAiOiJiZXR0eSIsInN1Ym9yZGluYXRlcyI6WyJjaGFybGllIl0sImhyIjpmYWxzZX0.TGCS6pTzjrs3nmALSOS7yiLO9Bh9fxzDXEDiq1LIYtE&quot;
-export DAVID_TOKEN=&quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZGF2aWQiLCJhenAiOiJkYXZpZCIsInN1Ym9yZGluYXRlcyI6W10sImhyIjp0cnVlfQ.Q6EiWzU1wx1g6sdWQ1r4bxT1JgSHUpVXpINMqMaUDMU&quot;
+<p>The OPA sidecar annotates ConfigMaps containing policies to indicate if they
+were installed successfully. Verify the ConfigMap was installed successfully.</p>
+<pre><code>kubectl get configmap break-glass -o yaml
+</code></pre><p>Test that <code>kubectl exec</code> access has been granted.</p>
+<pre><code class="lang-bash">kubectl -n production <span class="hljs-built_in">exec</span> -i -t nginx-privileged bash
 </code></pre>
-<p>These tokens encode the same information as the policies we did before (<code>bob</code> is <code>alice</code>&apos;s manager, <code>betty</code> is <code>charlie</code>&apos;s, <code>david</code> is the only HR member, etc).
-If you want to inspect their contents, start up the OPA REPL and execute <code>io.jwt.decode(&lt;token here&gt;, header, payload, signature)</code>.</p>
-<p>Let&apos;s try a few queries (note: you may need to escape the <code>?</code> characters in the queries for your shell):</p>
-<p>Check that <code>charlie</code> can&apos;t see <code>bob</code>&apos;s salary.</p>
-<pre><code class="lang-shell">curl --user charlie:password localhost:5000/finance/salary/bob?token=$CHARLIE_TOKEN
+<p>Finally, delete the <code>break-glass</code> policy now that calm has been restored.</p>
+<pre><code class="lang-bash">kubectl delete configmap <span class="hljs-built_in">break</span>-glass
 </code></pre>
-<p>Check that <code>charlie</code> can&apos;t pretend to be <code>bob</code> to see <code>alice</code>&apos;s salary.</p>
-<pre><code class="lang-shell">curl --user charlie:password localhost:5000/finance/salary/alice?token=$BOB_TOKEN
-</code></pre>
-<p>Check that <code>david</code> can see <code>betty</code>&apos;s salary.</p>
-<pre><code class="lang-shell">curl --user david:password localhost:5000/finance/salary/betty?token=$DAVID_TOKEN
-</code></pre>
-<p>Check that <code>bob</code> can see <code>alice</code>&apos;s salary.</p>
-<pre><code class="lang-shell">curl --user bob:password localhost:5000/finance/salary/alice?token=$BOB_TOKEN
-</code></pre>
-<p>Check that <code>alice</code> can see her own salary.</p>
-<pre><code class="lang-shell">curl --user alice:password localhost:5000/finance/salary/alice?token=$ALICE_TOKEN
-</code></pre>
+<p><code>kubectl exec</code> will no longer be able to access the privileged Pod in the production.</p>
 <h2 id="wrap-up">Wrap Up</h2>
 <p>Congratulations for finishing the tutorial!</p>
-<p>You learned a number of things about API authorization with OPA:</p>
-<ul>
-<li>OPA gives you fine-grained policy control over APIs once you set up the
-server to ask OPA for authorization.</li>
-<li>You write allow/deny policies to control which APIs can be executed by whom.</li>
-<li>You can import external data into OPA and write policies that depend on
-that data.</li>
-<li>You can use OPA data structures to define abstractions over your data.</li>
-</ul>
-<p>The code for this tutorial can be found in the
-<a href="https://github.com/open-policy-agent/contrib" target="_blank">open-policy-agent/contrib</a>
-repository.</p>
+<p>This tutorial showed how you can leverage OPA to enforce admission control
+decisions in Kubernetes clusters without modifying or recompiling any
+Kubernetes components. Furthermore, once Kubernetes is configured to use OPA as
+an External Admission Controller, policies can be modified on-the-fly to
+satisfy changing operational requirements.</p>
+<p>For more information about deploying OPA on top of Kubernetes, see
+<a href="deployments.html#kubernetes">Deployments - Kubernetes</a>.</p>
 
                                 
                                 </section>
@@ -1869,14 +1901,10 @@ repository.</p>
 
             
                 
-                <a href="docker-authorization.html" class="navigation navigation-prev " aria-label="Previous page: Docker Authorization">
+                <a href="ssh-and-sudo-authorization.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: SSH and sudo Authorization">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
-                
-                <a href="ssh-and-sudo-authorization.html" class="navigation navigation-next " aria-label="Next page: SSH and sudo Authorization">
-                    <i class="fa fa-angle-right"></i>
-                </a>
                 
             
         
@@ -1885,7 +1913,7 @@ repository.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"HTTP API Authorization","level":"2.3","depth":1,"next":{"title":"SSH and sudo Authorization","level":"2.4","depth":1,"path":"ssh-and-sudo-authorization.md","ref":"ssh-and-sudo-authorization.md","articles":[]},"previous":{"title":"Docker Authorization","level":"2.2","depth":1,"path":"docker-authorization.md","ref":"docker-authorization.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"http-api-authorization.md","mtime":"2017-07-24T15:16:30.847Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-24T15:17:46.163Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Kubernetes Admission Control","level":"2.5","depth":1,"previous":{"title":"SSH and sudo Authorization","level":"2.4","depth":1,"path":"ssh-and-sudo-authorization.md","ref":"ssh-and-sudo-authorization.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"kubernetes-admission-control.md","mtime":"2017-07-24T15:16:30.847Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-24T15:17:46.163Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
