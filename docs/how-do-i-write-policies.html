@@ -7,7 +7,7 @@
         <title>How Do I Write Policies? &#xB7; GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="description" content="">
-        <meta name="generator" content="GitBook 3.2.2">
+        <meta name="generator" content="GitBook 3.2.3">
         
         
         
@@ -1516,6 +1516,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.8" data-path="faq.html">
+            
+                <a href="faq.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
 
     
         
@@ -1885,11 +1898,12 @@ undefined
 <pre><code class="lang-ruby">&gt; sites[<span class="hljs-number">0</span>][<span class="hljs-string">&quot;servers&quot;</span>][<span class="hljs-number">1</span>][<span class="hljs-string">&quot;hostname&quot;</span>]
 <span class="hljs-string">&quot;helium&quot;</span>
 </code></pre>
-<p>Both forms are valid, however, the dot-access style is typically more readable. Note that there are two cases where brackets must be used:</p>
+<p>Both forms are valid, however, the dot-access style is typically more readable. Note that there are four cases where brackets must be used:</p>
 <ol>
 <li>String keys containing characters other than <code>[a-z]</code>, <code>[A-Z]</code>, <code>[0-9]</code>, or <code>_</code> (underscore).</li>
 <li>Non-string keys such as numbers, booleans, and null.</li>
 <li>Variable keys which are described later.</li>
+<li>Composite keys which are described later.</li>
 </ol>
 <p>References are always prefixed with a variable that identifies the root
 document. In the example above this is <code>p</code>. The root document may be:</p>
@@ -1944,6 +1958,25 @@ example data:</p>
 <blockquote>
 <p>Under the hood, OPA translates the <code>_</code> character to a unique variable name that does not conflict with variables and rules that are in scope.</p>
 </blockquote>
+<h3 id="composite-keys"><a name="composite-keys">Composite Keys</a></h3>
+<p>References can include <a href="#composite-values">Composite Values</a> as keys if the key is being used to refer into a set. Composite keys may not be used in refs
+for base data documents, they are only valid for references into virtual documents.</p>
+<p>This is useful for checking for the presence of composite values within a set, or extracting all values within a set matching some pattern.
+For example:</p>
+<pre><code class="lang-ruby">&gt; s = {[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>], [<span class="hljs-number">1</span>, <span class="hljs-number">4</span>], [<span class="hljs-number">2</span>, <span class="hljs-number">6</span>]}
+&gt; s[[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>]]
+[
+  <span class="hljs-number">1</span>,
+  <span class="hljs-number">2</span>
+]
+&gt; s[[<span class="hljs-number">1</span>, x]]
++---+
+| x |
++---+
+| <span class="hljs-number">2</span> |
+| <span class="hljs-number">4</span> |
++---+
+</code></pre>
 <h3 id="multiple-expressions"><a name="multiple-expressions">Multiple Expressions</a></h3>
 <p>Rules are often written in terms of multiple expressions that contain references to documents. In the following example, the rule defines a set of arrays where each array contains an application name and a hostname of a server where the application is deployed.</p>
 <pre><code class="lang-ruby">apps_and_hostnames[[name, hostname]] {
@@ -2656,7 +2689,7 @@ containers = [
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"How Do I Write Policies?","level":"1.3","depth":1,"next":{"title":"What is Rego?","level":"1.3.1","depth":2,"anchor":"#what-is-rego","path":"how-do-i-write-policies.md","ref":"how-do-i-write-policies.md#what-is-rego","articles":[]},"previous":{"title":"Future Features","level":"1.2.5","depth":2,"anchor":"#future-features","path":"how-does-opa-work.md","ref":"how-does-opa-work.md#future-features","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"how-do-i-write-policies.md","mtime":"2017-07-24T15:16:30.847Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-07-24T15:17:46.163Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"How Do I Write Policies?","level":"1.3","depth":1,"next":{"title":"What is Rego?","level":"1.3.1","depth":2,"anchor":"#what-is-rego","path":"how-do-i-write-policies.md","ref":"how-do-i-write-policies.md#what-is-rego","articles":[]},"previous":{"title":"Future Features","level":"1.2.5","depth":2,"anchor":"#future-features","path":"how-does-opa-work.md","ref":"how-does-opa-work.md#future-features","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"how-do-i-write-policies.md","mtime":"2017-08-07T15:57:06.641Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-08-07T15:58:01.326Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
