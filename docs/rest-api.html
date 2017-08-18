@@ -2528,390 +2528,6 @@ public_servers[server] {
   ]
 }
 </code></pre>
-<h4 id="example-request-for-result-set">Example Request For Result Set</h4>
-<pre><code class="lang-http"><span class="hljs-keyword">GET</span> <span class="hljs-string">/v1/data/opa/examples/allow_container?input=container:data.containers[container_index]</span> HTTP/1.1
-</code></pre>
-<h4 id="example-response-for-result-set">Example Response For Result Set</h4>
-<pre><code class="lang-http">HTTP/1.1 <span class="hljs-number">200</span> OK
-<span class="hljs-attribute">Content-Type</span>: application/json
-
-<span class="json">{
-  <span class="hljs-attr">&quot;result&quot;</span>: [
-    [
-      <span class="hljs-literal">true</span>,
-      {
-        <span class="hljs-attr">&quot;container_index&quot;</span>: <span class="hljs-number">0</span>
-      }
-    ]
-  ]
-}
-</span></code></pre>
-<p>Result sets have the following schema:</p>
-<pre><code class="lang-json">{
-  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;array&quot;</span>,
-  <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;Result Set&quot;</span>,
-  <span class="hljs-string">&quot;description&quot;</span>: <span class="hljs-string">&quot;Set of results returned for a Data API query.&quot;</span>,
-  <span class="hljs-string">&quot;items&quot;</span>: {
-    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;array&quot;</span>,
-    <span class="hljs-string">&quot;minItems&quot;</span>: <span class="hljs-number">2</span>,
-    <span class="hljs-string">&quot;maxItems&quot;</span>: <span class="hljs-number">2</span>,
-    <span class="hljs-string">&quot;items&quot;</span>: [
-      {
-        <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;Value&quot;</span>,
-        <span class="hljs-string">&quot;description&quot;</span>: <span class="hljs-string">&quot;The value of the document referred to by the Data API path.&quot;</span>
-      },
-      {
-        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;object&quot;</span>,
-        <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;Bindings&quot;</span>,
-        <span class="hljs-string">&quot;description&quot;</span>: <span class="hljs-string">&quot;The bindings of variables found in the Data API query input documents.&quot;</span>
-      }
-    ]
-  }
-}
-</code></pre>
-<p>The example above assumes the following data and policy:</p>
-<pre><code class="lang-json">{
-  <span class="hljs-string">&quot;containers&quot;</span>: [
-    {
-        <span class="hljs-string">&quot;Id&quot;</span>: <span class="hljs-string">&quot;a4288db7773ebb4f1b4d502712b87b241e3c28184cda6a1ad58f91ac6d89f052&quot;</span>,
-        <span class="hljs-string">&quot;Created&quot;</span>: <span class="hljs-string">&quot;2016-11-21T03:13:14.288557666Z&quot;</span>,
-        <span class="hljs-string">&quot;Path&quot;</span>: <span class="hljs-string">&quot;sh&quot;</span>,
-        <span class="hljs-string">&quot;Args&quot;</span>: [],
-        <span class="hljs-string">&quot;State&quot;</span>: {
-            <span class="hljs-string">&quot;Status&quot;</span>: <span class="hljs-string">&quot;running&quot;</span>,
-            <span class="hljs-string">&quot;Running&quot;</span>: <span class="hljs-literal">true</span>,
-            <span class="hljs-string">&quot;Paused&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;Restarting&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;OOMKilled&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;Dead&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;Pid&quot;</span>: <span class="hljs-number">12127</span>,
-            <span class="hljs-string">&quot;ExitCode&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;Error&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;StartedAt&quot;</span>: <span class="hljs-string">&quot;2016-11-21T03:13:14.915355869Z&quot;</span>,
-            <span class="hljs-string">&quot;FinishedAt&quot;</span>: <span class="hljs-string">&quot;0001-01-01T00:00:00Z&quot;</span>
-        },
-        <span class="hljs-string">&quot;Image&quot;</span>: <span class="hljs-string">&quot;sha256:baa5d63471ead618ff91ddfacf1e2c81bf0612bfeb1daf00eb0843a41fbfade3&quot;</span>,
-        <span class="hljs-string">&quot;ResolvConfPath&quot;</span>: <span class="hljs-string">&quot;/var/lib/docker/containers/a4288db7773ebb4f1b4d502712b87b241e3c28184cda6a1ad58f91ac6d89f052/resolv.conf&quot;</span>,
-        <span class="hljs-string">&quot;HostnamePath&quot;</span>: <span class="hljs-string">&quot;/var/lib/docker/containers/a4288db7773ebb4f1b4d502712b87b241e3c28184cda6a1ad58f91ac6d89f052/hostname&quot;</span>,
-        <span class="hljs-string">&quot;HostsPath&quot;</span>: <span class="hljs-string">&quot;/var/lib/docker/containers/a4288db7773ebb4f1b4d502712b87b241e3c28184cda6a1ad58f91ac6d89f052/hosts&quot;</span>,
-        <span class="hljs-string">&quot;LogPath&quot;</span>: <span class="hljs-string">&quot;/var/lib/docker/containers/a4288db7773ebb4f1b4d502712b87b241e3c28184cda6a1ad58f91ac6d89f052/a4288db7773ebb4f1b4d502712b87b241e3c28184cda6a1ad58f91ac6d89f052-json.log&quot;</span>,
-        <span class="hljs-string">&quot;Name&quot;</span>: <span class="hljs-string">&quot;/suspicious_brahmagupta&quot;</span>,
-        <span class="hljs-string">&quot;RestartCount&quot;</span>: <span class="hljs-number">0</span>,
-        <span class="hljs-string">&quot;Driver&quot;</span>: <span class="hljs-string">&quot;aufs&quot;</span>,
-        <span class="hljs-string">&quot;MountLabel&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-        <span class="hljs-string">&quot;ProcessLabel&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-        <span class="hljs-string">&quot;AppArmorProfile&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-        <span class="hljs-string">&quot;ExecIDs&quot;</span>: <span class="hljs-literal">null</span>,
-        <span class="hljs-string">&quot;HostConfig&quot;</span>: {
-            <span class="hljs-string">&quot;Binds&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;ContainerIDFile&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;LogConfig&quot;</span>: {
-                <span class="hljs-string">&quot;Type&quot;</span>: <span class="hljs-string">&quot;json-file&quot;</span>,
-                <span class="hljs-string">&quot;Config&quot;</span>: {}
-            },
-            <span class="hljs-string">&quot;NetworkMode&quot;</span>: <span class="hljs-string">&quot;default&quot;</span>,
-            <span class="hljs-string">&quot;PortBindings&quot;</span>: {},
-            <span class="hljs-string">&quot;RestartPolicy&quot;</span>: {
-                <span class="hljs-string">&quot;Name&quot;</span>: <span class="hljs-string">&quot;no&quot;</span>,
-                <span class="hljs-string">&quot;MaximumRetryCount&quot;</span>: <span class="hljs-number">0</span>
-            },
-            <span class="hljs-string">&quot;AutoRemove&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;VolumeDriver&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;VolumesFrom&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;CapAdd&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;CapDrop&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;Dns&quot;</span>: [],
-            <span class="hljs-string">&quot;DnsOptions&quot;</span>: [],
-            <span class="hljs-string">&quot;DnsSearch&quot;</span>: [],
-            <span class="hljs-string">&quot;ExtraHosts&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;GroupAdd&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;IpcMode&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;Cgroup&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;Links&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;OomScoreAdj&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;PidMode&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;Privileged&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;PublishAllPorts&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;ReadonlyRootfs&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;SecurityOpt&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;UTSMode&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;UsernsMode&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;ShmSize&quot;</span>: <span class="hljs-number">67108864</span>,
-            <span class="hljs-string">&quot;Runtime&quot;</span>: <span class="hljs-string">&quot;runc&quot;</span>,
-            <span class="hljs-string">&quot;ConsoleSize&quot;</span>: [
-                <span class="hljs-number">0</span>,
-                <span class="hljs-number">0</span>
-            ],
-            <span class="hljs-string">&quot;Isolation&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;CpuShares&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;Memory&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;CgroupParent&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;BlkioWeight&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;BlkioWeightDevice&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;BlkioDeviceReadBps&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;BlkioDeviceWriteBps&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;BlkioDeviceReadIOps&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;BlkioDeviceWriteIOps&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;CpuPeriod&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;CpuQuota&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;CpusetCpus&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;CpusetMems&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;Devices&quot;</span>: [],
-            <span class="hljs-string">&quot;DiskQuota&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;KernelMemory&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;MemoryReservation&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;MemorySwap&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;MemorySwappiness&quot;</span>: <span class="hljs-number">-1</span>,
-            <span class="hljs-string">&quot;OomKillDisable&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;PidsLimit&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;Ulimits&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;CpuCount&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;CpuPercent&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;IOMaximumIOps&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;IOMaximumBandwidth&quot;</span>: <span class="hljs-number">0</span>
-        },
-        <span class="hljs-string">&quot;GraphDriver&quot;</span>: {
-            <span class="hljs-string">&quot;Name&quot;</span>: <span class="hljs-string">&quot;aufs&quot;</span>,
-            <span class="hljs-string">&quot;Data&quot;</span>: <span class="hljs-literal">null</span>
-        },
-        <span class="hljs-string">&quot;Mounts&quot;</span>: [],
-        <span class="hljs-string">&quot;Config&quot;</span>: {
-            <span class="hljs-string">&quot;Hostname&quot;</span>: <span class="hljs-string">&quot;a4288db7773e&quot;</span>,
-            <span class="hljs-string">&quot;Domainname&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;User&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;AttachStdin&quot;</span>: <span class="hljs-literal">true</span>,
-            <span class="hljs-string">&quot;AttachStdout&quot;</span>: <span class="hljs-literal">true</span>,
-            <span class="hljs-string">&quot;AttachStderr&quot;</span>: <span class="hljs-literal">true</span>,
-            <span class="hljs-string">&quot;Tty&quot;</span>: <span class="hljs-literal">true</span>,
-            <span class="hljs-string">&quot;OpenStdin&quot;</span>: <span class="hljs-literal">true</span>,
-            <span class="hljs-string">&quot;StdinOnce&quot;</span>: <span class="hljs-literal">true</span>,
-            <span class="hljs-string">&quot;Env&quot;</span>: [
-                <span class="hljs-string">&quot;no_proxy=*.local, 169.254/16&quot;</span>,
-                <span class="hljs-string">&quot;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;</span>
-            ],
-            <span class="hljs-string">&quot;Cmd&quot;</span>: [
-                <span class="hljs-string">&quot;sh&quot;</span>
-            ],
-            <span class="hljs-string">&quot;Image&quot;</span>: <span class="hljs-string">&quot;alpine:latest&quot;</span>,
-            <span class="hljs-string">&quot;Volumes&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;WorkingDir&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;Entrypoint&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;OnBuild&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;Labels&quot;</span>: {}
-        },
-        <span class="hljs-string">&quot;NetworkSettings&quot;</span>: {
-            <span class="hljs-string">&quot;Bridge&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;SandboxID&quot;</span>: <span class="hljs-string">&quot;2dadac1a8b18b7ae5658c4215637d998572c95bc0673bac2aceefbdd830d8860&quot;</span>,
-            <span class="hljs-string">&quot;HairpinMode&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;LinkLocalIPv6Address&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;LinkLocalIPv6PrefixLen&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;Ports&quot;</span>: {},
-            <span class="hljs-string">&quot;SandboxKey&quot;</span>: <span class="hljs-string">&quot;/var/run/docker/netns/2dadac1a8b18&quot;</span>,
-            <span class="hljs-string">&quot;SecondaryIPAddresses&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;SecondaryIPv6Addresses&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;EndpointID&quot;</span>: <span class="hljs-string">&quot;fb1af875e2f0e7643224b6505a2c713748175689b8e8edb7cc1496efa8cdcafd&quot;</span>,
-            <span class="hljs-string">&quot;Gateway&quot;</span>: <span class="hljs-string">&quot;172.17.0.1&quot;</span>,
-            <span class="hljs-string">&quot;GlobalIPv6Address&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;GlobalIPv6PrefixLen&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;IPAddress&quot;</span>: <span class="hljs-string">&quot;172.17.0.3&quot;</span>,
-            <span class="hljs-string">&quot;IPPrefixLen&quot;</span>: <span class="hljs-number">16</span>,
-            <span class="hljs-string">&quot;IPv6Gateway&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;MacAddress&quot;</span>: <span class="hljs-string">&quot;02:42:ac:11:00:03&quot;</span>,
-            <span class="hljs-string">&quot;Networks&quot;</span>: {
-                <span class="hljs-string">&quot;bridge&quot;</span>: {
-                    <span class="hljs-string">&quot;IPAMConfig&quot;</span>: <span class="hljs-literal">null</span>,
-                    <span class="hljs-string">&quot;Links&quot;</span>: <span class="hljs-literal">null</span>,
-                    <span class="hljs-string">&quot;Aliases&quot;</span>: <span class="hljs-literal">null</span>,
-                    <span class="hljs-string">&quot;NetworkID&quot;</span>: <span class="hljs-string">&quot;ad1022afa0af59671f2b701ff8cbd4607de24740b59484acd4a740fac4ad26f9&quot;</span>,
-                    <span class="hljs-string">&quot;EndpointID&quot;</span>: <span class="hljs-string">&quot;fb1af875e2f0e7643224b6505a2c713748175689b8e8edb7cc1496efa8cdcafd&quot;</span>,
-                    <span class="hljs-string">&quot;Gateway&quot;</span>: <span class="hljs-string">&quot;172.17.0.1&quot;</span>,
-                    <span class="hljs-string">&quot;IPAddress&quot;</span>: <span class="hljs-string">&quot;172.17.0.3&quot;</span>,
-                    <span class="hljs-string">&quot;IPPrefixLen&quot;</span>: <span class="hljs-number">16</span>,
-                    <span class="hljs-string">&quot;IPv6Gateway&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-                    <span class="hljs-string">&quot;GlobalIPv6Address&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-                    <span class="hljs-string">&quot;GlobalIPv6PrefixLen&quot;</span>: <span class="hljs-number">0</span>,
-                    <span class="hljs-string">&quot;MacAddress&quot;</span>: <span class="hljs-string">&quot;02:42:ac:11:00:03&quot;</span>
-                }
-            }
-        }
-    },
-    {
-        <span class="hljs-string">&quot;Id&quot;</span>: <span class="hljs-string">&quot;6887a5168d0e2324b8c9544c4b30321bce4952f12698491f268c17bbe77e5218&quot;</span>,
-        <span class="hljs-string">&quot;Created&quot;</span>: <span class="hljs-string">&quot;2016-11-21T03:13:05.080079329Z&quot;</span>,
-        <span class="hljs-string">&quot;Path&quot;</span>: <span class="hljs-string">&quot;sh&quot;</span>,
-        <span class="hljs-string">&quot;Args&quot;</span>: [],
-        <span class="hljs-string">&quot;State&quot;</span>: {
-            <span class="hljs-string">&quot;Status&quot;</span>: <span class="hljs-string">&quot;running&quot;</span>,
-            <span class="hljs-string">&quot;Running&quot;</span>: <span class="hljs-literal">true</span>,
-            <span class="hljs-string">&quot;Paused&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;Restarting&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;OOMKilled&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;Dead&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;Pid&quot;</span>: <span class="hljs-number">12079</span>,
-            <span class="hljs-string">&quot;ExitCode&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;Error&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;StartedAt&quot;</span>: <span class="hljs-string">&quot;2016-11-21T03:13:05.718411107Z&quot;</span>,
-            <span class="hljs-string">&quot;FinishedAt&quot;</span>: <span class="hljs-string">&quot;0001-01-01T00:00:00Z&quot;</span>
-        },
-        <span class="hljs-string">&quot;Image&quot;</span>: <span class="hljs-string">&quot;sha256:baa5d63471ead618ff91ddfacf1e2c81bf0612bfeb1daf00eb0843a41fbfade3&quot;</span>,
-        <span class="hljs-string">&quot;ResolvConfPath&quot;</span>: <span class="hljs-string">&quot;/var/lib/docker/containers/6887a5168d0e2324b8c9544c4b30321bce4952f12698491f268c17bbe77e5218/resolv.conf&quot;</span>,
-        <span class="hljs-string">&quot;HostnamePath&quot;</span>: <span class="hljs-string">&quot;/var/lib/docker/containers/6887a5168d0e2324b8c9544c4b30321bce4952f12698491f268c17bbe77e5218/hostname&quot;</span>,
-        <span class="hljs-string">&quot;HostsPath&quot;</span>: <span class="hljs-string">&quot;/var/lib/docker/containers/6887a5168d0e2324b8c9544c4b30321bce4952f12698491f268c17bbe77e5218/hosts&quot;</span>,
-        <span class="hljs-string">&quot;LogPath&quot;</span>: <span class="hljs-string">&quot;/var/lib/docker/containers/6887a5168d0e2324b8c9544c4b30321bce4952f12698491f268c17bbe77e5218/6887a5168d0e2324b8c9544c4b30321bce4952f12698491f268c17bbe77e5218-json.log&quot;</span>,
-        <span class="hljs-string">&quot;Name&quot;</span>: <span class="hljs-string">&quot;/fervent_almeida&quot;</span>,
-        <span class="hljs-string">&quot;RestartCount&quot;</span>: <span class="hljs-number">0</span>,
-        <span class="hljs-string">&quot;Driver&quot;</span>: <span class="hljs-string">&quot;aufs&quot;</span>,
-        <span class="hljs-string">&quot;MountLabel&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-        <span class="hljs-string">&quot;ProcessLabel&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-        <span class="hljs-string">&quot;AppArmorProfile&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-        <span class="hljs-string">&quot;ExecIDs&quot;</span>: <span class="hljs-literal">null</span>,
-        <span class="hljs-string">&quot;HostConfig&quot;</span>: {
-            <span class="hljs-string">&quot;Binds&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;ContainerIDFile&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;LogConfig&quot;</span>: {
-                <span class="hljs-string">&quot;Type&quot;</span>: <span class="hljs-string">&quot;json-file&quot;</span>,
-                <span class="hljs-string">&quot;Config&quot;</span>: {}
-            },
-            <span class="hljs-string">&quot;NetworkMode&quot;</span>: <span class="hljs-string">&quot;default&quot;</span>,
-            <span class="hljs-string">&quot;PortBindings&quot;</span>: {},
-            <span class="hljs-string">&quot;RestartPolicy&quot;</span>: {
-                <span class="hljs-string">&quot;Name&quot;</span>: <span class="hljs-string">&quot;no&quot;</span>,
-                <span class="hljs-string">&quot;MaximumRetryCount&quot;</span>: <span class="hljs-number">0</span>
-            },
-            <span class="hljs-string">&quot;AutoRemove&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;VolumeDriver&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;VolumesFrom&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;CapAdd&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;CapDrop&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;Dns&quot;</span>: [],
-            <span class="hljs-string">&quot;DnsOptions&quot;</span>: [],
-            <span class="hljs-string">&quot;DnsSearch&quot;</span>: [],
-            <span class="hljs-string">&quot;ExtraHosts&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;GroupAdd&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;IpcMode&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;Cgroup&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;Links&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;OomScoreAdj&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;PidMode&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;Privileged&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;PublishAllPorts&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;ReadonlyRootfs&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;SecurityOpt&quot;</span>: [
-                <span class="hljs-string">&quot;seccomp:unconfined&quot;</span>
-            ],
-            <span class="hljs-string">&quot;UTSMode&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;UsernsMode&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;ShmSize&quot;</span>: <span class="hljs-number">67108864</span>,
-            <span class="hljs-string">&quot;Runtime&quot;</span>: <span class="hljs-string">&quot;runc&quot;</span>,
-            <span class="hljs-string">&quot;ConsoleSize&quot;</span>: [
-                <span class="hljs-number">0</span>,
-                <span class="hljs-number">0</span>
-            ],
-            <span class="hljs-string">&quot;Isolation&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;CpuShares&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;Memory&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;CgroupParent&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;BlkioWeight&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;BlkioWeightDevice&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;BlkioDeviceReadBps&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;BlkioDeviceWriteBps&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;BlkioDeviceReadIOps&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;BlkioDeviceWriteIOps&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;CpuPeriod&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;CpuQuota&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;CpusetCpus&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;CpusetMems&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;Devices&quot;</span>: [],
-            <span class="hljs-string">&quot;DiskQuota&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;KernelMemory&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;MemoryReservation&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;MemorySwap&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;MemorySwappiness&quot;</span>: <span class="hljs-number">-1</span>,
-            <span class="hljs-string">&quot;OomKillDisable&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;PidsLimit&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;Ulimits&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;CpuCount&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;CpuPercent&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;IOMaximumIOps&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;IOMaximumBandwidth&quot;</span>: <span class="hljs-number">0</span>
-        },
-        <span class="hljs-string">&quot;GraphDriver&quot;</span>: {
-            <span class="hljs-string">&quot;Name&quot;</span>: <span class="hljs-string">&quot;aufs&quot;</span>,
-            <span class="hljs-string">&quot;Data&quot;</span>: <span class="hljs-literal">null</span>
-        },
-        <span class="hljs-string">&quot;Mounts&quot;</span>: [],
-        <span class="hljs-string">&quot;Config&quot;</span>: {
-            <span class="hljs-string">&quot;Hostname&quot;</span>: <span class="hljs-string">&quot;6887a5168d0e&quot;</span>,
-            <span class="hljs-string">&quot;Domainname&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;User&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;AttachStdin&quot;</span>: <span class="hljs-literal">true</span>,
-            <span class="hljs-string">&quot;AttachStdout&quot;</span>: <span class="hljs-literal">true</span>,
-            <span class="hljs-string">&quot;AttachStderr&quot;</span>: <span class="hljs-literal">true</span>,
-            <span class="hljs-string">&quot;Tty&quot;</span>: <span class="hljs-literal">true</span>,
-            <span class="hljs-string">&quot;OpenStdin&quot;</span>: <span class="hljs-literal">true</span>,
-            <span class="hljs-string">&quot;StdinOnce&quot;</span>: <span class="hljs-literal">true</span>,
-            <span class="hljs-string">&quot;Env&quot;</span>: [
-                <span class="hljs-string">&quot;no_proxy=*.local, 169.254/16&quot;</span>,
-                <span class="hljs-string">&quot;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;</span>
-            ],
-            <span class="hljs-string">&quot;Cmd&quot;</span>: [
-                <span class="hljs-string">&quot;sh&quot;</span>
-            ],
-            <span class="hljs-string">&quot;Image&quot;</span>: <span class="hljs-string">&quot;alpine:latest&quot;</span>,
-            <span class="hljs-string">&quot;Volumes&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;WorkingDir&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;Entrypoint&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;OnBuild&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;Labels&quot;</span>: {}
-        },
-        <span class="hljs-string">&quot;NetworkSettings&quot;</span>: {
-            <span class="hljs-string">&quot;Bridge&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;SandboxID&quot;</span>: <span class="hljs-string">&quot;580a6d3f8bebfb1647c8b34f7766dee1b86443752ef3e255d37517dfb35076ed&quot;</span>,
-            <span class="hljs-string">&quot;HairpinMode&quot;</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-string">&quot;LinkLocalIPv6Address&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;LinkLocalIPv6PrefixLen&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;Ports&quot;</span>: {},
-            <span class="hljs-string">&quot;SandboxKey&quot;</span>: <span class="hljs-string">&quot;/var/run/docker/netns/580a6d3f8beb&quot;</span>,
-            <span class="hljs-string">&quot;SecondaryIPAddresses&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;SecondaryIPv6Addresses&quot;</span>: <span class="hljs-literal">null</span>,
-            <span class="hljs-string">&quot;EndpointID&quot;</span>: <span class="hljs-string">&quot;a4340ac5857a79310cc7eaa344d4ff6771fdf6372f72447b91928c038d9ada7d&quot;</span>,
-            <span class="hljs-string">&quot;Gateway&quot;</span>: <span class="hljs-string">&quot;172.17.0.1&quot;</span>,
-            <span class="hljs-string">&quot;GlobalIPv6Address&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;GlobalIPv6PrefixLen&quot;</span>: <span class="hljs-number">0</span>,
-            <span class="hljs-string">&quot;IPAddress&quot;</span>: <span class="hljs-string">&quot;172.17.0.2&quot;</span>,
-            <span class="hljs-string">&quot;IPPrefixLen&quot;</span>: <span class="hljs-number">16</span>,
-            <span class="hljs-string">&quot;IPv6Gateway&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-            <span class="hljs-string">&quot;MacAddress&quot;</span>: <span class="hljs-string">&quot;02:42:ac:11:00:02&quot;</span>,
-            <span class="hljs-string">&quot;Networks&quot;</span>: {
-                <span class="hljs-string">&quot;bridge&quot;</span>: {
-                    <span class="hljs-string">&quot;IPAMConfig&quot;</span>: <span class="hljs-literal">null</span>,
-                    <span class="hljs-string">&quot;Links&quot;</span>: <span class="hljs-literal">null</span>,
-                    <span class="hljs-string">&quot;Aliases&quot;</span>: <span class="hljs-literal">null</span>,
-                    <span class="hljs-string">&quot;NetworkID&quot;</span>: <span class="hljs-string">&quot;ad1022afa0af59671f2b701ff8cbd4607de24740b59484acd4a740fac4ad26f9&quot;</span>,
-                    <span class="hljs-string">&quot;EndpointID&quot;</span>: <span class="hljs-string">&quot;a4340ac5857a79310cc7eaa344d4ff6771fdf6372f72447b91928c038d9ada7d&quot;</span>,
-                    <span class="hljs-string">&quot;Gateway&quot;</span>: <span class="hljs-string">&quot;172.17.0.1&quot;</span>,
-                    <span class="hljs-string">&quot;IPAddress&quot;</span>: <span class="hljs-string">&quot;172.17.0.2&quot;</span>,
-                    <span class="hljs-string">&quot;IPPrefixLen&quot;</span>: <span class="hljs-number">16</span>,
-                    <span class="hljs-string">&quot;IPv6Gateway&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-                    <span class="hljs-string">&quot;GlobalIPv6Address&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
-                    <span class="hljs-string">&quot;GlobalIPv6PrefixLen&quot;</span>: <span class="hljs-number">0</span>,
-                    <span class="hljs-string">&quot;MacAddress&quot;</span>: <span class="hljs-string">&quot;02:42:ac:11:00:02&quot;</span>
-                }
-            }
-        }
-    }]
-}
-</code></pre>
-<pre><code class="lang-ruby">package opa.examples
-
-import input.container
-
-allow_container { <span class="hljs-keyword">not</span> seccomp_unconfined }
-
-seccomp_unconfined {
-  container.HostConfig.SecurityOpt[<span class="hljs-number">_</span>] = <span class="hljs-string">&quot;seccomp:unconfined&quot;</span>
-}
-</code></pre>
 <h4 id="example-watch-request">Example Watch Request</h4>
 <p>If we make the following GET request:</p>
 <pre><code class="lang-http"><span class="hljs-keyword">GET</span> <span class="hljs-string">/v1/data/servers?watch&amp;pretty=true</span> HTTP/1.1
@@ -3110,7 +2726,7 @@ It is not complete, as further changes to <code>/data/servers</code> would cause
 </code></pre>
 <h4 id="query-parameters">Query Parameters</h4>
 <ul>
-<li><strong>input</strong> - Provide an input document. Format is <code>[[&lt;path&gt;]:]&lt;value&gt;</code> where <code>&lt;path&gt;</code> is the import path of the input document. The parameter may be specified multiple times but each instance should specify a unique <code>&lt;path&gt;</code>. The <code>&lt;path&gt;</code> may be empty (in which case, the entire input will be set to the <code>&lt;value&gt;</code>). The <code>&lt;value&gt;</code> may be a reference to a document in OPA. If <code>&lt;value&gt;</code> contains variables the response will contain a set of results instead of a single document. In most cases, input should be provided using the POST method, see <a href="#get-a-document-with-input">Get a Document (with Input)</a>.</li>
+<li><strong>input</strong> - Provide an input document. Format is a JSON value that will be used as the value for the input document.</li>
 <li><strong>pretty</strong> - If parameter is <code>true</code>, response will formatted for humans.</li>
 <li><strong>explain</strong> - Return query explanation in addition to result. Values: <strong>full</strong>, <strong>truth</strong>.</li>
 <li><strong>metrics</strong> - Return query performance metrics in addition to result. See <a href="#performance-metrics">Performance Metrics</a> for more detail.</li>
@@ -3433,6 +3049,8 @@ the following values:</p>
 <li><strong>full</strong> - returns a full query trace containing every step in the query evaluation process.</li>
 <li><strong>truth</strong> - returns a partial query trace containing one path that leads to the overall query being successful.</li>
 </ul>
+<p>By default, explanations are represented in a machine-friendly format. Set the
+<code>pretty</code> parameter to request a human-friendly format for debugging purposes.</p>
 <h3 id="trace-events"><a name="trace-events">Trace Events</a></h3>
 <p>When the <code>explain</code> query parameter is set to <strong>full</strong> or <strong>truth</strong> , the
 response contains an array of Trace Event objects.</p>
@@ -3540,6 +3158,160 @@ restarts, a <strong>Redo</strong> Trace Event is emitted.</p>
 <li><strong>timer_rego_query_compile_ns</strong>: time taken (in nanonseconds) to compile the query.</li>
 <li><strong>timer_rego_query_eval_ns</strong>: time taken (in nanonseconds) to evaluate the query.</li>
 </ul>
+<h2 id="diagnostics"><a name="diagnostics"></a> Diagnostics</h2>
+<p>The OPA server has the capability to log and return diagnostics on past requests to the user. By default, the server will not log any diagnostics at all. In order to have the server start logging diagnostic information, the document located at <code>data.system.diagnostics.config</code> (henceforth referred to as the config) must be defined. The config must evaluate to an object, which must be structured as follows:</p>
+<pre><code>{
+    &quot;mode&quot;: &lt;&quot;all&quot;/&quot;on&quot;/&quot;off&quot;&gt;,
+    &quot;metrics&quot;: &lt;true/false&gt;,
+    &quot;explain&quot;: &lt;true/false&gt;
+}
+</code></pre><p>An example of a policy that defines a simple diagnostics config that only logs GET requests:</p>
+<pre><code>package system.diagnostics
+
+default config = {&quot;mode&quot;: &quot;off&quot;}
+config = {&quot;mode&quot;: &quot;on&quot;} {
+    input.method = &quot;GET&quot;
+}
+</code></pre><p>If the config document does not conform to the structure above, then diagnostics are automatically disabled.</p>
+<p>Whenever a data GET/POST, a POST to <code>/</code> or query GET request is received by the server, it evaluates the config document to determine whether or not diagnostics should be logged. The table below describes the behavior of diagnostics depending on the values of the config fields.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mode</code></td>
+<td>&quot;all&quot;</td>
+<td>All diagnostics are recorded. Equivalent to <code>explain</code> and <code>metrics</code> both being true.</td>
+</tr>
+<tr>
+<td><code>mode</code></td>
+<td>&quot;on&quot;</td>
+<td>Diagnostics are recorded. Query, timestamp, input and result are logged. Explanations and metrics depend on <code>explain</code> and <code>metrics</code>, respectively.</td>
+</tr>
+<tr>
+<td><code>mode</code></td>
+<td>&quot;off&quot;</td>
+<td>No diagnostics are recorded. Overrides <code>explain</code> and <code>metrics</code> field.</td>
+</tr>
+<tr>
+<td><code>explain</code></td>
+<td>false</td>
+<td>Explanations are not logged.</td>
+</tr>
+<tr>
+<td><code>explain</code></td>
+<td>true</td>
+<td>Explanations are logged. <code>mode</code> is implicitly &quot;on&quot;.</td>
+</tr>
+<tr>
+<td><code>metrics</code></td>
+<td>false</td>
+<td>Metrics are not logged.</td>
+</tr>
+<tr>
+<td><code>metrics</code></td>
+<td>true</td>
+<td>Metrics are logged. <code>mode</code> is implicitly &quot;on&quot;.</td>
+</tr>
+</tbody>
+</table>
+<p>In order to allow the config document to make dynamic decisions about whether or not to record diagnostics for a given request, the server will provide a special input document when evaluating it. The input document will contain information from the HTTP request that was issued to the server, of the form:</p>
+<pre><code>{
+    &quot;method&quot;: &lt;HTTP request method&gt;,
+    &quot;path&quot;: &lt;Full HTTP request path&gt;,
+    &quot;body&quot;: &lt;HTTP request body (null if not present or invalid JSON)&gt;,
+
+    # The query parameters in the HTTP request.
+    &quot;params&quot;: {
+        &quot;param0&quot;: [&quot;value0&quot;, &quot;value1&quot;, ...],
+        &quot;param1&quot;: [...],
+        ...
+    },
+
+    # The header fields in the HTTP request.
+    &quot;header&quot;: {
+        &quot;field0&quot;: [&quot;value0&quot;, &quot;value1&quot;, ...],
+        &quot;field1&quot;: [...],
+        ...
+    }
+}
+</code></pre><p>As an example, the request <code>GET /v1/data/servers?watch&amp;pretty=true HTTP/1.1</code> would result in the input document below (the headers will likely depend on the client used to send the request):</p>
+<pre><code>{
+    &quot;method&quot;: &quot;GET&quot;,
+    &quot;path&quot;: &quot;/v1/data/servers&quot;,
+    &quot;body&quot;: null,
+    &quot;params&quot;: {
+        &quot;watch&quot;: [&quot;&quot;],
+        &quot;pretty&quot;: [&quot;true&quot;],
+    },
+
+    &quot;header&quot;: { ... }
+}
+</code></pre><p>Diagnostics may be fetched from the server using the Data GET endpoint. When the server sees a GET request to <code>/v1/data/system/diagnostics</code>, it will not evaluate the document located there, but instead return a list of the diagnostics stored on the server (ordered from oldest to newest). The server will honor the <code>explainMode</code> and <code>pretty</code> parameters from the GET request, but the others will be ignored. The response is of the form:</p>
+<pre><code>[
+    {
+        &quot;timestamp&quot;: ...,
+        &quot;query&quot;: ...,
+        &quot;input&quot;: ...,
+        &quot;result&quot;: ...,
+        &quot;error&quot;: ...,
+        &quot;explanation&quot;: ...,
+        &quot;metrics&quot;: ...
+    },
+    ...
+]
+</code></pre><table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Always Present</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>timestamp</code></td>
+<td>Yes</td>
+<td>Nanoseconds since the Unix Epoch time</td>
+</tr>
+<tr>
+<td><code>query</code></td>
+<td>Yes</td>
+<td>The query, if the request for the record was a query request. Otherwise the data path from the original request.</td>
+</tr>
+<tr>
+<td><code>input</code></td>
+<td>No</td>
+<td>Input provided to the <code>query</code> at evaluation time.</td>
+</tr>
+<tr>
+<td><code>result</code></td>
+<td>No</td>
+<td>Result of evaluating <code>query</code>. See the <a href="#data-api">Data</a> and <a href="#query-api">Query</a> APIs for detailed descriptions of formats.</td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td>No</td>
+<td><a href="#errors">Error</a> encountered while evaluating <code>query</code>.</td>
+</tr>
+<tr>
+<td><code>metrics</code></td>
+<td>No</td>
+<td><a href="#performance-metrics">Performance Metrics</a> for <code>query</code>.</td>
+</tr>
+<tr>
+<td><code>explanation</code></td>
+<td>No</td>
+<td><a href="#explanations">Explanation</a> of how <code>result</code> was found. Whether it contains a <code>truth</code> level or <code>full</code> level explanation depends on the explanation mode in the GET request that requested the diagnostics.</td>
+</tr>
+</tbody>
+</table>
+<p>The server will only store a finite number of diagnostics. If the server&apos;s diagnostics storage becomes full, it will delete the oldest diagnostic to make room for the new one. The size of the storage may be configured when the server is started.</p>
 <h2 id="watches"><a name="watches"></a> Watches</h2>
 <p>OPA can set watches on queries and report whenever the result of evaluating the query has changed. When a watch is set on a query, the requesting connection will be maintained as the query results are streamed back in HTTP Chunked Encoding format. A notification reflecting a certain change to the query results will be delivered <em>at most once</em>. That is, if a watch is set on <code>data.x</code>, and then multiple writes are made to <code>data.x</code>, say <code>1</code>, <code>2</code> and <code>3</code>, only the notification reflecting <code>data.x=3</code> is always seen eventually (assuming the watch is not ended, there are no connection problems, etc). The notifications reflecting <code>data.x=1</code> and <code>data.x=2</code> <em>might</em> be seen. However, the notifications sent are guaranteed to be in order (<code>data.x=2</code> will always come after <code>data.x=1</code>, if it comes).</p>
 <p>The notification stream will not be delimited by any value; the client is expected to be able to parse JSON values from the stream one by one, recognizing where one ends and the next begins.</p>
@@ -3611,7 +3383,7 @@ restarts, a <strong>Redo</strong> Trace Event is emitted.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"REST API","level":"1.5","depth":1,"next":{"title":"Policy API","level":"1.5.1","depth":2,"anchor":"#policy-api","path":"rest-api.md","ref":"rest-api.md#policy-api","articles":[{"title":"List Policies","level":"1.5.1.1","depth":3,"anchor":"#list-policies","path":"rest-api.md","ref":"rest-api.md#list-policies","articles":[]},{"title":"Get a Policy","level":"1.5.1.2","depth":3,"anchor":"#get-a-policy","path":"rest-api.md","ref":"rest-api.md#get-a-policy","articles":[]},{"title":"Create or Update a Policy","level":"1.5.1.3","depth":3,"anchor":"#create-or-update-a-policy","path":"rest-api.md","ref":"rest-api.md#create-or-update-a-policy","articles":[]},{"title":"Delete a Policy","level":"1.5.1.4","depth":3,"anchor":"#delete-a-policy","path":"rest-api.md","ref":"rest-api.md#delete-a-policy","articles":[]}]},"previous":{"title":"Grammar","level":"1.4.3","depth":2,"anchor":"#grammar","path":"language-reference.md","ref":"language-reference.md#grammar","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"rest-api.md","mtime":"2017-08-07T15:57:06.641Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-08-07T15:58:01.326Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"REST API","level":"1.5","depth":1,"next":{"title":"Policy API","level":"1.5.1","depth":2,"anchor":"#policy-api","path":"rest-api.md","ref":"rest-api.md#policy-api","articles":[{"title":"List Policies","level":"1.5.1.1","depth":3,"anchor":"#list-policies","path":"rest-api.md","ref":"rest-api.md#list-policies","articles":[]},{"title":"Get a Policy","level":"1.5.1.2","depth":3,"anchor":"#get-a-policy","path":"rest-api.md","ref":"rest-api.md#get-a-policy","articles":[]},{"title":"Create or Update a Policy","level":"1.5.1.3","depth":3,"anchor":"#create-or-update-a-policy","path":"rest-api.md","ref":"rest-api.md#create-or-update-a-policy","articles":[]},{"title":"Delete a Policy","level":"1.5.1.4","depth":3,"anchor":"#delete-a-policy","path":"rest-api.md","ref":"rest-api.md#delete-a-policy","articles":[]}]},"previous":{"title":"Grammar","level":"1.4.3","depth":2,"anchor":"#grammar","path":"language-reference.md","ref":"language-reference.md#grammar","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"rest-api.md","mtime":"2017-08-18T01:41:01.990Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-08-18T01:42:00.457Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
