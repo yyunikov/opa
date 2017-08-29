@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Introduction &#xB7; GitBook</title>
+        <title>Terraform Testing &#xB7; GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -58,8 +58,8 @@
     <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="./">
     
+    <link rel="prev" href="kubernetes-admission-control.html">
     
 
     </head>
@@ -173,7 +173,7 @@
         
         
     
-        <li class="chapter active" data-level="1.1" data-path="./">
+        <li class="chapter " data-level="1.1" data-path="./">
             
                 <a href="./">
             
@@ -1612,7 +1612,7 @@
             
         </li>
     
-        <li class="chapter " data-level="2.6" data-path="terraform.html">
+        <li class="chapter active" data-level="2.6" data-path="terraform.html">
             
                 <a href="terraform.html">
             
@@ -1655,7 +1655,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".">Introduction</a>
+        <a href=".">Terraform Testing</a>
     </h1>
 </div>
 
@@ -1670,47 +1670,328 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="introduction">Introduction</h1>
-<p>A policy is a set of rules that governs the behavior of a service.
-Policy-enablement empowers users to read, write, and manage these rules without
-needing specialized development or operational expertise. When your users can
-implement policies without recompiling your source code, then your service is
-policy enabled.</p>
-<h2 id="what-is-policy"><a name="what-is-policy">What is Policy?</a></h2>
-<p>All organizations have policies. Policies are essential to the long-term
-success of organizations because they encode important knowledge about how to
-comply with legal requirements, work within technical constraints, avoid
-repeating mistakes, and so on.</p>
-<p>In their simplest form, policies can be applied manually based on rules that
-are written down or conventions that are unspoken but permeate an
-organization&#x2019;s culture. Policies may also be enforced with application logic or
-statically configured at deploy time.</p>
-<h2 id="what-is-policy-enablement"><a name="what-is-policy-enablement">What is Policy Enablement?</a></h2>
-<p>Policy-enabled services allow policies to be specified declaratively, updated
-at any time without recompiling or redeploying, and enforced automatically
-(which is especially valuable when decisions need to be made faster than
-humanly possible). They make deployments more adaptable to changing business
-requirements, improve the ability to discover violations and conflicts,
-increase the consistency of policy compliance, and mitigate the risk of human
-error.</p>
-<p>A policy-enabled service is able to answer questions by comparing relevant
-input from its environment to policy statements written by administrators. For
-example, a cloud computing service could answer questions such as:</p>
+                                <h1 id="terraform-testing">Terraform Testing</h1>
+<p>Terraform lets you describe the infrastructure you want and automatically creates, deletes, and modifies
+your existing infrastructure to match.  OPA makes it possible to write policies that test the changes
+Terraform is about to make before it makes them.  Such tests help in different ways:</p>
 <ul>
-<li>Can I add compute capacity?</li>
-<li>In what regions can I add compute capacity?</li>
-<li>Which instances are currently running in the wrong region?</li>
+<li>tests help individual developers sanity check their Terraform changes</li>
+<li>tests can auto-approve run-of-the-mill infrastructure changes and reduce
+the burden of peer-review</li>
+<li>tests can help catch problems that arise when applying Terraform to production after applying it to staging</li>
 </ul>
-<h2 id="what-is-opa"><a name="what-is-opa">What is OPA?</a></h2>
-<p>OPA is a lightweight general-purpose policy engine that can be co-located with
-your service. You can integrate OPA as a sidecar, host-level daemon, or
-library.</p>
-<p>Services offload policy decisions to OPA by executing <em>queries</em>. OPA evaluates
-policies and data to produce query results (which are sent back to the client).
-Policies are written in a high-level declarative language and can be loaded
-into OPA via the filesystem or well-defined APIs.</p>
-<h2 id="why-use-opa"><a name="why-use-opa">Why use OPA?</a></h2>
-<p><img src="images/benefits.svg" alt="benefits" title="benefits"></p>
+<h2 id="goals">Goals</h2>
+<p>In this tutorial, you&apos;ll learn how to use OPA to implement unit tests for Terraform plans that create
+and delete auto-scaling groups and servers.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>This tutorial requires</p>
+<ul>
+<li><a href="https://releases.hashicorp.com/terraform/0.8.8/" target="_blank">Terraform 0.8</a></li>
+<li><a href="https://github.com/open-policy-agent/opa/releases" target="_blank">OPA</a></li>
+<li><a href="https://github.com/palantir/tfjson" target="_blank">tfjson</a> (<code>go get github.com/palantir/tfjson</code>): a Go utility that converts Terraform plans into JSON</li>
+</ul>
+<p>(This tutorial <em>should</em> also work with the <a href="https://www.terraform.io/downloads.html" target="_blank">latest version of Terraform</a> 
+and the <a href="https://github.com/philips/tfjson" target="_blank">latest version of tfjson</a>, but it is untested.  Contributions welcome!)</p>
+<h2 id="steps">Steps</h2>
+<h3 id="1-create-and-save-a-terraform-plan">1. Create and save a Terraform plan</h3>
+<p>Create a <a href="https://www.terraform.io/docs/index.html" target="_blank">Terraform</a> file that includes an 
+auto-scaling group and a server on AWS.  (You will need to modify the <code>shared_credentials_file</code>
+to point to your AWS credentials.)</p>
+<pre><code class="lang-shell">cat &gt;main.tf &lt;&lt;EOF
+provider &quot;aws&quot; {
+    region = &quot;us-west-1&quot;
+}
+resource &quot;aws_instance&quot; &quot;web&quot; {
+  instance_type = &quot;t2.micro&quot;
+  ami = &quot;ami-09b4b74c&quot;
+}
+resource &quot;aws_autoscaling_group&quot; &quot;my_asg&quot; {
+  availability_zones        = [&quot;us-west-1a&quot;]
+  name                      = &quot;my_asg&quot;
+  max_size                  = 5
+  min_size                  = 1
+  health_check_grace_period = 300
+  health_check_type         = &quot;ELB&quot;
+  desired_capacity          = 4
+  force_delete              = true
+  launch_configuration      = &quot;my_web_config&quot;
+}
+resource &quot;aws_launch_configuration&quot; &quot;my_web_config&quot; {
+    name = &quot;my_web_config&quot;
+    image_id = &quot;ami-09b4b74c&quot;
+    instance_type = &quot;t2.micro&quot;
+}
+EOF
+</code></pre>
+<p>Then ask Terraform to calculate what changes it will make and store the output in <code>plan.binary</code>.</p>
+<pre><code class="lang-shell">terraform plan --out tfplan.binary
+</code></pre>
+<h3 id="2-convert-the-terraform-plan-into-json">2. Convert the Terraform plan into JSON</h3>
+<p>Use the <code>tfjson</code> tool to convert the Terraform plan into JSON so that OPA can read the plan.</p>
+<pre><code class="lang-shell">tfjson tfplan.binary &gt; tfplan.json
+</code></pre>
+<p>Here is the expected contents of <code>tfplan.json</code>.</p>
+<pre><code>{
+    &quot;aws_autoscaling_group.my_asg&quot;: {
+        &quot;arn&quot;: &quot;&quot;,
+        &quot;availability_zones.#&quot;: &quot;1&quot;,
+        &quot;availability_zones.3205754986&quot;: &quot;us-west-1a&quot;,
+        &quot;default_cooldown&quot;: &quot;&quot;,
+        &quot;desired_capacity&quot;: &quot;4&quot;,
+        &quot;destroy&quot;: false,
+        &quot;destroy_tainted&quot;: false,
+        &quot;force_delete&quot;: &quot;true&quot;,
+        &quot;health_check_grace_period&quot;: &quot;300&quot;,
+        &quot;health_check_type&quot;: &quot;ELB&quot;,
+        &quot;id&quot;: &quot;&quot;,
+        &quot;launch_configuration&quot;: &quot;my_web_config&quot;,
+        &quot;load_balancers.#&quot;: &quot;&quot;,
+        &quot;max_size&quot;: &quot;5&quot;,
+        &quot;metrics_granularity&quot;: &quot;1Minute&quot;,
+        &quot;min_size&quot;: &quot;1&quot;,
+        &quot;name&quot;: &quot;my_asg&quot;,
+        &quot;protect_from_scale_in&quot;: &quot;false&quot;,
+        &quot;vpc_zone_identifier.#&quot;: &quot;&quot;,
+        &quot;wait_for_capacity_timeout&quot;: &quot;10m&quot;
+    },
+    &quot;aws_instance.web&quot;: {
+        &quot;ami&quot;: &quot;ami-09b4b74c&quot;,
+        &quot;associate_public_ip_address&quot;: &quot;&quot;,
+        &quot;availability_zone&quot;: &quot;&quot;,
+        &quot;destroy&quot;: false,
+        &quot;destroy_tainted&quot;: false,
+        &quot;ebs_block_device.#&quot;: &quot;&quot;,
+        &quot;ephemeral_block_device.#&quot;: &quot;&quot;,
+        &quot;id&quot;: &quot;&quot;,
+        &quot;instance_state&quot;: &quot;&quot;,
+        &quot;instance_type&quot;: &quot;t2.micro&quot;,
+        &quot;ipv6_addresses.#&quot;: &quot;&quot;,
+        &quot;key_name&quot;: &quot;&quot;,
+        &quot;network_interface_id&quot;: &quot;&quot;,
+        &quot;placement_group&quot;: &quot;&quot;,
+        &quot;private_dns&quot;: &quot;&quot;,
+        &quot;private_ip&quot;: &quot;&quot;,
+        &quot;public_dns&quot;: &quot;&quot;,
+        &quot;public_ip&quot;: &quot;&quot;,
+        &quot;root_block_device.#&quot;: &quot;&quot;,
+        &quot;security_groups.#&quot;: &quot;&quot;,
+        &quot;source_dest_check&quot;: &quot;true&quot;,
+        &quot;subnet_id&quot;: &quot;&quot;,
+        &quot;tenancy&quot;: &quot;&quot;,
+        &quot;vpc_security_group_ids.#&quot;: &quot;&quot;
+    },
+    &quot;aws_launch_configuration.my_web_config&quot;: {
+        &quot;associate_public_ip_address&quot;: &quot;false&quot;,
+        &quot;destroy&quot;: false,
+        &quot;destroy_tainted&quot;: false,
+        &quot;ebs_block_device.#&quot;: &quot;&quot;,
+        &quot;ebs_optimized&quot;: &quot;&quot;,
+        &quot;enable_monitoring&quot;: &quot;true&quot;,
+        &quot;id&quot;: &quot;&quot;,
+        &quot;image_id&quot;: &quot;ami-09b4b74c&quot;,
+        &quot;instance_type&quot;: &quot;t2.micro&quot;,
+        &quot;key_name&quot;: &quot;&quot;,
+        &quot;name&quot;: &quot;my_web_config&quot;,
+        &quot;root_block_device.#&quot;: &quot;&quot;
+    },
+    &quot;destroy&quot;: false
+}
+</code></pre><h3 id="3-write-the-opa-policy-to-check-the-plan">3. Write the OPA policy to check the plan</h3>
+<p>The policy computes a score for a Terraform that combines</p>
+<ul>
+<li>The number of deletions of each resource type</li>
+<li>The number of creations of each resource type</li>
+<li>The number of modifications of each resource type</li>
+</ul>
+<p>The policy authorizes the plan when the score for the plan is below a threshold
+and there are no changes made to any IAM resources.
+(For simplicity, the threshold in this tutorial is the same for everyone, but in
+practice you would vary the threshold depending on the user.)</p>
+<pre><code class="lang-shell">cat &gt;terraform.rego &lt;&lt;EOF
+package terraform.analysis
+
+import input as tfplan
+
+########################
+# Parameters for Policy
+########################
+
+# acceptable score for automated authorization
+blast_radius = 30
+
+# weights assigned for each operation on each resource-type
+weights = {
+    &quot;aws_autoscaling_group&quot;: {&quot;delete&quot;: 100, &quot;create&quot;: 10, &quot;modify&quot;: 1},
+    &quot;aws_instance&quot;: {&quot;delete&quot;: 10, &quot;create&quot;: 1, &quot;modify&quot;: 1}
+}
+
+# Consider exactly these resource types in calculations
+resource_types = {&quot;aws_autoscaling_group&quot;, &quot;aws_instance&quot;, &quot;aws_iam&quot;, &quot;aws_launch_configuration&quot;}
+
+#########
+# Policy
+#########
+
+# Authorization holds if score for the plan is acceptable and no changes are made to IAM
+default authz = false
+authz {
+    score &lt; blast_radius
+    not touches_iam
+}
+
+# Compute the score for a Terraform plan as the weighted sum of deletions, creations, modifications
+score = s {
+    all = [ x | 
+            weights[resource_type] = crud;
+            del = crud[&quot;delete&quot;] * num_deletes[resource_type];
+            new = crud[&quot;create&quot;] * num_creates[resource_type];
+            mod = crud[&quot;modify&quot;] * num_modifies[resource_type];
+            x1 = del + new
+            x = x1 + mod
+    ]
+    sum(all, s)
+}
+
+# Whether there is any change to IAM
+touches_iam {
+    all = instance_names[&quot;aws_iam&quot;]
+    count(all, c)
+    c &gt; 0
+}
+
+####################
+# Terraform Library
+####################
+
+# list of all resources of a given type
+instance_names[resource_type] = all {
+    resource_types[resource_type]
+    all = [name |
+        tfplan[name] = _
+        startswith(name, resource_type)
+    ]
+}
+
+# number of deletions of resources of a given type
+num_deletes[resource_type] = num {
+    resource_types[resource_type]
+    all = instance_names[resource_type]
+    deletions = [name | all[_] = name; tfplan[name][&quot;destroy&quot;] = true]
+    count(deletions, num)
+}
+
+# number of creations of resources of a given type
+num_creates[resource_type] = num {
+    resource_types[resource_type]
+    all = instance_names[resource_type]
+    creates = [name | all[_] = name; tfplan[name][&quot;id&quot;] = &quot;&quot;]
+    count(creates, num)
+}
+
+# number of modifications to resources of a given type
+num_modifies[resource_type] = num {
+    resource_types[resource_type]
+    all = instance_names[resource_type]
+    modifies = [name | all[_] = name; obj = tfplan[name]; obj[&quot;destroy&quot;] = false; not obj[&quot;id&quot;]]
+    count(modifies, num)
+}
+EOF
+</code></pre>
+<h3 id="4-evaluate-the-opa-policy-on-the-terraform-plan">4. Evaluate the OPA policy on the Terraform plan</h3>
+<p>To evaluate the policy against that plan, you hand OPA the policy, the Terraform plan as input, and
+ask it to evaluate <code>data.terraform.analysis.authz</code>.</p>
+<pre><code class="lang-shell">opa run terraform.rego repl.input:tfplan.json -e &quot;data.terraform.analysis.authz&quot;
+</code></pre>
+<p>If you&apos;re curious, you can ask for the score that the policy used to make the authorization decision.
+In our example, it is 11 (10 for the creation of the auto-scaling group and 1 for the creation of the server).</p>
+<pre><code class="lang-shell">opa run terraform.rego repl.input:tfplan.json -e &quot;data.terraform.analysis.score&quot;
+</code></pre>
+<p>If as suggested in the previous step, you want to modify your policy to make an authorization decision
+based on both the user and the Terraform plan, the input you would give to OPA would take the form
+<code>{&quot;user&quot;: &lt;user&gt;, &quot;plan&quot;: &lt;plan&gt;}</code>, and your policy would reference the user with <code>input.user</code> and
+the plan with <code>input.plan</code>.  You could even go so far as to provide the Terraform state file and the AWS
+EC2 data to OPA and write policy using all of that context.</p>
+<h3 id="5-create-a-large-terraform-plan-and-evaluate-it">5. Create a Large Terraform plan and Evaluate it</h3>
+<p>Create a Terraform plan that creates enough resources to exceed the blast-radius permitted
+by policy.  </p>
+<pre><code class="lang-shell">cat &gt;main.tf &lt;&lt;EOF
+provider &quot;aws&quot; {
+    region = &quot;us-west-1&quot;
+}
+resource &quot;aws_instance&quot; &quot;web&quot; {
+  instance_type = &quot;t2.micro&quot;
+  ami = &quot;ami-09b4b74c&quot;
+}
+resource &quot;aws_autoscaling_group&quot; &quot;my_asg&quot; {
+  availability_zones        = [&quot;us-west-1a&quot;]
+  name                      = &quot;my_asg&quot;
+  max_size                  = 5
+  min_size                  = 1
+  health_check_grace_period = 300
+  health_check_type         = &quot;ELB&quot;
+  desired_capacity          = 4
+  force_delete              = true
+  launch_configuration      = &quot;my_web_config&quot;
+}
+resource &quot;aws_launch_configuration&quot; &quot;my_web_config&quot; {
+    name = &quot;my_web_config&quot;
+    image_id = &quot;ami-09b4b74c&quot;
+    instance_type = &quot;t2.micro&quot;
+}
+resource &quot;aws_autoscaling_group&quot; &quot;my_asg2&quot; {
+  availability_zones        = [&quot;us-west-2a&quot;]
+  name                      = &quot;my_asg2&quot;
+  max_size                  = 6
+  min_size                  = 1
+  health_check_grace_period = 300
+  health_check_type         = &quot;ELB&quot;
+  desired_capacity          = 4
+  force_delete              = true
+  launch_configuration      = &quot;my_web_config&quot;
+}
+resource &quot;aws_autoscaling_group&quot; &quot;my_asg3&quot; {
+  availability_zones        = [&quot;us-west-2b&quot;]
+  name                      = &quot;my_asg3&quot;
+  max_size                  = 7
+  min_size                  = 1
+  health_check_grace_period = 300
+  health_check_type         = &quot;ELB&quot;
+  desired_capacity          = 4
+  force_delete              = true
+  launch_configuration      = &quot;my_web_config&quot;
+}
+EOF
+</code></pre>
+<p>Generate the Terraform plan and convert it to JSON.</p>
+<pre><code class="lang-shell">terraform plan --out tfplan_large.binary
+tfjson tfplan_large.binary &gt; tfplan_large.json
+</code></pre>
+<p>Evaluate the policy to see that it fails the policy tests and check the score.</p>
+<pre><code class="lang-shell">opa run terraform.rego repl.input:tfplan_large.json -e &quot;data.terraform.analysis.authz&quot;
+opa run terraform.rego repl.input:tfplan_large.json -e &quot;data.terraform.analysis.score&quot;
+</code></pre>
+<h3 id="6-optional-run-opa-as-a-daemon-and-evaluate-policy">6. (Optional) Run OPA as a daemon and evaluate policy</h3>
+<p>In addition to running OPA from the command-line, you can run it as a daemon loaded with the Terraform policy and
+then interact with it using its HTTP API.  First, start the daemon:</p>
+<pre><code class="lang-shell">opa run -s terraform.rego
+</code></pre>
+<p>Then in a separate terminal, use OPA&apos;s HTTP API to evaluate the policy against the two Terraform plans.</p>
+<pre><code class="lang-shell">curl localhost:8181/v0/data/terraform/analysis/authz -d @tfplan.json
+curl localhost:8181/v0/data/terraform/analysis/authz -d @tfplan_large.json
+</code></pre>
+<h2 id="wrap-up">Wrap Up</h2>
+<p>Congratulations for finishing the tutorial!</p>
+<p>You learned a number of things about Terraform Testing with OPA:</p>
+<ul>
+<li>OPA gives you fine-grained policy control over Terraform plans.</li>
+<li>You can use data other than the plan itself (e.g. the user) when writing authorization policies.</li>
+</ul>
+<p>Keep in mind that it&apos;s up to you to decide how to use OPA&apos;s Terraform tests and authorization decision.  Here are some ideas.</p>
+<ul>
+<li>Add it as part of your Terraform wrapper to implement unit tests on Terraform plans</li>
+<li>Use it to automatically approve run-of-the-mill Terraform changes to reduce the burden of peer-review</li>
+<li>Embed it into your deployment system to catch problems that arise when applying Terraform to production after applying it to staging</li>
+</ul>
 
                                 
                                 </section>
@@ -1738,10 +2019,10 @@ into OPA via the filesystem or well-defined APIs.</p>
 
             
                 
-                
-                <a href="./#what-is-policy" class="navigation navigation-next navigation-unique" aria-label="Next page: What is Policy?">
-                    <i class="fa fa-angle-right"></i>
+                <a href="kubernetes-admission-control.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Kubernetes Admission Control">
+                    <i class="fa fa-angle-left"></i>
                 </a>
+                
                 
             
         
@@ -1750,7 +2031,7 @@ into OPA via the filesystem or well-defined APIs.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Introduction","level":"1.1","depth":1,"next":{"title":"What is Policy?","level":"1.1.1","depth":2,"anchor":"#what-is-policy","path":"README.md","ref":"README.md#what-is-policy","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"README.md","mtime":"2017-08-29T22:53:10.592Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-08-29T22:54:09.361Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Terraform Testing","level":"2.6","depth":1,"previous":{"title":"Kubernetes Admission Control","level":"2.5","depth":1,"path":"kubernetes-admission-control.md","ref":"kubernetes-admission-control.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"terraform.md","mtime":"2017-08-29T22:53:10.622Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-08-29T22:54:09.361Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

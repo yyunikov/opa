@@ -1372,6 +1372,19 @@
     
         <li class="chapter " data-level="1.5.8" data-path="rest-api.html">
             
+                <a href="rest-api.html#diagnostics">
+            
+                    
+                    Diagnostics
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.9" data-path="rest-api.html">
+            
                 <a href="rest-api.html#watches">
             
                     
@@ -1601,6 +1614,19 @@
             
         </li>
     
+        <li class="chapter " data-level="2.6" data-path="terraform.html">
+            
+                <a href="terraform.html">
+            
+                    
+                    Terraform Testing
+            
+                </a>
+            
+
+            
+        </li>
+    
 
     
 
@@ -1664,206 +1690,9 @@
 <pre><code class="lang-json">{
   <span class="hljs-string">&quot;result&quot;</span>: [
     {
-      <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;example1&quot;</span>,
-      <span class="hljs-string">&quot;module&quot;</span>: {
-        <span class="hljs-string">&quot;package&quot;</span>: {
-          <span class="hljs-string">&quot;path&quot;</span>: [
-            {
-              <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-              <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;data&quot;</span>
-            },
-            {
-              <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-              <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;opa&quot;</span>
-            },
-            {
-              <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-              <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;examples&quot;</span>
-            }
-          ]
-        },
-        <span class="hljs-string">&quot;rules&quot;</span>: [
-          {
-            <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;public_servers&quot;</span>,
-            <span class="hljs-string">&quot;key&quot;</span>: {
-              <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-              <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;server&quot;</span>
-            },
-            <span class="hljs-string">&quot;body&quot;</span>: [
-              {
-                <span class="hljs-string">&quot;index&quot;</span>: <span class="hljs-number">0</span>,
-                <span class="hljs-string">&quot;terms&quot;</span>: [
-                  {
-                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                    <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;eq&quot;</span>
-                  },
-                  {
-                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                    <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;server&quot;</span>
-                  },
-                  {
-                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;ref&quot;</span>,
-                    <span class="hljs-string">&quot;value&quot;</span>: [
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;data&quot;</span>
-                      },
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;servers&quot;</span>
-                      },
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;$0&quot;</span>
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                <span class="hljs-string">&quot;index&quot;</span>: <span class="hljs-number">1</span>,
-                <span class="hljs-string">&quot;terms&quot;</span>: [
-                  {
-                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                    <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;eq&quot;</span>
-                  },
-                  {
-                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;ref&quot;</span>,
-                    <span class="hljs-string">&quot;value&quot;</span>: [
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;server&quot;</span>
-                      },
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;ports&quot;</span>
-                      },
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;$1&quot;</span>
-                      }
-                    ]
-                  },
-                  {
-                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;ref&quot;</span>,
-                    <span class="hljs-string">&quot;value&quot;</span>: [
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;data&quot;</span>
-                      },
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;ports&quot;</span>
-                      },
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;k&quot;</span>
-                      },
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;id&quot;</span>
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                <span class="hljs-string">&quot;index&quot;</span>: <span class="hljs-number">2</span>,
-                <span class="hljs-string">&quot;terms&quot;</span>: [
-                  {
-                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                    <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;eq&quot;</span>
-                  },
-                  {
-                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;ref&quot;</span>,
-                    <span class="hljs-string">&quot;value&quot;</span>: [
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;data&quot;</span>
-                      },
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;ports&quot;</span>
-                      },
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;k&quot;</span>
-                      },
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;networks&quot;</span>
-                      },
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;$2&quot;</span>
-                      }
-                    ]
-                  },
-                  {
-                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;ref&quot;</span>,
-                    <span class="hljs-string">&quot;value&quot;</span>: [
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;data&quot;</span>
-                      },
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;networks&quot;</span>
-                      },
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;m&quot;</span>
-                      },
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;id&quot;</span>
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                <span class="hljs-string">&quot;index&quot;</span>: <span class="hljs-number">3</span>,
-                <span class="hljs-string">&quot;terms&quot;</span>: [
-                  {
-                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                    <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;eq&quot;</span>
-                  },
-                  {
-                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;ref&quot;</span>,
-                    <span class="hljs-string">&quot;value&quot;</span>: [
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;data&quot;</span>
-                      },
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;networks&quot;</span>
-                      },
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;m&quot;</span>
-                      },
-                      {
-                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;public&quot;</span>
-                      }
-                    ]
-                  },
-                  {
-                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
-                    <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-literal">true</span>
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
       <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;example2&quot;</span>,
-      <span class="hljs-string">&quot;module&quot;</span>: {
+      <span class="hljs-string">&quot;raw&quot;</span>: <span class="hljs-string">&quot;package opa.examples\n\nimport data.servers\n\nviolations[server] {\n\tserver = servers[_]\n\tserver.protocols[_] = \&quot;http\&quot;\n\tpublic_servers[server]\n}\n&quot;</span>,
+      <span class="hljs-string">&quot;ast&quot;</span>: {
         <span class="hljs-string">&quot;package&quot;</span>: {
           <span class="hljs-string">&quot;path&quot;</span>: [
             {
@@ -1882,17 +1711,19 @@
         },
         <span class="hljs-string">&quot;rules&quot;</span>: [
           {
-            <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;violations&quot;</span>,
-            <span class="hljs-string">&quot;key&quot;</span>: {
-              <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-              <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;server&quot;</span>
+            <span class="hljs-string">&quot;head&quot;</span>: {
+              <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;violations&quot;</span>,
+              <span class="hljs-string">&quot;key&quot;</span>: {
+                <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;server&quot;</span>
+              }
             },
             <span class="hljs-string">&quot;body&quot;</span>: [
               {
                 <span class="hljs-string">&quot;index&quot;</span>: <span class="hljs-number">0</span>,
                 <span class="hljs-string">&quot;terms&quot;</span>: [
                   {
-                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
                     <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;eq&quot;</span>
                   },
                   {
@@ -1922,7 +1753,7 @@
                 <span class="hljs-string">&quot;index&quot;</span>: <span class="hljs-number">1</span>,
                 <span class="hljs-string">&quot;terms&quot;</span>: [
                   {
-                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
                     <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;eq&quot;</span>
                   },
                   {
@@ -1980,6 +1811,207 @@
           }
         ]
       }
+    },
+    {
+      <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;example1&quot;</span>,
+      <span class="hljs-string">&quot;raw&quot;</span>: <span class="hljs-string">&quot;package opa.examples\n\nimport data.servers\nimport data.networks\nimport data.ports\n\npublic_servers[server] {\n\tserver = servers[_]\n\tserver.ports[_] = ports[k].id\n\tports[k].networks[_] = networks[m].id\n\tnetworks[m].public = true\n}\n&quot;</span>,
+      <span class="hljs-string">&quot;ast&quot;</span>: {
+        <span class="hljs-string">&quot;package&quot;</span>: {
+          <span class="hljs-string">&quot;path&quot;</span>: [
+            {
+              <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+              <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;data&quot;</span>
+            },
+            {
+              <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+              <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;opa&quot;</span>
+            },
+            {
+              <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+              <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;examples&quot;</span>
+            }
+          ]
+        },
+        <span class="hljs-string">&quot;rules&quot;</span>: [
+          {
+            <span class="hljs-string">&quot;head&quot;</span>: {
+              <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;public_servers&quot;</span>,
+              <span class="hljs-string">&quot;key&quot;</span>: {
+                <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;server&quot;</span>
+              }
+            },
+            <span class="hljs-string">&quot;body&quot;</span>: [
+              {
+                <span class="hljs-string">&quot;index&quot;</span>: <span class="hljs-number">0</span>,
+                <span class="hljs-string">&quot;terms&quot;</span>: [
+                  {
+                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                    <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;eq&quot;</span>
+                  },
+                  {
+                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                    <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;server&quot;</span>
+                  },
+                  {
+                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;ref&quot;</span>,
+                    <span class="hljs-string">&quot;value&quot;</span>: [
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;data&quot;</span>
+                      },
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;servers&quot;</span>
+                      },
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;$0&quot;</span>
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                <span class="hljs-string">&quot;index&quot;</span>: <span class="hljs-number">1</span>,
+                <span class="hljs-string">&quot;terms&quot;</span>: [
+                  {
+                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                    <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;eq&quot;</span>
+                  },
+                  {
+                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;ref&quot;</span>,
+                    <span class="hljs-string">&quot;value&quot;</span>: [
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;server&quot;</span>
+                      },
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;ports&quot;</span>
+                      },
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;$1&quot;</span>
+                      }
+                    ]
+                  },
+                  {
+                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;ref&quot;</span>,
+                    <span class="hljs-string">&quot;value&quot;</span>: [
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;data&quot;</span>
+                      },
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;ports&quot;</span>
+                      },
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;k&quot;</span>
+                      },
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;id&quot;</span>
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                <span class="hljs-string">&quot;index&quot;</span>: <span class="hljs-number">2</span>,
+                <span class="hljs-string">&quot;terms&quot;</span>: [
+                  {
+                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                    <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;eq&quot;</span>
+                  },
+                  {
+                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;ref&quot;</span>,
+                    <span class="hljs-string">&quot;value&quot;</span>: [
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;data&quot;</span>
+                      },
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;ports&quot;</span>
+                      },
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;k&quot;</span>
+                      },
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;networks&quot;</span>
+                      },
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;$2&quot;</span>
+                      }
+                    ]
+                  },
+                  {
+                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;ref&quot;</span>,
+                    <span class="hljs-string">&quot;value&quot;</span>: [
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;data&quot;</span>
+                      },
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;networks&quot;</span>
+                      },
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;m&quot;</span>
+                      },
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;id&quot;</span>
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                <span class="hljs-string">&quot;index&quot;</span>: <span class="hljs-number">3</span>,
+                <span class="hljs-string">&quot;terms&quot;</span>: [
+                  {
+                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                    <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;eq&quot;</span>
+                  },
+                  {
+                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;ref&quot;</span>,
+                    <span class="hljs-string">&quot;value&quot;</span>: [
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;data&quot;</span>
+                      },
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;networks&quot;</span>
+                      },
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;m&quot;</span>
+                      },
+                      {
+                        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+                        <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;public&quot;</span>
+                      }
+                    ]
+                  },
+                  {
+                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
+                    <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-literal">true</span>
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
     }
   ]
 }
@@ -2002,7 +2034,8 @@
 <pre><code class="lang-json">{
   <span class="hljs-string">&quot;result&quot;</span>: {
     <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;example1&quot;</span>,
-    <span class="hljs-string">&quot;module&quot;</span>: {
+    <span class="hljs-string">&quot;raw&quot;</span>: <span class="hljs-string">&quot;package opa.examples\n\nimport data.servers\nimport data.networks\nimport data.ports\n\npublic_servers[server] {\n\tserver = servers[_]\n\tserver.ports[_] = ports[k].id\n\tports[k].networks[_] = networks[m].id\n\tnetworks[m].public = true\n}\n&quot;</span>,
+    <span class="hljs-string">&quot;ast&quot;</span>: {
       <span class="hljs-string">&quot;package&quot;</span>: {
         <span class="hljs-string">&quot;path&quot;</span>: [
           {
@@ -2021,17 +2054,19 @@
       },
       <span class="hljs-string">&quot;rules&quot;</span>: [
         {
-          <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;public_servers&quot;</span>,
-          <span class="hljs-string">&quot;key&quot;</span>: {
-            <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-            <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;server&quot;</span>
+          <span class="hljs-string">&quot;head&quot;</span>: {
+            <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;public_servers&quot;</span>,
+            <span class="hljs-string">&quot;key&quot;</span>: {
+              <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+              <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;server&quot;</span>
+            }
           },
           <span class="hljs-string">&quot;body&quot;</span>: [
             {
               <span class="hljs-string">&quot;index&quot;</span>: <span class="hljs-number">0</span>,
               <span class="hljs-string">&quot;terms&quot;</span>: [
                 {
-                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
                   <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;eq&quot;</span>
                 },
                 {
@@ -2061,7 +2096,7 @@
               <span class="hljs-string">&quot;index&quot;</span>: <span class="hljs-number">1</span>,
               <span class="hljs-string">&quot;terms&quot;</span>: [
                 {
-                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
                   <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;eq&quot;</span>
                 },
                 {
@@ -2108,7 +2143,7 @@
               <span class="hljs-string">&quot;index&quot;</span>: <span class="hljs-number">2</span>,
               <span class="hljs-string">&quot;terms&quot;</span>: [
                 {
-                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
                   <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;eq&quot;</span>
                 },
                 {
@@ -2163,7 +2198,7 @@
               <span class="hljs-string">&quot;index&quot;</span>: <span class="hljs-number">3</span>,
               <span class="hljs-string">&quot;terms&quot;</span>: [
                 {
-                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
+                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
                   <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;eq&quot;</span>
                 },
                 {
@@ -2200,30 +2235,9 @@
   }
 }
 </code></pre>
-<h4 id="example-request-for-source">Example Request For Source</h4>
-<pre><code class="lang-http"><span class="hljs-keyword">GET</span> <span class="hljs-string">/v1/policies/example1?source=true</span> HTTP/1.1
-</code></pre>
-<h4 id="example-response-for-source">Example Response For Source</h4>
-<pre><code class="lang-http">HTTP/1.1 <span class="hljs-number">200</span> OK
-<span class="hljs-attribute">Content-Type</span>: text/plain; charset=utf-8
-</code></pre>
-<pre><code class="lang-ruby">package opa.examples
-
-import data.servers
-import data.networks
-import data.ports
-
-public_servers[server] {
-    server = servers[<span class="hljs-number">_</span>]
-    server.ports[<span class="hljs-number">_</span>] = ports[k].id
-    ports[k].networks[<span class="hljs-number">_</span>] = networks[m].id
-    networks[m].public = <span class="hljs-keyword">true</span>
-}
-</code></pre>
 <h4 id="query-parameters">Query Parameters</h4>
 <ul>
-<li><strong>source</strong> - If <code>true</code> the response will contain the raw source instead of
-the AST.</li>
+<li><strong>pretty</strong> - If parameter is <code>true</code>, response will formatted for humans.</li>
 </ul>
 <h4 id="status-codes">Status Codes</h4>
 <ul>
@@ -2261,207 +2275,13 @@ public_servers[server] {
 <pre><code class="lang-http">HTTP/1.1 <span class="hljs-number">200</span> OK
 <span class="hljs-attribute">Content-Type</span>: application/json
 </code></pre>
-<pre><code class="lang-json">{
-  <span class="hljs-string">&quot;result&quot;</span>: {
-    <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;example1&quot;</span>,
-    <span class="hljs-string">&quot;module&quot;</span>: {
-      <span class="hljs-string">&quot;package&quot;</span>: {
-        <span class="hljs-string">&quot;path&quot;</span>: [
-          {
-            <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-            <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;data&quot;</span>
-          },
-          {
-            <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-            <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;opa&quot;</span>
-          },
-          {
-            <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-            <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;examples&quot;</span>
-          }
-        ]
-      },
-      <span class="hljs-string">&quot;rules&quot;</span>: [
-        {
-          <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;public_servers&quot;</span>,
-          <span class="hljs-string">&quot;key&quot;</span>: {
-            <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-            <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;server&quot;</span>
-          },
-          <span class="hljs-string">&quot;body&quot;</span>: [
-            {
-              <span class="hljs-string">&quot;index&quot;</span>: <span class="hljs-number">0</span>,
-              <span class="hljs-string">&quot;terms&quot;</span>: [
-                {
-                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                  <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;eq&quot;</span>
-                },
-                {
-                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                  <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;server&quot;</span>
-                },
-                {
-                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;ref&quot;</span>,
-                  <span class="hljs-string">&quot;value&quot;</span>: [
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;data&quot;</span>
-                    },
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;servers&quot;</span>
-                    },
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;$0&quot;</span>
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              <span class="hljs-string">&quot;index&quot;</span>: <span class="hljs-number">1</span>,
-              <span class="hljs-string">&quot;terms&quot;</span>: [
-                {
-                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                  <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;eq&quot;</span>
-                },
-                {
-                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;ref&quot;</span>,
-                  <span class="hljs-string">&quot;value&quot;</span>: [
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;server&quot;</span>
-                    },
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;ports&quot;</span>
-                    },
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;$1&quot;</span>
-                    }
-                  ]
-                },
-                {
-                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;ref&quot;</span>,
-                  <span class="hljs-string">&quot;value&quot;</span>: [
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;data&quot;</span>
-                    },
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;ports&quot;</span>
-                    },
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;k&quot;</span>
-                    },
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;id&quot;</span>
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              <span class="hljs-string">&quot;index&quot;</span>: <span class="hljs-number">2</span>,
-              <span class="hljs-string">&quot;terms&quot;</span>: [
-                {
-                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                  <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;eq&quot;</span>
-                },
-                {
-                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;ref&quot;</span>,
-                  <span class="hljs-string">&quot;value&quot;</span>: [
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;data&quot;</span>
-                    },
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;ports&quot;</span>
-                    },
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;k&quot;</span>
-                    },
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;networks&quot;</span>
-                    },
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;$2&quot;</span>
-                    }
-                  ]
-                },
-                {
-                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;ref&quot;</span>,
-                  <span class="hljs-string">&quot;value&quot;</span>: [
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;data&quot;</span>
-                    },
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;networks&quot;</span>
-                    },
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;m&quot;</span>
-                    },
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;id&quot;</span>
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              <span class="hljs-string">&quot;index&quot;</span>: <span class="hljs-number">3</span>,
-              <span class="hljs-string">&quot;terms&quot;</span>: [
-                {
-                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                  <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;eq&quot;</span>
-                },
-                {
-                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;ref&quot;</span>,
-                  <span class="hljs-string">&quot;value&quot;</span>: [
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;data&quot;</span>
-                    },
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;networks&quot;</span>
-                    },
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;var&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;m&quot;</span>
-                    },
-                    {
-                      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-                      <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;public&quot;</span>
-                    }
-                  ]
-                },
-                {
-                  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>,
-                  <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-literal">true</span>
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  }
-}
+<pre><code class="lang-json">{}
 </code></pre>
+<h3 id="query-parameters">Query Parameters</h3>
+<ul>
+<li><strong>pretty</strong> - If parameter is <code>true</code>, response will formatted for humans.</li>
+<li><strong>metrics</strong> - Return compiler performance metrics in addition to result. See <a href="#performance-metrics">Performance Metrics</a> for more detail.</li>
+</ul>
 <h4 id="status-codes">Status Codes</h4>
 <ul>
 <li><strong>200</strong> - no error</li>
@@ -2476,8 +2296,16 @@ public_servers[server] {
 <pre><code class="lang-http"><span class="hljs-keyword">DELETE</span> <span class="hljs-string">/v1/policies/example2</span> HTTP/1.1
 </code></pre>
 <h4 id="example-response">Example Response</h4>
-<pre><code class="lang-http">HTTP/1.1 <span class="hljs-number">204</span> No Content
+<pre><code class="lang-http">HTTP/1.1 <span class="hljs-number">200</span> OK
+<span class="hljs-attribute">Content-Type</span>: application/json
 </code></pre>
+<pre><code class="lang-json">{}
+</code></pre>
+<h4 id="query-parameters">Query Parameters</h4>
+<ul>
+<li><strong>pretty</strong> - If parameter is <code>true</code>, response will formatted for humans.</li>
+<li><strong>metrics</strong> - Return compiler performance metrics in addition to result. See <a href="#performance-metrics">Performance Metrics</a> for more detail.</li>
+</ul>
 <h4 id="status-codes">Status Codes</h4>
 <ul>
 <li><strong>204</strong> - no content</li>
@@ -3157,6 +2985,8 @@ restarts, a <strong>Redo</strong> Trace Event is emitted.</p>
 <li><strong>timer_rego_query_parse_ns</strong>: time taken (in nanonseconds) to parse the query.</li>
 <li><strong>timer_rego_query_compile_ns</strong>: time taken (in nanonseconds) to compile the query.</li>
 <li><strong>timer_rego_query_eval_ns</strong>: time taken (in nanonseconds) to evaluate the query.</li>
+<li><strong>timer_rego_module_parse_ns</strong>: time taken (in nanoseconds) to parse the input policy module.</li>
+<li><strong>timer_rego_module_compile_ns</strong>: time taken (in nanoseconds) to compile the loaded policy modules.</li>
 </ul>
 <h2 id="diagnostics"><a name="diagnostics"></a> Diagnostics</h2>
 <p>The OPA server has the capability to log and return diagnostics on past requests to the user. By default, the server will not log any diagnostics at all. In order to have the server start logging diagnostic information, the document located at <code>data.system.diagnostics.config</code> (henceforth referred to as the config) must be defined. The config must evaluate to an object, which must be structured as follows:</p>
@@ -3383,7 +3213,7 @@ config = {&quot;mode&quot;: &quot;on&quot;} {
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"REST API","level":"1.5","depth":1,"next":{"title":"Policy API","level":"1.5.1","depth":2,"anchor":"#policy-api","path":"rest-api.md","ref":"rest-api.md#policy-api","articles":[{"title":"List Policies","level":"1.5.1.1","depth":3,"anchor":"#list-policies","path":"rest-api.md","ref":"rest-api.md#list-policies","articles":[]},{"title":"Get a Policy","level":"1.5.1.2","depth":3,"anchor":"#get-a-policy","path":"rest-api.md","ref":"rest-api.md#get-a-policy","articles":[]},{"title":"Create or Update a Policy","level":"1.5.1.3","depth":3,"anchor":"#create-or-update-a-policy","path":"rest-api.md","ref":"rest-api.md#create-or-update-a-policy","articles":[]},{"title":"Delete a Policy","level":"1.5.1.4","depth":3,"anchor":"#delete-a-policy","path":"rest-api.md","ref":"rest-api.md#delete-a-policy","articles":[]}]},"previous":{"title":"Grammar","level":"1.4.3","depth":2,"anchor":"#grammar","path":"language-reference.md","ref":"language-reference.md#grammar","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"rest-api.md","mtime":"2017-08-18T01:41:01.990Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-08-18T01:42:00.457Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"REST API","level":"1.5","depth":1,"next":{"title":"Policy API","level":"1.5.1","depth":2,"anchor":"#policy-api","path":"rest-api.md","ref":"rest-api.md#policy-api","articles":[{"title":"List Policies","level":"1.5.1.1","depth":3,"anchor":"#list-policies","path":"rest-api.md","ref":"rest-api.md#list-policies","articles":[]},{"title":"Get a Policy","level":"1.5.1.2","depth":3,"anchor":"#get-a-policy","path":"rest-api.md","ref":"rest-api.md#get-a-policy","articles":[]},{"title":"Create or Update a Policy","level":"1.5.1.3","depth":3,"anchor":"#create-or-update-a-policy","path":"rest-api.md","ref":"rest-api.md#create-or-update-a-policy","articles":[]},{"title":"Delete a Policy","level":"1.5.1.4","depth":3,"anchor":"#delete-a-policy","path":"rest-api.md","ref":"rest-api.md#delete-a-policy","articles":[]}]},"previous":{"title":"Grammar","level":"1.4.3","depth":2,"anchor":"#grammar","path":"language-reference.md","ref":"language-reference.md#grammar","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"rest-api.md","mtime":"2017-08-29T22:53:10.592Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-08-29T22:54:09.361Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
