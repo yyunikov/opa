@@ -1806,8 +1806,7 @@ complex types.</p>
 <td><code>s3</code> is the intersection of <code>s1</code> and <code>s2</code>.</td>
 </tr>
 <tr>
-<td><span class="opa-keep-it-together">``s3 = s1</span></td>
-<td>s2``&lt;/span&gt;</td>
+<td><span class="opa-keep-it-together"><code>s3 = s1 | s2</code></span></td>
 <td>2</td>
 <td><code>s3</code> is the union of <code>s1</code> and <code>s2</code>.</td>
 </tr>
@@ -1829,9 +1828,9 @@ complex types.</p>
 </thead>
 <tbody>
 <tr>
-<td><span class="opa-keep-it-together"><code>concat(join, array_or_set, output)</code></span></td>
+<td><span class="opa-keep-it-together"><code>concat(delimiter, array_or_set, output)</code></span></td>
 <td>2</td>
-<td><code>output</code> is the result of concatenating the elements of <code>array_or_set</code> with the  string <code>join</code></td>
+<td><code>output</code> is the result of joining together the elements of <code>array_or_set</code> with the  string <code>delimiter</code></td>
 </tr>
 <tr>
 <td><span class="opa-keep-it-together"><code>contains(string, search)</code></span></td>
@@ -2045,11 +2044,9 @@ package         = &quot;package&quot; ref
 import          = &quot;import&quot; package [ &quot;as&quot; var ]
 policy          = { rule }
 rule            = [ &quot;default&quot; ] rule-head { rule-body }
-rule-head       = var [ &quot;[&quot; term &quot;]&quot; ] [ = term ]
+rule-head       = var [ &quot;(&quot; rule-args &quot;)&quot; ] [ &quot;[&quot; term &quot;]&quot; ] [ = term ]
+rule-args       = term { &quot;,&quot; term }
 rule-body       = [ else [ = term ] ] &quot;{&quot; query &quot;}&quot;
-function        = func-head func-body
-func-head       = var &quot;(&quot; [ arg-term { , arg-term } ] &quot;)&quot; = term
-func-body       = &quot;{&quot; instructions &quot;}&quot;
 query           = literal { &quot;;&quot; | [\r\n] literal }
 literal         = ( expr | &quot;not&quot; expr ) { with-modifier }
 with-modifier   = &quot;with&quot; term &quot;as&quot; term
@@ -2058,7 +2055,6 @@ expr            = term | expr-built-in | expr-infix
 expr-built-in   = var [ &quot;.&quot; var ] &quot;(&quot; [ term { , term } ] &quot;)&quot;
 expr-infix      = [ term &quot;=&quot; ] term infix-operator term
 term            = ref | var | scalar | array | object | set | array-compr
-arg-term        = scalar | var | arg-object | arg-array
 array-compr     = &quot;[&quot; term &quot;|&quot; rule-body &quot;]&quot;
 set-compr       = &quot;{&quot; term &quot;|&quot; rule-body &quot;}&quot;
 object-compr    = &quot;{&quot; object-item &quot;|&quot; rule-body &quot;}&quot;
@@ -2075,11 +2071,8 @@ scalar          = string | NUMBER | TRUE | FALSE | NULL
 string          = STRING | raw-string
 raw-string      = &quot;`&quot; { CHAR-&quot;`&quot; } &quot;`&quot;
 array           = &quot;[&quot; term { &quot;,&quot; term } &quot;]&quot;
-arg-array       = &quot;[&quot; arg-term { &quot;,&quot; arg-term } &quot;]&quot;
 object          = &quot;{&quot; object-item { &quot;,&quot; object-item } &quot;}&quot;
 object-item     = ( scalar | ref | var ) &quot;:&quot; term
-arg-object      = &quot;{&quot; arg-object-item { &quot;,&quot; arg-object-item } &quot;}&quot;
-arg-object-item = ( scalar | ref ) &quot;:&quot; arg-term
 set             = empty-set | non-empty-set
 non-empty-set   = &quot;{&quot; term { &quot;,&quot; term } &quot;}&quot;
 empty-set       = &quot;set(&quot; &quot;)&quot;
@@ -2139,7 +2132,7 @@ DIGIT  ASCII characters 0-9
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Language Reference","level":"1.4","depth":1,"next":{"title":"Built-in Functions","level":"1.4.1","depth":2,"anchor":"#built-in-functions","path":"language-reference.md","ref":"language-reference.md#built-in-functions","articles":[{"title":"Inequality","level":"1.4.1.1","depth":3,"anchor":"#inequality","path":"language-reference.md","ref":"language-reference.md#inequality","articles":[]},{"title":"Numbers","level":"1.4.1.2","depth":3,"anchor":"#numbers","path":"language-reference.md","ref":"language-reference.md#numbers","articles":[]},{"title":"Aggregates","level":"1.4.1.3","depth":3,"anchor":"#aggregates","path":"language-reference.md","ref":"language-reference.md#aggregates","articles":[]},{"title":"Sets","level":"1.4.1.4","depth":3,"anchor":"#sets","path":"language-reference.md","ref":"language-reference.md#sets","articles":[]},{"title":"Strings","level":"1.4.1.5","depth":3,"anchor":"#strings","path":"language-reference.md","ref":"language-reference.md#strings","articles":[]},{"title":"Types","level":"1.4.1.6","depth":3,"anchor":"#types","path":"language-reference.md","ref":"language-reference.md#types","articles":[]},{"title":"Encoding","level":"1.4.1.7","depth":3,"anchor":"#encoding","path":"language-reference.md","ref":"language-reference.md#encoding","articles":[]},{"title":"Tokens","level":"1.4.1.8","depth":3,"anchor":"#tokens","path":"language-reference.md","ref":"language-reference.md#tokens","articles":[]},{"title":"Time","level":"1.4.1.9","depth":3,"anchor":"#time","path":"language-reference.md","ref":"language-reference.md#time","articles":[]}]},"previous":{"title":"Example Data","level":"1.3.18","depth":2,"anchor":"#example-data","path":"how-do-i-write-policies.md","ref":"how-do-i-write-policies.md#example-data","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"language-reference.md","mtime":"2017-09-15T16:14:10.217Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-09-15T16:15:09.381Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Language Reference","level":"1.4","depth":1,"next":{"title":"Built-in Functions","level":"1.4.1","depth":2,"anchor":"#built-in-functions","path":"language-reference.md","ref":"language-reference.md#built-in-functions","articles":[{"title":"Inequality","level":"1.4.1.1","depth":3,"anchor":"#inequality","path":"language-reference.md","ref":"language-reference.md#inequality","articles":[]},{"title":"Numbers","level":"1.4.1.2","depth":3,"anchor":"#numbers","path":"language-reference.md","ref":"language-reference.md#numbers","articles":[]},{"title":"Aggregates","level":"1.4.1.3","depth":3,"anchor":"#aggregates","path":"language-reference.md","ref":"language-reference.md#aggregates","articles":[]},{"title":"Sets","level":"1.4.1.4","depth":3,"anchor":"#sets","path":"language-reference.md","ref":"language-reference.md#sets","articles":[]},{"title":"Strings","level":"1.4.1.5","depth":3,"anchor":"#strings","path":"language-reference.md","ref":"language-reference.md#strings","articles":[]},{"title":"Types","level":"1.4.1.6","depth":3,"anchor":"#types","path":"language-reference.md","ref":"language-reference.md#types","articles":[]},{"title":"Encoding","level":"1.4.1.7","depth":3,"anchor":"#encoding","path":"language-reference.md","ref":"language-reference.md#encoding","articles":[]},{"title":"Tokens","level":"1.4.1.8","depth":3,"anchor":"#tokens","path":"language-reference.md","ref":"language-reference.md#tokens","articles":[]},{"title":"Time","level":"1.4.1.9","depth":3,"anchor":"#time","path":"language-reference.md","ref":"language-reference.md#time","articles":[]}]},"previous":{"title":"Example Data","level":"1.3.18","depth":2,"anchor":"#example-data","path":"how-do-i-write-policies.md","ref":"how-do-i-write-policies.md#example-data","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"language-reference.md","mtime":"2017-10-10T16:36:01.302Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-10-10T16:37:16.867Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

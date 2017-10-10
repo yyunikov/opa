@@ -2274,8 +2274,8 @@ max_memory: eval_conflict_error: completely defined rules must produce exactly o
 undefined
 </code></pre>
 <p>In some cases, having an undefined result for a document is not desirable. In those cases, policies can use the <a href="#default">Default Keyword</a> to provide a fallback value.</p>
-<h2 id="user-functions"><a name="user-functions"></a> User Functions</h2>
-<p>Rego supports user defined functions that can be called with the same semantics as <a href="#built-ins">Built-in Functions</a>. User functions do not need to be imported, and can be accessed by their name preceded by their package name. They have access to both the <a href="how-does-opa-work.html#the-data-document">the data Document</a> and <a href="how-does-opa-work.html#the-input-document">the input Document</a>.</p>
+<h3 id="functions"><a name="functions"></a> Functions</h3>
+<p>Rego supports user-defined functions that can be called with the same semantics as <a href="#built-ins">Built-in Functions</a>. They have access to both the <a href="how-does-opa-work.html#the-data-document">the data Document</a> and <a href="how-does-opa-work.html#the-input-document">the input Document</a>.</p>
 <p>For example, the following function will return the result of trimming the spaces from a string and then splitting it by periods.</p>
 <pre><code class="lang-ruby">&gt; trim_and_split(s) = x {
 |     trim(s, <span class="hljs-string">&quot; &quot;</span>, t)
@@ -2289,9 +2289,7 @@ undefined
 | [<span class="hljs-string">&quot;foo&quot;</span>,<span class="hljs-string">&quot;bar&quot;</span>] |
 +---------------+
 </code></pre>
-<p>In general, functions may have an arbitrary number of inputs, but exactly one output. All function inputs must be either Scalars, <a href="#variables">Variables</a>, Arrays or Objects. The contents of Arrays and Objects passed to functions also must obey this restriction, applied recursively.</p>
-<p>It is worth noting that these restrictions only apply to the declared inputs of functions. When calling a function, any term that matches the declared terms may be passed. If the passed term has deeper components than the declared term, the deep parts will be folded into the appropriate variables in the declaration.</p>
-<p>As an example, suppose we have the user defined function below:</p>
+<p>Functions may have an arbitrary number of inputs, but exactly one output. Function arguments may be any kind of term. For example, suppose we have the following function:</p>
 <pre><code>foo([x, {&quot;bar&quot;: y}]) = z {
     z = {x: y}
 }
@@ -2336,9 +2334,10 @@ f(x) = true {
 | }
 |
 &gt; p([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>], out)
-p([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>], out)<span class="hljs-symbol">:</span> <span class="hljs-symbol">eval_conflict_error:</span> function <span class="hljs-string">&quot;repl.p&quot;</span> produces conflicting outputs
+p([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>], out)<span class="hljs-symbol">:</span> <span class="hljs-symbol">eval_conflict_error:</span> completely <span class="hljs-keyword">defined</span> rules must produce exactly one value
 </code></pre>
 <p>It is possible in Rego to define a function more than once, to achieve a conditional selection of which function to execute:</p>
+<p>Functions can be defined incrementally.</p>
 <pre><code class="lang-ruby">&gt; p(<span class="hljs-number">1</span>, x) = y {
 |     y = x
 | }
@@ -2370,7 +2369,7 @@ p([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span
 | }
 |
 &gt; p(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, y)
-p(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, y)<span class="hljs-symbol">:</span> <span class="hljs-symbol">eval_conflict_error:</span> function <span class="hljs-string">&quot;repl.p&quot;</span> produces conflicting outputs
+p(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, y)<span class="hljs-symbol">:</span> <span class="hljs-symbol">eval_conflict_error:</span> completely <span class="hljs-keyword">defined</span> rules must produce exactly one value
 </code></pre>
 <p>On the other hand, if a call matches no functions, then the result is undefined, and the query containing it will become unsatisfied.</p>
 <pre><code>&gt; p(x, 2) = y {
@@ -2385,8 +2384,7 @@ p(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, y)<spa
 +----+
 &gt; p(5, 3, y)
 false
-</code></pre><p>For a formal definition of the function syntax (as well as formal definitions for Array, Object and Scalar), see the <a href="language-reference.html#grammar">Language Reference</a> document.</p>
-<h2 id="negation"><a name="negation"></a> Negation</h2>
+</code></pre><h2 id="negation"><a name="negation"></a> Negation</h2>
 <p>To generate the content of a <a href="how-does-opa-work.html#virtual-documents">Virtual Document</a>, OPA attempts to bind variables in the body of the rule such that all expressions in the rule evaluate to True.</p>
 <p>This generates the correct result when the expressions represent assertions about what states should exist in the data stored in OPA. In some cases, you want to express that certain states <em>should not</em> exist in the data stored in OPA. In these cases, negation must be used.</p>
 <p>For safety, a variable appearing in a negated expression must also appear in another non-negated equality expression in the rule.</p>
@@ -2715,7 +2713,7 @@ containers = [
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"How Do I Write Policies?","level":"1.3","depth":1,"next":{"title":"What is Rego?","level":"1.3.1","depth":2,"anchor":"#what-is-rego","path":"how-do-i-write-policies.md","ref":"how-do-i-write-policies.md#what-is-rego","articles":[]},"previous":{"title":"Future Features","level":"1.2.5","depth":2,"anchor":"#future-features","path":"how-does-opa-work.md","ref":"how-does-opa-work.md#future-features","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"how-do-i-write-policies.md","mtime":"2017-09-15T16:14:10.207Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-09-15T16:15:09.381Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"How Do I Write Policies?","level":"1.3","depth":1,"next":{"title":"What is Rego?","level":"1.3.1","depth":2,"anchor":"#what-is-rego","path":"how-do-i-write-policies.md","ref":"how-do-i-write-policies.md#what-is-rego","articles":[]},"previous":{"title":"Future Features","level":"1.2.5","depth":2,"anchor":"#future-features","path":"how-does-opa-work.md","ref":"how-does-opa-work.md#future-features","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"how-do-i-write-policies.md","mtime":"2017-10-10T16:36:01.302Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-10-10T16:37:16.867Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
