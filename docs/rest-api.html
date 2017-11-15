@@ -2556,7 +2556,7 @@ It is not complete, as further changes to <code>/data/servers</code> would cause
 <ul>
 <li><strong>input</strong> - Provide an input document. Format is a JSON value that will be used as the value for the input document.</li>
 <li><strong>pretty</strong> - If parameter is <code>true</code>, response will formatted for humans.</li>
-<li><strong>explain</strong> - Return query explanation in addition to result. Values: <strong>full</strong>, <strong>truth</strong>.</li>
+<li><strong>explain</strong> - Return query explanation in addition to result. Values: <strong>full</strong>.</li>
 <li><strong>metrics</strong> - Return query performance metrics in addition to result. See <a href="#performance-metrics">Performance Metrics</a> for more detail.</li>
 <li><strong>watch</strong> - Set a watch on the data reference if the parameter is present. See <a href="#watches">Watches</a> for more detail.</li>
 </ul>
@@ -2630,7 +2630,7 @@ allow_request { flag = <span class="hljs-keyword">true</span> }
 <h4 id="query-parameters">Query Parameters</h4>
 <ul>
 <li><strong>pretty</strong> - If parameter is <code>true</code>, response will formatted for humans.</li>
-<li><strong>explain</strong> - Return query explanation in addition to result. Values: <strong>full</strong>, <strong>truth</strong>.</li>
+<li><strong>explain</strong> - Return query explanation in addition to result. Values: <strong>full</strong>.</li>
 <li><strong>metrics</strong> - Return query performance metrics in addition to result. See <a href="#performance-metrics">Performance Metrics</a> for more detail.</li>
 </ul>
 <h4 id="status-codes">Status Codes</h4>
@@ -2816,7 +2816,7 @@ Content-Type: application/json
 <ul>
 <li><strong>q</strong> - The ad-hoc query to execute. OPA will parse, compile, and execute the query represented by the parameter value. The value MUST be URL encoded.</li>
 <li><strong>pretty</strong> - If parameter is <code>true</code>, response will formatted for humans.</li>
-<li><strong>explain</strong> - Return query explanation in addition to result. Values: <strong>full</strong>, <strong>truth</strong>.</li>
+<li><strong>explain</strong> - Return query explanation in addition to result. Values: <strong>full</strong>.</li>
 <li><strong>metrics</strong> - Return query performance metrics in addition to result. See <a href="#performance-metrics">Performance Metrics</a> for more detail.</li>
 <li><strong>watch</strong> - Set a watch on the query if the parameter is present. See <a href="#watches">Watches</a> for more detail.</li>
 </ul>
@@ -2875,13 +2875,11 @@ produce query results.</p>
 the following values:</p>
 <ul>
 <li><strong>full</strong> - returns a full query trace containing every step in the query evaluation process.</li>
-<li><strong>truth</strong> - returns a partial query trace containing one path that leads to the overall query being successful.</li>
 </ul>
 <p>By default, explanations are represented in a machine-friendly format. Set the
 <code>pretty</code> parameter to request a human-friendly format for debugging purposes.</p>
 <h3 id="trace-events"><a name="trace-events">Trace Events</a></h3>
-<p>When the <code>explain</code> query parameter is set to <strong>full</strong> or <strong>truth</strong> , the
-response contains an array of Trace Event objects.</p>
+<p>When the <code>explain</code> query parameter is set to <strong>full</strong> , the response contains an array of Trace Event objects.</p>
 <p>Trace Event objects contain the following fields:</p>
 <ul>
 <li><strong>op</strong> - identifies the kind of Trace Event. Values: <strong>&quot;Enter&quot;</strong>, <strong>&quot;Exit&quot;</strong>, <strong>&quot;Eval&quot;</strong>, <strong>&quot;Fail&quot;</strong>, <strong>&quot;Redo&quot;</strong>.</li>
@@ -3118,7 +3116,7 @@ config = {&quot;mode&quot;: &quot;on&quot;} {
 <tr>
 <td><code>explanation</code></td>
 <td>No</td>
-<td><a href="#explanations">Explanation</a> of how <code>result</code> was found. Whether it contains a <code>truth</code> level or <code>full</code> level explanation depends on the explanation mode in the GET request that requested the diagnostics.</td>
+<td><a href="#explanations">Explanation</a> of how <code>result</code> was found.</td>
 </tr>
 </tbody>
 </table>
@@ -3194,7 +3192,7 @@ config = {&quot;mode&quot;: &quot;on&quot;} {
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"REST API","level":"1.5","depth":1,"next":{"title":"Policy API","level":"1.5.1","depth":2,"anchor":"#policy-api","path":"rest-api.md","ref":"rest-api.md#policy-api","articles":[{"title":"List Policies","level":"1.5.1.1","depth":3,"anchor":"#list-policies","path":"rest-api.md","ref":"rest-api.md#list-policies","articles":[]},{"title":"Get a Policy","level":"1.5.1.2","depth":3,"anchor":"#get-a-policy","path":"rest-api.md","ref":"rest-api.md#get-a-policy","articles":[]},{"title":"Create or Update a Policy","level":"1.5.1.3","depth":3,"anchor":"#create-or-update-a-policy","path":"rest-api.md","ref":"rest-api.md#create-or-update-a-policy","articles":[]},{"title":"Delete a Policy","level":"1.5.1.4","depth":3,"anchor":"#delete-a-policy","path":"rest-api.md","ref":"rest-api.md#delete-a-policy","articles":[]}]},"previous":{"title":"Grammar","level":"1.4.3","depth":2,"anchor":"#grammar","path":"language-reference.md","ref":"language-reference.md#grammar","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"rest-api.md","mtime":"2017-10-30T18:12:06.125Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-10-30T18:13:04.182Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"REST API","level":"1.5","depth":1,"next":{"title":"Policy API","level":"1.5.1","depth":2,"anchor":"#policy-api","path":"rest-api.md","ref":"rest-api.md#policy-api","articles":[{"title":"List Policies","level":"1.5.1.1","depth":3,"anchor":"#list-policies","path":"rest-api.md","ref":"rest-api.md#list-policies","articles":[]},{"title":"Get a Policy","level":"1.5.1.2","depth":3,"anchor":"#get-a-policy","path":"rest-api.md","ref":"rest-api.md#get-a-policy","articles":[]},{"title":"Create or Update a Policy","level":"1.5.1.3","depth":3,"anchor":"#create-or-update-a-policy","path":"rest-api.md","ref":"rest-api.md#create-or-update-a-policy","articles":[]},{"title":"Delete a Policy","level":"1.5.1.4","depth":3,"anchor":"#delete-a-policy","path":"rest-api.md","ref":"rest-api.md#delete-a-policy","articles":[]}]},"previous":{"title":"Grammar","level":"1.4.3","depth":2,"anchor":"#grammar","path":"language-reference.md","ref":"language-reference.md#grammar","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"rest-api.md","mtime":"2017-11-15T23:17:32.481Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-11-15T23:18:28.455Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
