@@ -2106,13 +2106,13 @@ public_servers[server] {
 <p>OPA is under active development. The following features are planned but not yet implemented.</p>
 <h3 id="transactions">Transactions</h3>
 <p>OPA APIs support transactional operations. Either all of the operations within a transaction succeed or the whole transaction fails. For example, to deploy a new virtual machine, you might:</p>
-<ul>
+<ol>
 <li>Open a new transaction.</li>
 <li>Query OPA for a list of hosts where the VM can be deployed.</li>
 <li>Deploy the VM to host from the list.</li>
 <li>Push data about the new deployment into OPA&#x2019;s document store.</li>
 <li>Close the transaction.</li>
-</ul>
+</ol>
 <p>If any of steps 2&#x2013;4 fail, so will the transaction.</p>
 
                                 
@@ -2157,7 +2157,7 @@ public_servers[server] {
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"How Does OPA Work?","level":"1.2","depth":1,"next":{"title":"Overview","level":"1.2.1","depth":2,"anchor":"#overview","path":"how-does-opa-work.md","ref":"how-does-opa-work.md#overview","articles":[]},"previous":{"title":"Why use OPA?","level":"1.1.4","depth":2,"anchor":"#why-use-opa","path":"README.md","ref":"README.md#why-use-opa","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"how-does-opa-work.md","mtime":"2017-11-15T23:17:32.481Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-11-15T23:18:28.455Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"How Does OPA Work?","level":"1.2","depth":1,"next":{"title":"Overview","level":"1.2.1","depth":2,"anchor":"#overview","path":"how-does-opa-work.md","ref":"how-does-opa-work.md#overview","articles":[]},"previous":{"title":"Why use OPA?","level":"1.1.4","depth":2,"anchor":"#why-use-opa","path":"README.md","ref":"README.md#why-use-opa","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"how-does-opa-work.md","mtime":"2017-11-22T22:51:42.408Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-11-22T22:52:42.861Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
