@@ -1682,7 +1682,7 @@ first time deploying OPA and you plan to use one of the Docker images, we
 recommend you review this section to familiarize yourself with the basics.</p>
 <p>OPA releases are available as images on Docker Hub.</p>
 <ul>
-<li><a href="https://hub.docker.com/r/openpolicyagent/opa/" target="_blank">openpolicyagent/opa:0.5.12</a></li>
+<li><a href="https://hub.docker.com/r/openpolicyagent/opa/" target="_blank">openpolicyagent/opa:0.5.13</a></li>
 </ul>
 <h3 id="running-with-docker"><a name="running-with-docker">Running with Docker</a></h3>
 <p>If you start OPA outside of Docker without any arguments, it prints a list of
@@ -1726,18 +1726,21 @@ provide files via volume mounts.</p>
     run <span class="hljs-_">-e</span> <span class="hljs-string">&apos;data.example.greeting&apos;</span> \
     /example
 </code></pre>
-<p><strong>$PWD/example/data.json</strong>:</p>
-<pre><code class="lang-json">{
-    <span class="hljs-string">&quot;hostOS&quot;</span>: <span class="hljs-string">&quot;$(uname)&quot;</span>
+<p><strong>$PWD/example/<a href="https://github.com/open-policy-agent/opa/docs/book/tutorials/deployments-docker/example/data.json" target="_blank">data.json</a></strong>:</p>
+<pre><code class="lang-yaml">{
+<span class="hljs-attr">    &quot;hostOS&quot;:</span> <span class="hljs-string">&quot;$(uname)&quot;</span>
 }
 </code></pre>
-<p><strong>$PWD/example/policy.rego</strong>:</p>
+
+<p><strong>$PWD/example/<a href="https://github.com/open-policy-agent/opa/docs/book/tutorials/deployments-docker/example/policy.rego" target="_blank">policy.rego</a></strong>:</p>
 <pre><code class="lang-ruby">package example
 
 greeting = msg {
     concat(<span class="hljs-string">&quot;&quot;</span>, [<span class="hljs-string">&quot;Hello &quot;</span>, data.example.hostOS, <span class="hljs-string">&quot;!&quot;</span>], msg)
 }
+
 </code></pre>
+
 <h4 id="more-information">More Information</h4>
 <p>For more information on OPA&apos;s command line, see <code>--help</code>:</p>
 <pre><code>docker run openpolicyagent/opa run --help
@@ -1770,6 +1773,7 @@ pod includes containers that refer to images outside the acmecorp registry,
 <p>In this case, the policy file does not contain sensitive information so it&apos;s
 fine to store as a ConfigMap. If the file contained sensitive information, then
 we recommend you store it as a Secret.</p>
+<p><strong><a href="https://github.com/open-policy-agent/opa/docs/book/tutorials/deployments-kubernetes/example.rego" target="_blank">example.rego</a></strong></p>
 <pre><code class="lang-ruby">package example
 
 import input.pod
@@ -1783,14 +1787,15 @@ allow = <span class="hljs-keyword">false</span> {
 allow = <span class="hljs-keyword">false</span> {
     container = pod.spec.containers[<span class="hljs-number">_</span>]
     <span class="hljs-keyword">not</span> re_match(<span class="hljs-string">&quot;^registry.acmecorp.com/.+$&quot;</span>, container.image)
-}
-</code></pre>
+}</code></pre>
+
 <pre><code class="lang-bash">kubectl create configmap example-policy \
     --from-file example.rego
 </code></pre>
 <p>Next, create a ReplicationController to deploy OPA. The ConfigMap containing the
 policy is volume mounted into the container. This allows OPA to load the policy
 from the file system.</p>
+<p><strong><a href="https://github.com/open-policy-agent/opa/docs/book/tutorials/deployments-kubernetes/rc_opa.yaml" target="_blank">rc_opa.yaml</a></strong></p>
 <pre><code class="lang-yaml"><span class="hljs-attr">kind:</span> ReplicationController
 <span class="hljs-attr">apiVersion:</span> v1
 <span class="hljs-attr">metadata:</span>
@@ -1821,12 +1826,13 @@ from the file system.</p>
 <span class="hljs-attr">        volumeMounts:</span>
 <span class="hljs-attr">        - readOnly:</span> <span class="hljs-literal">true</span>
 <span class="hljs-attr">          mountPath:</span> /policies
-<span class="hljs-attr">          name:</span> example-policy
-</code></pre>
+<span class="hljs-attr">          name:</span> example-policy</code></pre>
+
 <pre><code class="lang-bash">kubectl create <span class="hljs-_">-f</span> rc_opa.yaml
 </code></pre>
 <p>At this point OPA is up and running. Create a Service to expose the OPA API so
 that you can query it:</p>
+<p><strong><a href="https://github.com/open-policy-agent/opa/docs/book/tutorials/deployments-kubernetes/svc_opa.yaml" target="_blank">svc_opa.yaml</a></strong></p>
 <pre><code class="lang-yaml"><span class="hljs-attr">kind:</span> Service
 <span class="hljs-attr">apiVersion:</span> v1
 <span class="hljs-attr">metadata:</span>
@@ -1841,8 +1847,9 @@ that you can query it:</p>
 <span class="hljs-attr">    - name:</span> http
 <span class="hljs-attr">      protocol:</span> TCP
 <span class="hljs-attr">      port:</span> <span class="hljs-number">8181</span>
-<span class="hljs-attr">      targetPort:</span> <span class="hljs-number">8181</span>
-</code></pre>
+<span class="hljs-attr">      targetPort:</span> <span class="hljs-number">8181</span></code></pre>
+
+
 <pre><code class="lang-bash">kubectl create <span class="hljs-_">-f</span> svc_opa.yaml
 </code></pre>
 <p>Get the URL of OPA using <code>minikube</code>:</p>
@@ -1850,6 +1857,7 @@ that you can query it:</p>
 </code></pre>
 <p>Exercise the OPA API. Note that the container below references an image outside
 our hypothetical repository:</p>
+<p><strong><a href="https://github.com/open-policy-agent/opa/docs/book/tutorials/deployments-kubernetes/example_pod.json" target="_blank">example_pod.json</a></strong></p>
 <pre><code class="lang-json">{
     <span class="hljs-string">&quot;input&quot;</span>: {
         <span class="hljs-string">&quot;kind&quot;</span>: <span class="hljs-string">&quot;Pod&quot;</span>,
@@ -1871,6 +1879,7 @@ our hypothetical repository:</p>
     }
 }
 </code></pre>
+
 <pre><code class="lang-bash">curl <span class="hljs-variable">$OPA_URL</span>/v1/data <span class="hljs-_">-d</span> @example_pod.json
 </code></pre>
 
@@ -1916,7 +1925,7 @@ our hypothetical repository:</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Deployments","level":"1.6","depth":1,"next":{"title":"Docker","level":"1.6.1","depth":2,"anchor":"#docker","path":"deployments.md","ref":"deployments.md#docker","articles":[{"title":"Running with Docker","level":"1.6.1.1","depth":3,"anchor":"#running-with-docker","path":"deployments.md","ref":"deployments.md#running-with-docker","articles":[]}]},"previous":{"title":"Watches","level":"1.5.9","depth":2,"anchor":"#watches","path":"rest-api.md","ref":"rest-api.md#watches","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"deployments.md","mtime":"2017-11-22T22:51:42.408Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-11-22T22:52:42.861Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Deployments","level":"1.6","depth":1,"next":{"title":"Docker","level":"1.6.1","depth":2,"anchor":"#docker","path":"deployments.md","ref":"deployments.md#docker","articles":[{"title":"Running with Docker","level":"1.6.1.1","depth":3,"anchor":"#running-with-docker","path":"deployments.md","ref":"deployments.md#running-with-docker","articles":[]}]},"previous":{"title":"Watches","level":"1.5.9","depth":2,"anchor":"#watches","path":"rest-api.md","ref":"rest-api.md#watches","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"deployments.md","mtime":"2017-12-08T04:18:23.470Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-12-08T04:19:50.119Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
