@@ -1711,7 +1711,7 @@ represent our backend and frontend hosts.</p>
 version: &apos;2&apos;
 services:
   opa:
-    image: openpolicyagent/opa:0.5.13
+    image: openpolicyagent/opa:0.6.0
     ports:
       - 8181:8181
     command:
@@ -1742,7 +1742,7 @@ against OPA.</p>
 echo &apos;{&quot;host_id&quot;: &quot;backend&quot;}&apos; &gt; backend_host_id.json
 </code></pre>
 <blockquote>
-<p>In real-world scenarios, these files could contain arbitrary infomration that we want to expose to the policy.</p>
+<p>In real-world scenarios, these files could contain arbitrary information that we want to expose to the policy.</p>
 </blockquote>
 <p>Finally, run <code>docker-compose</code> to pull and run the containers.</p>
 <pre><code class="lang-shell">docker-compose -f docker-compose.yml up
@@ -1975,7 +1975,7 @@ repository.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"SSH and sudo Authorization","level":"2.4","depth":1,"next":{"title":"Kubernetes Admission Control","level":"2.5","depth":1,"path":"kubernetes-admission-control.md","ref":"kubernetes-admission-control.md","articles":[]},"previous":{"title":"HTTP API Authorization","level":"2.3","depth":1,"path":"http-api-authorization.md","ref":"http-api-authorization.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"ssh-and-sudo-authorization.md","mtime":"2017-12-08T04:18:23.480Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-12-08T04:19:50.119Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"SSH and sudo Authorization","level":"2.4","depth":1,"next":{"title":"Kubernetes Admission Control","level":"2.5","depth":1,"path":"kubernetes-admission-control.md","ref":"kubernetes-admission-control.md","articles":[]},"previous":{"title":"HTTP API Authorization","level":"2.3","depth":1,"path":"http-api-authorization.md","ref":"http-api-authorization.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"ssh-and-sudo-authorization.md","mtime":"2018-01-18T23:06:09.254Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-01-18T23:07:08.484Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

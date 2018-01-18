@@ -1692,7 +1692,7 @@ the web server will be run as containers.</p>
 version: &apos;2&apos;
 services:
   opa:
-    image: openpolicyagent/opa:0.5.13
+    image: openpolicyagent/opa:0.6.0
     ports:
       - 8181:8181
     command:
@@ -1713,24 +1713,31 @@ EOF
 </code></pre>
 <p>Every time the demo web server receives an HTTP request, it
 asks OPA to decide whether an HTTP API is authorized or not
-using a single RESTful API call.  The full code is <a href="https://github.com/open-policy-agent/contrib/blob/master/api_authz/docker/echo_server.py" target="_blank">here</a>,
+using a single RESTful API call.  An example code is <a href="https://github.com/open-policy-agent/contrib/blob/master/api_authz/docker/echo_server.py" target="_blank">here</a>,
 but the crux of the (Python) code is shown below.</p>
-<pre><code class="lang-python">request = ...    <span class="hljs-comment"># grab incoming HTTP API request</span>
-input_dict = {   <span class="hljs-comment"># create input to hand to OPA</span>
-  <span class="hljs-string">&quot;input&quot;</span>: {
-        <span class="hljs-string">&quot;user&quot;</span>: request.token.username,
-        <span class="hljs-string">&quot;path&quot;</span>: request.path.split(<span class="hljs-string">&quot;/&quot;</span>),   <span class="hljs-comment"># turn &quot;/finance/salary&quot; into [&quot;finance&quot;, &quot;salary&quot;]</span>
-        <span class="hljs-string">&quot;method&quot;</span>: request.method           <span class="hljs-comment"># HTTP verb, e.g. GET, POST, PUT, ...</span>
-    }}
+<pre><code class="lang-python">
+<span class="hljs-comment"># Grab basic information. We assume user is passed on a form.</span>
+http_api_user = request.form[<span class="hljs-string">&apos;user&apos;</span>]
+orig_path_list = request.path.split(<span class="hljs-string">&quot;/&quot;</span>)
 
+<span class="hljs-comment"># Remove empty entries from list that are a result of the split</span>
+<span class="hljs-comment"># Example: &quot;&lt;some_prefix&gt;/finance/salary/&quot; will become [&quot;&quot;, &quot;finance&quot;, &quot;salary&quot;, &quot;&quot;]</span>
+http_api_path_list = [x <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> orig_path_list <span class="hljs-keyword">if</span> x]
+
+input_dict = {  <span class="hljs-comment"># create input to hand to OPA</span>
+    <span class="hljs-string">&quot;input&quot;</span>: {
+        <span class="hljs-string">&quot;user&quot;</span>: http_api_user,
+        <span class="hljs-string">&quot;path&quot;</span>: http_api_path_list, <span class="hljs-comment"># Ex: [&quot;finance&quot;, &quot;salary&quot;, &quot;alice&quot;]</span>
+        <span class="hljs-string">&quot;method&quot;</span>: request.method  <span class="hljs-comment"># HTTP verb, e.g. GET, POST, PUT, ...</span>
+    }
+}
 <span class="hljs-comment"># ask OPA for a policy decision</span>
 <span class="hljs-comment"># (in reality OPA URL would be constructed from environment)</span>
-rsp = requests.post(<span class="hljs-string">&quot;http://opa:8181/v1/data/httpapi/authz&quot;</span>, data=input_dict)
-<span class="hljs-keyword">if</span> rsp.json()[<span class="hljs-string">&quot;allow&quot;</span>] {
+rsp = requests.post(<span class="hljs-string">&quot;http://127.0.0.1:8181/v1/data/httpapi/authz&quot;</span>, data=json.dumps(input_dict))
+<span class="hljs-keyword">if</span> rsp.json()[<span class="hljs-string">&quot;allow&quot;</span>]:
   <span class="hljs-comment"># HTTP API allowed</span>
-} <span class="hljs-keyword">else</span> {
+<span class="hljs-keyword">else</span>:
   <span class="hljs-comment"># HTTP API denied</span>
-}
 </code></pre>
 <h3 id="2-load-a-policy-into-opa">2. Load a policy into OPA.</h3>
 <p>In another terminal, create a policy that allows users to
@@ -1945,7 +1952,7 @@ repository.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"HTTP API Authorization","level":"2.3","depth":1,"next":{"title":"SSH and sudo Authorization","level":"2.4","depth":1,"path":"ssh-and-sudo-authorization.md","ref":"ssh-and-sudo-authorization.md","articles":[]},"previous":{"title":"Docker Authorization","level":"2.2","depth":1,"path":"docker-authorization.md","ref":"docker-authorization.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"http-api-authorization.md","mtime":"2017-12-08T04:18:23.470Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-12-08T04:19:50.119Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"HTTP API Authorization","level":"2.3","depth":1,"next":{"title":"SSH and sudo Authorization","level":"2.4","depth":1,"path":"ssh-and-sudo-authorization.md","ref":"ssh-and-sudo-authorization.md","articles":[]},"previous":{"title":"Docker Authorization","level":"2.2","depth":1,"path":"docker-authorization.md","ref":"docker-authorization.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"http-api-authorization.md","mtime":"2018-01-18T23:06:09.254Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-01-18T23:07:08.484Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

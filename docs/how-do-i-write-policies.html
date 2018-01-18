@@ -1797,7 +1797,7 @@ undefined
 <p>If you made it this far, congratulations!</p>
 <p>This section introduced the main aspects of Rego. The rest of this document
 walks through each part of the language in more detail.</p>
-<p>For a concise reference, see the <a href="documentation/references/language">Language
+<p>For a concise reference, see the <a href="language-reference.html">Language
 Reference</a> document.</p>
 <h2 id="scalar-values"><a name="scalar-values"></a> Scalar Values</h2>
 <p>Scalar values are the simplest type of term in Rego. Scalar values can be <a href="#strings">Strings</a>, numbers, booleans, or null.</p>
@@ -1822,7 +1822,7 @@ null
 </code></pre>
 <h2 id="strings"><a name="strings"></a> Strings</h2>
 <p>Rego supports two different types of syntax for declaring strings. The first is likely to be the most familiar: characters surrounded by double quotes.
-In such strings, certain characters must be escaped to appear in the string, such as double quotes themselves, backslashes, etc. See the <a href="documentation/references/language">Language
+In such strings, certain characters must be escaped to appear in the string, such as double quotes themselves, backslashes, etc. See the <a href="language-reference.html">Language
 Reference</a> for a formal definition.</p>
 <p>The other type of string declaration is a raw string declaration. These are made of characters surrounded by backticks (<code>` </code>), with the exception
 that raw strings may not contain backticks themselves. Raw strings are what they sound like: escape sequences are not interpreted, but instead taken
@@ -1914,8 +1914,8 @@ undefined
 </code></pre>
 <p>Variables appearing in the head of a rule must also appear in a non-negated equality expression within the same rule. This property ensures that if the rule is evaluated and all of the expressions evaluate to true for some set of variable bindings, the variable in the head of the rule will be defined.</p>
 <h2 id="references"><a name="references"></a> References</h2>
-<p>Referenced are used to access nested documents.</p>
-<p>The examples in this section use the data defined in the <a href="#examples">Examples</a> section.</p>
+<p>References are used to access nested documents.</p>
+<p>The examples in this section use the data defined in the <a href="#examples-data">Examples</a> section.</p>
 <p>The simplest reference contains no variables. For example, the following reference returns the hostname of the second server in the first site document from our example data:</p>
 <pre><code class="lang-ruby">&gt; sites[<span class="hljs-number">0</span>].servers[<span class="hljs-number">1</span>].hostname
 <span class="hljs-string">&quot;helium&quot;</span>
@@ -2071,7 +2071,7 @@ For example:</p>
 </blockquote>
 <p>Comprehensions are similar to the same constructs found in other languages like Python. For example, we could write the above comprehension in Python as follows:</p>
 <pre><code class="lang-ruby"><span class="hljs-comment"># Python equivalent of Rego comprehension shown above.</span>
-names = [site.name <span class="hljs-keyword">for</span> site <span class="hljs-keyword">in</span> sites <span class="hljs-keyword">if</span> site.region = <span class="hljs-string">&quot;west&quot;</span>]
+names = [site.name <span class="hljs-keyword">for</span> site <span class="hljs-keyword">in</span> sites <span class="hljs-keyword">if</span> site.region == <span class="hljs-string">&quot;west&quot;</span>]
 </code></pre>
 <p>Comprehensions are often used to group elements by some key. A common use case for comprehensions is to assist in computing aggregate values (e.g., the number of containers running on a host).</p>
 <h3 id="array-comprehensions"><a name="array-comprehensions"></a> Array Comprehensions</h3>
@@ -2202,7 +2202,7 @@ the union of the documents produced by each individual rule.</p>
 }
 
 instances[instance] {
-    containers[<span class="hljs-number">_</span>] = container,
+    containers[<span class="hljs-number">_</span>] = container
     instance = {<span class="hljs-string">&quot;address&quot;</span><span class="hljs-symbol">:</span> container.ipaddress, <span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:</span> container.name}
 }
 </code></pre>
@@ -2212,7 +2212,7 @@ obtain the same result:</p>
     sites[<span class="hljs-number">_</span>].servers[<span class="hljs-number">_</span>] = server
     instance = {<span class="hljs-string">&quot;address&quot;</span><span class="hljs-symbol">:</span> server.hostname, <span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:</span> server.name}
 } {
-    containers[<span class="hljs-number">_</span>] = container,
+    containers[<span class="hljs-number">_</span>] = container
     instance = {<span class="hljs-string">&quot;address&quot;</span><span class="hljs-symbol">:</span> container.ipaddress, <span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:</span> container.name}
 }
 </code></pre>
@@ -2273,9 +2273,9 @@ max_memory: eval_conflict_error: completely defined rules must produce exactly o
 &gt; max_memory
 undefined
 </code></pre>
-<p>In some cases, having an undefined result for a document is not desirable. In those cases, policies can use the <a href="#default">Default Keyword</a> to provide a fallback value.</p>
+<p>In some cases, having an undefined result for a document is not desirable. In those cases, policies can use the <a href="#default-keyword">Default Keyword</a> to provide a fallback value.</p>
 <h3 id="functions"><a name="functions"></a> Functions</h3>
-<p>Rego supports user-defined functions that can be called with the same semantics as <a href="#built-ins">Built-in Functions</a>. They have access to both the <a href="how-does-opa-work.html#the-data-document">the data Document</a> and <a href="how-does-opa-work.html#the-input-document">the input Document</a>.</p>
+<p>Rego supports user-defined functions that can be called with the same semantics as <a href="#built-in-functions">Built-in Functions</a>. They have access to both the <a href="how-does-opa-work.html#the-data-document">the data Document</a> and <a href="how-does-opa-work.html#the-input-document">the input Document</a>.</p>
 <p>For example, the following function will return the result of trimming the spaces from a string and then splitting it by periods.</p>
 <pre><code class="lang-ruby">&gt; trim_and_split(s) = x {
 |     trim(s, <span class="hljs-string">&quot; &quot;</span>, t)
@@ -2543,23 +2543,44 @@ found. Once a match is found, rule evaluation does not proceed to rules further
 in the chain.</p>
 <p>The <code>else</code> keyword is useful if you are porting policies into Rego from an
 order-sensitive system like IPTables.</p>
-<pre><code># Service queries &quot;authorize&quot; and intreprets result (&quot;allow&quot; or &quot;deny&quot;)
-authorize = &quot;allow&quot; {
-    input.user = &quot;superuser&quot;
+<pre><code class="lang-ruby">authorize = <span class="hljs-string">&quot;allow&quot;</span> {
+    input.user = <span class="hljs-string">&quot;superuser&quot;</span>           <span class="hljs-comment"># allow &apos;superuser&apos; to perform any operation.</span>
+} <span class="hljs-keyword">else</span> = <span class="hljs-string">&quot;deny&quot;</span> {
+    input.path[<span class="hljs-number">0</span>] = <span class="hljs-string">&quot;admin&quot;</span>            <span class="hljs-comment"># disallow &apos;admin&apos; operations...</span>
+    input.source_network = <span class="hljs-string">&quot;external&quot;</span>  <span class="hljs-comment"># from external networks.</span>
+} <span class="hljs-comment"># ... more rules</span>
+</code></pre>
+<p>In the example below, evaluation stops immediately after the first rule even
+though the input matches the second rule as well.</p>
+<pre><code class="lang-ruby">&gt; input
+{
+  <span class="hljs-string">&quot;path&quot;</span><span class="hljs-symbol">:</span> [
+    <span class="hljs-string">&quot;admin&quot;</span>,
+    <span class="hljs-string">&quot;exec_shell&quot;</span>
+  ],
+  <span class="hljs-string">&quot;source_network&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;external&quot;</span>,
+  <span class="hljs-string">&quot;user&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;superuser&quot;</span>
 }
-
-# Check if caller is from outside network.
-else = &quot;deny&quot; {
-    input.path[0] = &quot;admin&quot;
-    input.source_network = &quot;external&quot;
+&gt; authorize
+<span class="hljs-string">&quot;allow&quot;</span>
+</code></pre>
+<p>In the next example, the input matches the second rule (but not the first) so
+evaluation continues to the second rule before stopping.</p>
+<pre><code class="lang-ruby">&gt; input
+{
+  <span class="hljs-string">&quot;path&quot;</span><span class="hljs-symbol">:</span> [
+    <span class="hljs-string">&quot;admin&quot;</span>,
+    <span class="hljs-string">&quot;exec_shell&quot;</span>
+  ],
+  <span class="hljs-string">&quot;source_network&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;external&quot;</span>,
+  <span class="hljs-string">&quot;user&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;alice&quot;</span>
 }
-
-# Check if caller is from inside network.
-else = &quot;allow&quot; {
-    input.path[0] = &quot;admin&quot;
-    input.source_network = &quot;internal&quot;
-} # ... more rules
-</code></pre><h2 id="operators"><a name="operators"></a> Operators</h2>
+&gt; authorize
+<span class="hljs-string">&quot;deny&quot;</span>
+</code></pre>
+<p>The <code>else</code> keyword may be used repeatedly on the same rule and there is no
+limit imposed on the number of <code>else</code> clauses on a rule.</p>
+<h2 id="operators"><a name="operators"></a> Operators</h2>
 <h3 id="equality"><a name="equality"></a> Equality</h3>
 <p>The equality operator (<code>=</code>) is used to define expressions that assert that two values are the same. If the expression is defined in terms of one or more variables then the expression will evaluate to true if one of the variables is unbound. If the neither operand is an unbound variable, the expression is evaluated by comparing the <em>values</em> referenced by the operands.</p>
 <p>OPA attempts to <em>bind</em> variables to values when it encounters unbound variables in equality expressions. Binding a variable affects subsequent evaluation of expressions such that the variable will be treated as a constant (with the bound value) instead of a variable.</p>
@@ -2713,7 +2734,7 @@ containers = [
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"How Do I Write Policies?","level":"1.3","depth":1,"next":{"title":"What is Rego?","level":"1.3.1","depth":2,"anchor":"#what-is-rego","path":"how-do-i-write-policies.md","ref":"how-do-i-write-policies.md#what-is-rego","articles":[]},"previous":{"title":"Future Features","level":"1.2.5","depth":2,"anchor":"#future-features","path":"how-does-opa-work.md","ref":"how-does-opa-work.md#future-features","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"how-do-i-write-policies.md","mtime":"2017-12-08T04:18:23.470Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-12-08T04:19:50.119Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"How Do I Write Policies?","level":"1.3","depth":1,"next":{"title":"What is Rego?","level":"1.3.1","depth":2,"anchor":"#what-is-rego","path":"how-do-i-write-policies.md","ref":"how-do-i-write-policies.md#what-is-rego","articles":[]},"previous":{"title":"Future Features","level":"1.2.5","depth":2,"anchor":"#future-features","path":"how-does-opa-work.md","ref":"how-does-opa-work.md#future-features","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"how-do-i-write-policies.md","mtime":"2018-01-18T23:06:09.254Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-01-18T23:07:08.484Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

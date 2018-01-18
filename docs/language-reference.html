@@ -1865,7 +1865,7 @@ complex types.</p>
 <tr>
 <td><span class="opa-keep-it-together"><code>re_match(pattern, value)</code></span></td>
 <td>2</td>
-<td>true if the value matches the pattern</td>
+<td>true if the value matches the regex pattern</td>
 </tr>
 <tr>
 <td><span class="opa-keep-it-together"><code>replace(string, old, new, output)</code></span></td>
@@ -1918,6 +1918,46 @@ complex types.</p>
 <td><span class="opa-keep-it-together"><code>to_number(x, output)</code></span></td>
 <td>1</td>
 <td><code>output</code> is <code>x</code> converted to a number</td>
+</tr>
+<tr>
+<td><span class="opa-keep-it-together"><code>is_number(x, output)</code></span></td>
+<td>1</td>
+<td><code>output</code> is <code>true</code> if <code>x</code> is a number</td>
+</tr>
+<tr>
+<td><span class="opa-keep-it-together"><code>is_string(x, output)</code></span></td>
+<td>1</td>
+<td><code>output</code> is <code>true</code> if <code>x</code> is a string</td>
+</tr>
+<tr>
+<td><span class="opa-keep-it-together"><code>is_boolean(x, output)</code></span></td>
+<td>1</td>
+<td><code>output</code> is <code>true</code> if <code>x</code> is a boolean</td>
+</tr>
+<tr>
+<td><span class="opa-keep-it-together"><code>is_array(x, output)</code></span></td>
+<td>1</td>
+<td><code>output</code> is <code>true</code> if <code>x</code> is an array</td>
+</tr>
+<tr>
+<td><span class="opa-keep-it-together"><code>is_set(x, output)</code></span></td>
+<td>1</td>
+<td><code>output</code> is <code>true</code> if <code>x</code> is a set</td>
+</tr>
+<tr>
+<td><span class="opa-keep-it-together"><code>is_object(x, output)</code></span></td>
+<td>1</td>
+<td><code>output</code> is <code>true</code> if <code>x</code> is an object</td>
+</tr>
+<tr>
+<td><span class="opa-keep-it-together"><code>is_null(x, output)</code></span></td>
+<td>1</td>
+<td><code>output</code> is <code>true</code> if <code>x</code> is null</td>
+</tr>
+<tr>
+<td><span class="opa-keep-it-together"><code>type_name(x, output)</code></span></td>
+<td>1</td>
+<td><code>output</code> is the type of <code>x</code></td>
 </tr>
 </tbody>
 </table>
@@ -1999,17 +2039,17 @@ complex types.</p>
 <tr>
 <td><span class="opa-keep-it-together"><code>time.parse_ns(layout, value, output)</code></span></td>
 <td>2</td>
-<td><code>output</code> is <code>number</code> representing the time <code>value</code> in nanoseconds since epoch. See the <a href="https://golang.org/pkg/time/#Parse" target="_blank">Go <code>time</code> package documentation</a> for more details on <code>layout</code>. ``</td>
+<td><code>output</code> is <code>number</code> representing the time <code>value</code> in nanoseconds since epoch. See the <a href="https://golang.org/pkg/time/#Parse" target="_blank">Go <code>time</code> package documentation</a> for more details on <code>layout</code>.</td>
 </tr>
 <tr>
 <td><span class="opa-keep-it-together"><code>time.parse_rfc3339_ns(value, output)</code></span></td>
 <td>1</td>
-<td><code>output</code> is <code>number</code> representing the time <code>value</code> in nanoseconds since epoch.``</td>
+<td><code>output</code> is <code>number</code> representing the time <code>value</code> in nanoseconds since epoch.</td>
 </tr>
 <tr>
 <td><span class="opa-keep-it-together"><code>time.parse_duration_ns(duration, output)</code></span></td>
 <td>1</td>
-<td><code>output</code> is <code>number</code> representing the duration <code>duration</code> in nanoseconds. See the <a href="https://golang.org/pkg/time/#ParseDuration" target="_blank">Go <code>time</code> package documentation</a> for more details on <code>duration</code>.``</td>
+<td><code>output</code> is <code>number</code> representing the duration <code>duration</code> in nanoseconds. See the <a href="https://golang.org/pkg/time/#ParseDuration" target="_blank">Go <code>time</code> package documentation</a> for more details on <code>duration</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -2142,7 +2182,7 @@ DIGIT  ASCII characters 0-9
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Language Reference","level":"1.4","depth":1,"next":{"title":"Built-in Functions","level":"1.4.1","depth":2,"anchor":"#built-in-functions","path":"language-reference.md","ref":"language-reference.md#built-in-functions","articles":[{"title":"Inequality","level":"1.4.1.1","depth":3,"anchor":"#inequality","path":"language-reference.md","ref":"language-reference.md#inequality","articles":[]},{"title":"Numbers","level":"1.4.1.2","depth":3,"anchor":"#numbers","path":"language-reference.md","ref":"language-reference.md#numbers","articles":[]},{"title":"Aggregates","level":"1.4.1.3","depth":3,"anchor":"#aggregates","path":"language-reference.md","ref":"language-reference.md#aggregates","articles":[]},{"title":"Sets","level":"1.4.1.4","depth":3,"anchor":"#sets","path":"language-reference.md","ref":"language-reference.md#sets","articles":[]},{"title":"Strings","level":"1.4.1.5","depth":3,"anchor":"#strings","path":"language-reference.md","ref":"language-reference.md#strings","articles":[]},{"title":"Types","level":"1.4.1.6","depth":3,"anchor":"#types","path":"language-reference.md","ref":"language-reference.md#types","articles":[]},{"title":"Encoding","level":"1.4.1.7","depth":3,"anchor":"#encoding","path":"language-reference.md","ref":"language-reference.md#encoding","articles":[]},{"title":"Tokens","level":"1.4.1.8","depth":3,"anchor":"#tokens","path":"language-reference.md","ref":"language-reference.md#tokens","articles":[]},{"title":"Time","level":"1.4.1.9","depth":3,"anchor":"#time","path":"language-reference.md","ref":"language-reference.md#time","articles":[]}]},"previous":{"title":"Example Data","level":"1.3.18","depth":2,"anchor":"#example-data","path":"how-do-i-write-policies.md","ref":"how-do-i-write-policies.md#example-data","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"language-reference.md","mtime":"2017-12-08T04:18:23.470Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-12-08T04:19:50.119Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Language Reference","level":"1.4","depth":1,"next":{"title":"Built-in Functions","level":"1.4.1","depth":2,"anchor":"#built-in-functions","path":"language-reference.md","ref":"language-reference.md#built-in-functions","articles":[{"title":"Inequality","level":"1.4.1.1","depth":3,"anchor":"#inequality","path":"language-reference.md","ref":"language-reference.md#inequality","articles":[]},{"title":"Numbers","level":"1.4.1.2","depth":3,"anchor":"#numbers","path":"language-reference.md","ref":"language-reference.md#numbers","articles":[]},{"title":"Aggregates","level":"1.4.1.3","depth":3,"anchor":"#aggregates","path":"language-reference.md","ref":"language-reference.md#aggregates","articles":[]},{"title":"Sets","level":"1.4.1.4","depth":3,"anchor":"#sets","path":"language-reference.md","ref":"language-reference.md#sets","articles":[]},{"title":"Strings","level":"1.4.1.5","depth":3,"anchor":"#strings","path":"language-reference.md","ref":"language-reference.md#strings","articles":[]},{"title":"Types","level":"1.4.1.6","depth":3,"anchor":"#types","path":"language-reference.md","ref":"language-reference.md#types","articles":[]},{"title":"Encoding","level":"1.4.1.7","depth":3,"anchor":"#encoding","path":"language-reference.md","ref":"language-reference.md#encoding","articles":[]},{"title":"Tokens","level":"1.4.1.8","depth":3,"anchor":"#tokens","path":"language-reference.md","ref":"language-reference.md#tokens","articles":[]},{"title":"Time","level":"1.4.1.9","depth":3,"anchor":"#time","path":"language-reference.md","ref":"language-reference.md#time","articles":[]}]},"previous":{"title":"Example Data","level":"1.3.18","depth":2,"anchor":"#example-data","path":"how-do-i-write-policies.md","ref":"how-do-i-write-policies.md#example-data","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"language-reference.md","mtime":"2018-01-18T23:06:09.254Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-01-18T23:07:08.484Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
