@@ -383,19 +383,6 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.5" data-path="how-does-opa-work.html">
-            
-                <a href="how-does-opa-work.html#future-features">
-            
-                    
-                    Future Features
-            
-                </a>
-            
-
-            
-        </li>
-    
 
             </ul>
             
@@ -1372,19 +1359,6 @@
     
         <li class="chapter " data-level="1.5.8" data-path="rest-api.html">
             
-                <a href="rest-api.html#diagnostics">
-            
-                    
-                    Diagnostics
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.5.9" data-path="rest-api.html">
-            
                 <a href="rest-api.html#watches">
             
                     
@@ -1484,7 +1458,52 @@
             
         </li>
     
-        <li class="chapter " data-level="1.7" data-path="security.html">
+        <li class="chapter " data-level="1.7" data-path="monitoring-diagnostics.html">
+            
+                <a href="monitoring-diagnostics.html">
+            
+                    
+                    Monitoring &amp; Diagnostics
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.7.1" data-path="monitoring-diagnostics.html">
+            
+                <a href="monitoring-diagnostics.html#prometheus">
+            
+                    
+                    Prometheus
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7.2" data-path="monitoring-diagnostics.html">
+            
+                <a href="monitoring-diagnostics.html#prometheus">
+            
+                    
+                    Diagnostics
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8" data-path="security.html">
             
                 <a href="security.html">
             
@@ -1498,7 +1517,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.7.1" data-path="security.html">
+        <li class="chapter " data-level="1.8.1" data-path="security.html">
             
                 <a href="security.html#tls-and-https">
             
@@ -1511,7 +1530,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.7.2" data-path="security.html">
+        <li class="chapter " data-level="1.8.2" data-path="security.html">
             
                 <a href="security.html#authentication-and-authorization">
             
@@ -1529,7 +1548,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.8" data-path="faq.html">
+        <li class="chapter " data-level="1.9" data-path="faq.html">
             
                 <a href="faq.html">
             
@@ -1539,6 +1558,77 @@
                 </a>
             
 
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10" data-path="comparison-to-other-systems.html">
+            
+                <a href="comparison-to-other-systems.html">
+            
+                    
+                    Comparison to Other Systems
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.10.1" data-path="comparison-to-other-systems.html">
+            
+                <a href="comparison-to-other-systems.html#role-based-access-control-rbac">
+            
+                    
+                    RBAC
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10.2" data-path="comparison-to-other-systems.html">
+            
+                <a href="comparison-to-other-systems.html#attribute-based-access-control-abac">
+            
+                    
+                    ABAC
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10.3" data-path="comparison-to-other-systems.html">
+            
+                <a href="comparison-to-other-systems.html#amazon-web-services-iam">
+            
+                    
+                    AWS IAM
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10.4" data-path="comparison-to-other-systems.html">
+            
+                <a href="comparison-to-other-systems.html#xacml">
+            
+                    
+                    XACML
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
             
         </li>
     
@@ -2102,18 +2192,6 @@ public_servers[server] {
   ]
 }
 </code></pre>
-<h2 id="future-features"><a name="future-features">Future Features</a></h2>
-<p>OPA is under active development. The following features are planned but not yet implemented.</p>
-<h3 id="transactions">Transactions</h3>
-<p>OPA APIs support transactional operations. Either all of the operations within a transaction succeed or the whole transaction fails. For example, to deploy a new virtual machine, you might:</p>
-<ol>
-<li>Open a new transaction.</li>
-<li>Query OPA for a list of hosts where the VM can be deployed.</li>
-<li>Deploy the VM to host from the list.</li>
-<li>Push data about the new deployment into OPA&#x2019;s document store.</li>
-<li>Close the transaction.</li>
-</ol>
-<p>If any of steps 2&#x2013;4 fail, so will the transaction.</p>
 
                                 
                                 </section>
@@ -2157,7 +2235,7 @@ public_servers[server] {
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"How Does OPA Work?","level":"1.2","depth":1,"next":{"title":"Overview","level":"1.2.1","depth":2,"anchor":"#overview","path":"how-does-opa-work.md","ref":"how-does-opa-work.md#overview","articles":[]},"previous":{"title":"Why use OPA?","level":"1.1.4","depth":2,"anchor":"#why-use-opa","path":"README.md","ref":"README.md#why-use-opa","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"how-does-opa-work.md","mtime":"2018-01-18T23:06:09.254Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-01-18T23:07:08.484Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"How Does OPA Work?","level":"1.2","depth":1,"next":{"title":"Overview","level":"1.2.1","depth":2,"anchor":"#overview","path":"how-does-opa-work.md","ref":"how-does-opa-work.md#overview","articles":[]},"previous":{"title":"Why use OPA?","level":"1.1.4","depth":2,"anchor":"#why-use-opa","path":"README.md","ref":"README.md#why-use-opa","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"how-does-opa-work.md","mtime":"2018-02-22T21:05:59.195Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-02-22T21:07:13.632Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

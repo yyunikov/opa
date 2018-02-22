@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Get Started &#xB7; GitBook</title>
+        <title>Comparison to Other Systems &#xB7; GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -58,10 +58,10 @@
     <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="docker-authorization.html">
+    <link rel="next" href="comparison-to-other-systems.html">
     
     
-    <link rel="prev" href="comparison-to-other-systems.html">
+    <link rel="prev" href="faq.html">
     
 
     </head>
@@ -1561,7 +1561,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.10" data-path="comparison-to-other-systems.html">
+        <li class="chapter active" data-level="1.10" data-path="comparison-to-other-systems.html">
             
                 <a href="comparison-to-other-systems.html">
             
@@ -1639,7 +1639,7 @@
         
         
     
-        <li class="chapter active" data-level="2.1" data-path="get-started.html">
+        <li class="chapter " data-level="2.1" data-path="get-started.html">
             
                 <a href="get-started.html">
             
@@ -1747,7 +1747,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".">Get Started</a>
+        <a href=".">Comparison to Other Systems</a>
     </h1>
 </div>
 
@@ -1762,238 +1762,457 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="get-started">Get Started</h1>
-<p>The Open Policy Agent (OPA) is an open source, general-purpose policy engine that enables unified, context-aware policy enforcement across the entire stack.</p>
-<p>OPA provides a high-level <strong>declarative language</strong> for authoring policies and
-simple APIs to answer policy queries. Using OPA, you can offload policy
-decisions from your service such as:</p>
+                                <h1 id="comparison-to-other-systems">Comparison to Other Systems</h1>
+<p>Often the easiest way to understand a new language is by comparing
+it to languages you already know.  Here we show how policies from
+several existing policy systems can be implemented with the Open
+Policy Agent.</p>
+<h2 id="role-based-access-control-rbac">Role-based access control (RBAC)</h2>
+<p>Role-based access control (RBAC) is pervasive today for authorization.
+To use RBAC for authorization, you write down two different kinds of
+information.</p>
 <ul>
-<li>Should this API call be allowed? E.g., <code>true</code> or <code>false</code>.</li>
-<li>How much quota remains for this user? E.g., <code>1048</code>.</li>
-<li>Which hosts can this container be deployed on? E.g., <code>[&quot;host1&quot;, &quot;host40&quot;, ..., &quot;host329&quot;]</code>.</li>
-<li>What updates must be applied to this resource? E.g., <code>{&quot;labels&quot;: {&quot;team&quot;: &quot;products}}</code>.</li>
+<li>Which users have which roles</li>
+<li>Which roles have which permissions</li>
 </ul>
-<p>This tutorial shows how to get started with OPA using an interactive shell or <a href="https://en.wikipedia.org/wiki/Read&#x2013;eval&#x2013;print_loop" target="_blank">REPL (read-eval-print loop)</a>.</p>
-<h2 id="goals">Goals</h2>
-<p>REPLs are great for learning new languages and running quick experiments. You
-can use OPA&apos;s REPL to experiment with policies and prototype new ones.</p>
-<p>To introduce the REPL, you will use dummy data and an example policy. In English, the policy can be stated as follows:</p>
+<p>Once you provide RBAC with both those assignments, RBAC tells you
+how to make an authorization decision.  A user is authorized for
+all those permissions assigned to any of the roles she is assigned to.</p>
+<p>For example, we might have the following user/role assignments:</p>
+<table>
+<thead>
+<tr>
+<th>User</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>alice</code></td>
+<td><code>engineering</code></td>
+</tr>
+<tr>
+<td><code>alice</code></td>
+<td><code>webdev</code></td>
+</tr>
+<tr>
+<td><code>bob</code></td>
+<td><code>hr</code></td>
+</tr>
+</tbody>
+</table>
+<p>And the following role/permission assignments:</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Permission</th>
+<th>Resource</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>engineering</code></td>
+<td><code>read</code></td>
+<td><code>server123</code></td>
+</tr>
+<tr>
+<td><code>webdev</code></td>
+<td><code>write</code></td>
+<td><code>server123</code></td>
+</tr>
+<tr>
+<td><code>webdev</code></td>
+<td><code>read</code></td>
+<td><code>server123</code></td>
+</tr>
+<tr>
+<td><code>hr</code></td>
+<td><code>write</code></td>
+<td><code>database456</code></td>
+</tr>
+</tbody>
+</table>
+<p>In this example, RBAC makes the following authorization decisions:</p>
+<table>
+<thead>
+<tr>
+<th>User</th>
+<th>Operation</th>
+<th>Resource</th>
+<th>Decision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>alice</code></td>
+<td><code>read</code></td>
+<td><code>server123</code></td>
+<td><code>allow</code> because <code>alice</code> is in <code>engineering</code></td>
+</tr>
+<tr>
+<td><code>alice</code></td>
+<td><code>write</code></td>
+<td><code>server123</code></td>
+<td><code>allow</code> because <code>alice</code> is in <code>webdev</code></td>
+</tr>
+<tr>
+<td><code>bob</code></td>
+<td><code>read</code></td>
+<td><code>database456</code></td>
+<td><code>allow</code> because <code>bob</code> is in <code>hr</code></td>
+</tr>
+<tr>
+<td><code>bob</code></td>
+<td><code>read</code></td>
+<td><code>server123</code></td>
+<td><code>deny</code> because <code>bob</code> is not in <code>engineering</code> or <code>webdev</code></td>
+</tr>
+</tbody>
+</table>
+<p>With OPA, you can write the following snippets to implement the
+example RBAC policy shown above.</p>
+<pre><code class="lang-ruby">package rbac.authz
+
+<span class="hljs-comment"># Policy decisions are made using the following input</span>
+<span class="hljs-comment">#   Not part of the policy but good as documentation</span>
+<span class="hljs-comment"># input = {</span>
+<span class="hljs-comment">#     &quot;user&quot;: &quot;bob&quot;,</span>
+<span class="hljs-comment">#     &quot;action&quot;: &quot;read&quot;,</span>
+<span class="hljs-comment">#     &quot;object&quot;: &quot;server123&quot;</span>
+<span class="hljs-comment"># }</span>
+
+<span class="hljs-comment"># user-role assignments</span>
+user_roles = {
+    <span class="hljs-string">&quot;alice&quot;</span><span class="hljs-symbol">:</span> [<span class="hljs-string">&quot;engineering&quot;</span>, <span class="hljs-string">&quot;webdev&quot;</span>],
+    <span class="hljs-string">&quot;bob&quot;</span><span class="hljs-symbol">:</span> [<span class="hljs-string">&quot;hr&quot;</span>]
+}
+
+<span class="hljs-comment"># role-permissions assignments</span>
+role_permissions = {
+    <span class="hljs-string">&quot;engineering&quot;</span><span class="hljs-symbol">:</span> [{<span class="hljs-string">&quot;action&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;read&quot;</span>,  <span class="hljs-string">&quot;object&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;server123&quot;</span>}],
+    <span class="hljs-string">&quot;webdev&quot;</span><span class="hljs-symbol">:</span>      [{<span class="hljs-string">&quot;action&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;read&quot;</span>,  <span class="hljs-string">&quot;object&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;server123&quot;</span>},
+                    {<span class="hljs-string">&quot;action&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;write&quot;</span>, <span class="hljs-string">&quot;object&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;server123&quot;</span>}],
+    <span class="hljs-string">&quot;hr&quot;</span><span class="hljs-symbol">:</span>          [{<span class="hljs-string">&quot;action&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;read&quot;</span>,  <span class="hljs-string">&quot;object&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;database456&quot;</span>}]
+}
+
+<span class="hljs-comment"># logic that implements RBAC.</span>
+default allow = <span class="hljs-keyword">false</span>
+allow {
+    <span class="hljs-comment"># lookup the list of roles for the user</span>
+    roles = user_roles[input.user]
+    <span class="hljs-comment"># for each role in that list</span>
+    r = roles[<span class="hljs-number">_</span>]
+    <span class="hljs-comment"># lookup the permissions list for role r</span>
+    permissions = role_permissions[r]
+    <span class="hljs-comment"># for each permission</span>
+    p = permissions[<span class="hljs-number">_</span>]
+    <span class="hljs-comment"># check if the permission granted to r matches the user&apos;s request</span>
+    <span class="hljs-comment">#    Note: equality (=) works for both assignment and comparison</span>
+    {<span class="hljs-string">&quot;action&quot;</span><span class="hljs-symbol">:</span> input.action, <span class="hljs-string">&quot;object&quot;</span><span class="hljs-symbol">:</span> input.object} = p
+}
+</code></pre>
+<h3 id="rbac-separation-of-duty-sod">RBAC Separation of duty (SOD)</h3>
+<p>Separation of duty (SOD) refers to the idea that there are certain
+combinations of permissions that no one should have at the same time.
+For example, no one should be able to both create payments and approve payments.</p>
+<p>In RBAC, that means there are some pairs of roles that no one should be
+assigned simultaneously.  For example, any user assigned both of the roles
+in each pair below would violate SOD.</p>
 <ul>
-<li>Servers that open an unencrypted HTTP port must not be connected to a public network.</li>
+<li>create-payment and approve-payment</li>
+<li>create-vendor and pay-vendor</li>
 </ul>
-<p>Inside the REPL, you will define rules that codify the policy stated above.</p>
-<p>Once you finish this tutorial, you will be familiar with:</p>
-<ul>
-<li>Running OPA as an interactive shell/REPL.</li>
-<li>Writing ad-hoc queries in <a href="how-do-i-write-policies.html">Rego</a>.</li>
-</ul>
-<h2 id="prerequisites">Prerequisites</h2>
-<p>If this is your first time using OPA, download the latest executable for your system.</p>
-<p>On macOS (64-bit):</p>
-<pre><code class="lang-shell">curl -L -o opa https://github.com/open-policy-agent/opa/releases/download/v0.7.0/opa_darwin_amd64
-</code></pre>
-<p>On Linux (64-bit):</p>
-<pre><code class="lang-shell">curl -L -o opa https://github.com/open-policy-agent/opa/releases/download/v0.7.0/opa_linux_amd64
-</code></pre>
-<blockquote>
-<p>Windows users can obtain the OPA executable from <a href="https://github.com/open-policy-agent/opa/releases" target="_blank">GitHub Releases</a>. The steps below are the same for Windows users except the executable name will be different.</p>
-</blockquote>
-<p>Set permissions on the OPA executable:</p>
-<pre><code class="lang-shell">chmod 755 ./opa
-</code></pre>
-<h2 id="steps">Steps</h2>
-<h3 id="1-make-sure-you-can-run-the-repl-on-your-machine">1. Make sure you can run the REPL on your machine.</h3>
-<pre><code class="lang-shell">./opa run
-</code></pre>
-<p>Without any data, you can experiment with simple expressions to get the hang of it:</p>
-<pre><code class="lang-ruby">&gt; <span class="hljs-keyword">true</span>
-<span class="hljs-keyword">true</span>
-&gt; <span class="hljs-number">3.14</span>
-<span class="hljs-number">3.14</span>
-&gt; [<span class="hljs-string">&quot;hello&quot;</span>, <span class="hljs-string">&quot;world&quot;</span>]
-[
-  <span class="hljs-string">&quot;hello&quot;</span>,
-  <span class="hljs-string">&quot;world&quot;</span>
+<p>OPA&apos;s API does not yet let you enforce SOD by rejecting improper role-assignments,
+but it does let you express SOD constraints and ask for all SOD violations,
+as shown below.  (Here we assume the statements below are added to the RBAC
+statements above.)</p>
+<pre><code class="lang-ruby"><span class="hljs-comment"># Pairs of roles that no user can be assigned to simultaneously</span>
+sod_roles = [
+    [<span class="hljs-string">&quot;create-payment&quot;</span>, <span class="hljs-string">&quot;approve-payment&quot;</span>],
+    [<span class="hljs-string">&quot;create-vendor&quot;</span>, <span class="hljs-string">&quot;pay-vendor&quot;</span>]
 ]
-</code></pre>
-<p>You can also test simple boolean expressions:</p>
-<pre><code class="lang-ruby">&gt; <span class="hljs-keyword">true</span> = <span class="hljs-keyword">false</span>
-<span class="hljs-keyword">false</span>
-&gt; <span class="hljs-number">3.14</span> &gt; <span class="hljs-number">3</span>
-<span class="hljs-keyword">true</span>
-&gt; <span class="hljs-string">&quot;hello&quot;</span> != <span class="hljs-string">&quot;goodbye&quot;</span>
-<span class="hljs-keyword">true</span>
-</code></pre>
-<p>Most REPLs let you define variables that you can reference later on. OPA allows you to do something similar. For example, you can define a <code>pi</code> constant as follows:</p>
-<pre><code class="lang-ruby">&gt; pi = <span class="hljs-number">3.14</span>
-</code></pre>
-<p>Once &quot;pi&quot; is defined, you query for the value and write expressions in terms of it:</p>
-<pre><code class="lang-ruby">&gt; pi
-<span class="hljs-number">3.14</span>
-&gt; pi &gt; <span class="hljs-number">3</span>
-<span class="hljs-keyword">true</span>
-</code></pre>
-<p>One thing to watch out for in the REPL is that <code>=</code> is used both for assigning variables values and for testing the value of variables. For example <code>p = q</code> sometimes assigns <code>p</code> the value of <code>q</code> and sometimes checks if the values of <code>p</code> and <code>q</code> are the same. The REPL decides between assignment and test based on whether <code>p</code> already has a value or not. If <code>p</code> has a value, <code>p = q</code> is a test (returning <code>true</code> or <code>false</code>), and if <code>p</code> has no value <code>p = q</code> is an assignment. To unset a value for a variable, use the <code>unset</code> command. (This ambiguity is only really an issue in the REPL. When writing policy, the duality of <code>=</code> is actually beneficial.)</p>
-<pre><code class="lang-ruby">&gt; pi = <span class="hljs-number">3</span>
-<span class="hljs-keyword">false</span>
-&gt; unset pi
-&gt; pi = <span class="hljs-number">3</span>
-&gt; pi
-<span class="hljs-number">3</span>
-</code></pre>
-<p>In addition to running queries, the REPL also lets you define rules:</p>
-<pre><code class="lang-ruby">&gt; items = [<span class="hljs-string">&quot;pizza&quot;</span>, <span class="hljs-string">&quot;apples&quot;</span>, <span class="hljs-string">&quot;bread&quot;</span>, <span class="hljs-string">&quot;coffee&quot;</span>]
-&gt; users = {<span class="hljs-string">&quot;bob&quot;</span><span class="hljs-symbol">:</span> {<span class="hljs-string">&quot;likes&quot;</span><span class="hljs-symbol">:</span> [<span class="hljs-number">0</span>, <span class="hljs-number">2</span>]}, <span class="hljs-string">&quot;alice&quot;</span><span class="hljs-symbol">:</span> {<span class="hljs-string">&quot;likes&quot;</span><span class="hljs-symbol">:</span> [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]}}
-&gt; likes[[name, item]] { index = users[name].likes[<span class="hljs-number">_</span>]; item = items[index] }
-</code></pre>
-<p>The likes rule above defines a set of tuples specifying what each user likes.</p>
-<pre><code>&gt; likes[[&quot;alice&quot;, item]] # what does alice like?
-+----------+
-|   item   |
-+----------+
-| &quot;apples&quot; |
-| &quot;bread&quot;  |
-| &quot;coffee&quot; |
-+----------+
-&gt; likes[[name, &quot;bread&quot;]] # who likes bread?
-+---------+
-|  name   |
-+---------+
-| &quot;bob&quot;   |
-| &quot;alice&quot; |
-+---------+
-</code></pre><p>When you enter expressions into the OPA REPL, you are effectively running <em>queries</em>. The REPL output shows the values of variables in the expression that make the query <code>true</code>. If there is no set of variables that would make the query <code>true</code>, the REPL prints <code>false</code>. If there are no variables in the query and the query evaluates successfully, then the REPL just prints <code>true</code>.</p>
-<p>Quit out of the REPL by pressing Control-D or typing <code>exit</code>:</p>
-<pre><code class="lang-ruby">&gt; exit
-Exiting
-</code></pre>
-<h3 id="2-create-a-data-file-and-a-policy-module">2. Create a data file and a policy module.</h3>
-<p>Let&apos;s define a bit of JSON data that will be used in the tutorial:</p>
-<pre><code class="lang-shell">cat &gt;data.json &lt;&lt;EOF
-{
-    &quot;servers&quot;: [
-        {&quot;id&quot;: &quot;s1&quot;, &quot;name&quot;: &quot;app&quot;, &quot;protocols&quot;: [&quot;https&quot;, &quot;ssh&quot;], &quot;ports&quot;: [&quot;p1&quot;, &quot;p2&quot;, &quot;p3&quot;]},
-        {&quot;id&quot;: &quot;s2&quot;, &quot;name&quot;: &quot;db&quot;, &quot;protocols&quot;: [&quot;mysql&quot;], &quot;ports&quot;: [&quot;p3&quot;]},
-        {&quot;id&quot;: &quot;s3&quot;, &quot;name&quot;: &quot;cache&quot;, &quot;protocols&quot;: [&quot;memcache&quot;], &quot;ports&quot;: [&quot;p3&quot;]},
-        {&quot;id&quot;: &quot;s4&quot;, &quot;name&quot;: &quot;dev&quot;, &quot;protocols&quot;: [&quot;http&quot;], &quot;ports&quot;: [&quot;p1&quot;, &quot;p2&quot;]}
-    ],
-    &quot;networks&quot;: [
-        {&quot;id&quot;: &quot;n1&quot;, &quot;public&quot;: false},
-        {&quot;id&quot;: &quot;n2&quot;, &quot;public&quot;: false},
-        {&quot;id&quot;: &quot;n3&quot;, &quot;public&quot;: true}
-    ],
-    &quot;ports&quot;: [
-        {&quot;id&quot;: &quot;p1&quot;, &quot;networks&quot;: [&quot;n1&quot;]},
-        {&quot;id&quot;: &quot;p2&quot;, &quot;networks&quot;: [&quot;n3&quot;]},
-        {&quot;id&quot;: &quot;p3&quot;, &quot;networks&quot;: [&quot;n2&quot;]}
-    ]
-}
-EOF
-</code></pre>
-<p>Also, let&apos;s include a rule that defines a set of servers that are attached to public networks:</p>
-<pre><code class="lang-shell">cat &gt;example.rego &lt;&lt;EOF
-package opa.example
 
-import data.servers
-import data.networks
-import data.ports
-
-public_servers[s] {
-    s = servers[_]
-    s.ports[_] = ports[i].id
-    ports[i].networks[_] = networks[j].id
-    networks[j].public = true
+<span class="hljs-comment"># Find all users violating SOD</span>
+sod_violation[user] {
+    <span class="hljs-comment"># grab one role for a user</span>
+    role1 = user_role[user][<span class="hljs-number">_</span>]
+    <span class="hljs-comment"># grab another role for that same user</span>
+    role2 = user_role[user][<span class="hljs-number">_</span>]
+    <span class="hljs-comment"># check if those roles are forbidden by SOD</span>
+    sod_roles[<span class="hljs-number">_</span>] = [role1, role2]
 }
-EOF
 </code></pre>
-<h3 id="3-run-the-repl-with-the-data-file-and-policy-module-as-input">3. Run the REPL with the data file and policy module as input.</h3>
-<pre><code class="lang-shell">./opa run data.json example.rego
+<p>(For those familar with SOD, this is the static version since SOD violations
+happen whenever a user is assigned two conflicting roles.  The dynamic version of SOD allows
+a single user to be assigned two conflicting roles but requires that the same user not
+utilize those roles on the same transaction, which is out of scope for this document.)</p>
+<h2 id="attribute-based-access-control-abac">Attribute-based access control (ABAC)</h2>
+<p>With attribute-based access control, you make policy decisions using the
+attributes of the users, objects, and actions involved in the request.
+It has three main components:</p>
+<ul>
+<li>Attributes for users</li>
+<li>Attributes for objects</li>
+<li>Logic dictating which attribute combinations are authorized</li>
+</ul>
+<p>For example, we might know the following attributes for our users</p>
+<ul>
+<li>alice<ul>
+<li>joined the company 15 years ago</li>
+<li>is a trader</li>
+</ul>
+</li>
+<li>bob<ul>
+<li>joined the company 5 years ago</li>
+<li>is an analyst</li>
+</ul>
+</li>
+</ul>
+<p>We would also have attributes for the objects, in this case stock ticker symbols.</p>
+<ul>
+<li>MSFT<ul>
+<li>is sold on NASDAQ</li>
+<li>sells at $59.20 per share</li>
+</ul>
+</li>
+<li>AMZN<ul>
+<li>is sold on NASDAQ</li>
+<li>sells at $813.64 per share</li>
+</ul>
+</li>
+</ul>
+<p>An example ABAC policy in english might be:</p>
+<ul>
+<li>Traders may purchase NASDAQ stocks for under $2M</li>
+<li>Traders with 10+ years experience may purchase NASDAQ stocks for under $5M</li>
+</ul>
+<p>OPA supports ABAC policies as shown below.</p>
+<pre><code class="lang-ruby">package abac
+
+<span class="hljs-comment"># Sample input</span>
+<span class="hljs-comment"># input = {</span>
+<span class="hljs-comment">#    &quot;user&quot;: &quot;alice&quot;,</span>
+<span class="hljs-comment">#    &quot;ticker&quot;: &quot;MSFT&quot;,</span>
+<span class="hljs-comment">#    &quot;action&quot;: &quot;buy&quot;,</span>
+<span class="hljs-comment">#    &quot;amount&quot;: 1000000</span>
+<span class="hljs-comment"># }</span>
+
+<span class="hljs-comment"># User attributes</span>
+user_attributes = {
+    <span class="hljs-string">&quot;alice&quot;</span><span class="hljs-symbol">:</span> {<span class="hljs-string">&quot;tenure&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-number">15</span>, <span class="hljs-string">&quot;title&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;trader&quot;</span>},
+    <span class="hljs-string">&quot;bob&quot;</span><span class="hljs-symbol">:</span> {<span class="hljs-string">&quot;tenure&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-number">5</span>, <span class="hljs-string">&quot;title&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;analyst&quot;</span>}
+}
+
+<span class="hljs-comment"># Stock attributes</span>
+ticker_attributes = {
+    <span class="hljs-string">&quot;MSFT&quot;</span><span class="hljs-symbol">:</span> {<span class="hljs-string">&quot;exchange&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;NASDAQ&quot;</span>, <span class="hljs-string">&quot;price&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-number">59.20</span>},
+    <span class="hljs-string">&quot;AMZN&quot;</span><span class="hljs-symbol">:</span> {<span class="hljs-string">&quot;exchange&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;NASDAQ&quot;</span>, <span class="hljs-string">&quot;price&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-number">813.64</span>}
+}
+
+<span class="hljs-comment"># all traders may buy NASDAQ under $2M</span>
+allow {
+    <span class="hljs-comment"># lookup the user&apos;s attributes</span>
+    user = user_attributes[input.user]
+    <span class="hljs-comment"># check that the user is a trader</span>
+    user.title = <span class="hljs-string">&quot;trader&quot;</span>
+    <span class="hljs-comment"># check that the stock being purchased is sold on the NASDAQ</span>
+    tickerAttributes[input.ticker].exchange = <span class="hljs-string">&quot;NASDAQ&quot;</span>
+    <span class="hljs-comment"># check that the purchase amount is under $2M</span>
+    input.amount &lt;= <span class="hljs-number">2000000</span>
+}
+
+<span class="hljs-comment"># traders with 10+ years experience may buy NASDAQ under $5M</span>
+allow {
+    <span class="hljs-comment"># lookup the user&apos;s attributes</span>
+    user = user_attributes[input.user]
+    <span class="hljs-comment"># check that the user is a trader</span>
+    user.title = <span class="hljs-string">&quot;trader&quot;</span>
+    <span class="hljs-comment"># check that the stock being purchased is sold on the NASDAQ</span>
+    tickerAttributes[input.ticker].exchange = <span class="hljs-string">&quot;NASDAQ&quot;</span>
+    <span class="hljs-comment"># check that the user has at least 10 years of experience</span>
+    user.tenure &gt; <span class="hljs-number">10</span>
+    <span class="hljs-comment"># check that the purchase amount is under $5M</span>
+    input.amount &lt;= <span class="hljs-number">5000000</span>
+}
 </code></pre>
-<p>You can now run queries against the various documents:</p>
-<pre><code class="lang-ruby">&gt; data.servers[<span class="hljs-number">_</span>].id
-+--------------------+
-| data.servers[<span class="hljs-number">_</span>].id |
-+--------------------+
-| <span class="hljs-string">&quot;s1&quot;</span>               |
-| <span class="hljs-string">&quot;s2&quot;</span>               |
-| <span class="hljs-string">&quot;s3&quot;</span>               |
-| <span class="hljs-string">&quot;s4&quot;</span>               |
-+--------------------+
-&gt; data.opa.example.public_servers[x]
-+-------------------------------------------------------------------------------+
-|                                       x                                       |
-+-------------------------------------------------------------------------------+
-| {<span class="hljs-string">&quot;id&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;s1&quot;</span></span>,<span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;app&quot;</span></span>,<span class="hljs-string">&quot;ports&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;p1&quot;</span>,<span class="hljs-string">&quot;p2&quot;</span>,<span class="hljs-string">&quot;p3&quot;</span>],<span class="hljs-string">&quot;protocols&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;https&quot;</span>,<span class="hljs-string">&quot;ssh&quot;</span>]} |
-| {<span class="hljs-string">&quot;id&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;s4&quot;</span></span>,<span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;dev&quot;</span></span>,<span class="hljs-string">&quot;ports&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;p1&quot;</span>,<span class="hljs-string">&quot;p2&quot;</span>],<span class="hljs-string">&quot;protocols&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;http&quot;</span>]}             |
-+-------------------------------------------------------------------------------+
-</code></pre>
-<p>One powerful thing about Rego and the REPL is that you can run queries using the same syntax that you would use to lookup values.</p>
-<p>For example if <code>i</code> has value <code>0</code> then <code>data.servers[i]</code> returns the first value in the <code>data.servers</code> array:</p>
-<pre><code class="lang-ruby">&gt; i = <span class="hljs-number">0</span>
-&gt; data.servers[i]
-{
-  <span class="hljs-string">&quot;id&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;s1&quot;</span>,
-  <span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;app&quot;</span>,
-  <span class="hljs-string">&quot;ports&quot;</span><span class="hljs-symbol">:</span> [
-      <span class="hljs-string">&quot;p1&quot;</span>,
-      <span class="hljs-string">&quot;p2&quot;</span>,
-      <span class="hljs-string">&quot;p3&quot;</span>
-  ],
-  <span class="hljs-string">&quot;protocols&quot;</span><span class="hljs-symbol">:</span> [
-      <span class="hljs-string">&quot;https&quot;</span>,
-      <span class="hljs-string">&quot;ssh&quot;</span>
+<p>In OPA, there&apos;s nothing special about users and objects.  You can attach
+attributes to anything.  And the attributes can themselves be structured JSON objects
+and have attributes on attributes on attributes.  Because OPA was designed to work
+with arbitrarily nested JSON data, it supports incredibly rich ABAC policies.</p>
+<h2 id="amazon-web-services-iam">Amazon Web Services IAM</h2>
+<p>Amazon Web Services (AWS) lets you create policies that you attach to users, roles, groups,
+and resources.  You write <code>allow</code> and <code>deny</code> statements to decide which users can
+execute which API calls on which resources.  By default all API access is denied;
+policy statements can explicitly allow API access.  If an API is both allowed and
+denied, it is always denied.</p>
+<pre><code class="lang-json">{
+  <span class="hljs-string">&quot;Version&quot;</span>: <span class="hljs-string">&quot;2012-10-17&quot;</span>,
+  <span class="hljs-string">&quot;Statement&quot;</span>: [
+    {
+      <span class="hljs-string">&quot;Sid&quot;</span>: <span class="hljs-string">&quot;FirstStatement&quot;</span>,
+      <span class="hljs-string">&quot;Effect&quot;</span>: <span class="hljs-string">&quot;Allow&quot;</span>,
+      <span class="hljs-string">&quot;Action&quot;</span>: [<span class="hljs-string">&quot;iam:ChangePassword&quot;</span>],
+      <span class="hljs-string">&quot;Resource&quot;</span>: <span class="hljs-string">&quot;*&quot;</span>
+    },
+    {
+      <span class="hljs-string">&quot;Sid&quot;</span>: <span class="hljs-string">&quot;SecondStatement&quot;</span>,
+      <span class="hljs-string">&quot;Effect&quot;</span>: <span class="hljs-string">&quot;Allow&quot;</span>,
+      <span class="hljs-string">&quot;Action&quot;</span>: <span class="hljs-string">&quot;s3:ListAllMyBuckets&quot;</span>,
+      <span class="hljs-string">&quot;Resource&quot;</span>: <span class="hljs-string">&quot;*&quot;</span>
+    },
+    {
+      <span class="hljs-string">&quot;Sid&quot;</span>: <span class="hljs-string">&quot;ThirdStatement&quot;</span>,
+      <span class="hljs-string">&quot;Effect&quot;</span>: <span class="hljs-string">&quot;Allow&quot;</span>,
+      <span class="hljs-string">&quot;Action&quot;</span>: [
+        <span class="hljs-string">&quot;s3:List*&quot;</span>,
+        <span class="hljs-string">&quot;s3:Get*&quot;</span>
+      ],
+      <span class="hljs-string">&quot;Resource&quot;</span>: [
+        <span class="hljs-string">&quot;arn:aws:s3:::confidential-data&quot;</span>,
+        <span class="hljs-string">&quot;arn:aws:s3:::confidential-data/*&quot;</span>
+      ]
+    }
   ]
 }
 </code></pre>
-<p>That same expression <code>data.servers[i]</code> when <code>i</code> has no value defines a query that returns all the values of <code>i</code> and <code>data.servers[i]</code>:</p>
-<pre><code class="lang-ruby">&gt; unset i
-&gt; data.servers[i]
-+---+-------------------------------------------------------------------------------+
-| i |                                data.servers[i]                                |
-+---+-------------------------------------------------------------------------------+
-| <span class="hljs-number">0</span> | {<span class="hljs-string">&quot;id&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;s1&quot;</span></span>,<span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;app&quot;</span></span>,<span class="hljs-string">&quot;ports&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;p1&quot;</span>,<span class="hljs-string">&quot;p2&quot;</span>,<span class="hljs-string">&quot;p3&quot;</span>],<span class="hljs-string">&quot;protocols&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;https&quot;</span>,<span class="hljs-string">&quot;ssh&quot;</span>]} |
-| <span class="hljs-number">1</span> | {<span class="hljs-string">&quot;id&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;s2&quot;</span></span>,<span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;db&quot;</span></span>,<span class="hljs-string">&quot;ports&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;p3&quot;</span>],<span class="hljs-string">&quot;protocols&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;mysql&quot;</span>]}                  |
-| <span class="hljs-number">2</span> | {<span class="hljs-string">&quot;id&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;s3&quot;</span></span>,<span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;cache&quot;</span></span>,<span class="hljs-string">&quot;ports&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;p3&quot;</span>],<span class="hljs-string">&quot;protocols&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;memcache&quot;</span>]}            |
-| <span class="hljs-number">3</span> | {<span class="hljs-string">&quot;id&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;s4&quot;</span></span>,<span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;dev&quot;</span></span>,<span class="hljs-string">&quot;ports&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;p1&quot;</span>,<span class="hljs-string">&quot;p2&quot;</span>],<span class="hljs-string">&quot;protocols&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;http&quot;</span>]}             |
-+---+-------------------------------------------------------------------------------+
-</code></pre>
-<h3 id="4-import-and-export-documents">4. Import and export documents.</h3>
-<p>The REPL also understands the <a href="how-do-i-write-policies.html#modules">Import and Package</a> directives.</p>
-<pre><code class="lang-ruby">&gt; import data.servers
-&gt; servers[i].ports[<span class="hljs-number">_</span>] = <span class="hljs-string">&quot;p2&quot;</span>; servers[i].id = id
-+---+------+
-| i |  id  |
-+---+------+
-| <span class="hljs-number">0</span> | <span class="hljs-string">&quot;s1&quot;</span> |
-| <span class="hljs-number">3</span> | <span class="hljs-string">&quot;s4&quot;</span> |
-+---+------+
-</code></pre>
-<pre><code class="lang-ruby">&gt; package opa.example
-&gt; public_servers[x].protocols[<span class="hljs-number">_</span>] = <span class="hljs-string">&quot;http&quot;</span>
-+-------------------------------------------------------------------+
-|                                 x                                 |
-+-------------------------------------------------------------------+
-| {<span class="hljs-string">&quot;id&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;s4&quot;</span></span>,<span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;dev&quot;</span></span>,<span class="hljs-string">&quot;ports&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;p1&quot;</span>,<span class="hljs-string">&quot;p2&quot;</span>],<span class="hljs-string">&quot;protocols&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;http&quot;</span>]} |
-+-------------------------------------------------------------------+
-</code></pre>
-<h3 id="5-define-a-rule-to-identify-servers-in-violation-of-our-security-policy">5. Define a rule to identify servers in violation of our security policy.</h3>
-<pre><code class="lang-ruby">&gt; import data.servers
-&gt; violations[s] {
-  s = servers[<span class="hljs-number">_</span>]
-  s.protocols[<span class="hljs-number">_</span>] = <span class="hljs-string">&quot;http&quot;</span>
-  public_servers[s]
+<p>In OPA, you write each of the AWS <code>allow</code> statements as a separate statement, and you
+expect the input to have <code>user</code>, <code>action</code>, and <code>resource</code> fields.</p>
+<pre><code class="lang-ruby">package aws
+
+<span class="hljs-comment"># input = {</span>
+<span class="hljs-comment">#     &quot;user&quot;: &quot;alice&quot;,</span>
+<span class="hljs-comment">#     &quot;action&quot;: &quot;ec2:StartInstance&quot;</span>
+<span class="hljs-comment">#     &quot;resource&quot;: &quot;arn:aws:ec2:::instance/i78999879&quot;</span>
+<span class="hljs-comment"># }</span>
+
+<span class="hljs-comment"># FirstStatement</span>
+allow {
+    input.action = <span class="hljs-string">&quot;iam:ChangePassword&quot;</span>
 }
 
-&gt; violations[server]
-+-------------------------------------------------------------------+
-|                              server                               |
-+-------------------------------------------------------------------+
-| {<span class="hljs-string">&quot;id&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;s4&quot;</span></span>,<span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;dev&quot;</span></span>,<span class="hljs-string">&quot;ports&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;p1&quot;</span>,<span class="hljs-string">&quot;p2&quot;</span>],<span class="hljs-string">&quot;protocols&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;http&quot;</span>]} |
-+-------------------------------------------------------------------+
+<span class="hljs-comment"># SecondStatement</span>
+allow {
+    input.action = <span class="hljs-string">&quot;s3:ListAllMyBuckets&quot;</span>
+}
+
+<span class="hljs-comment"># ThirdStatement</span>
+<span class="hljs-comment">#  Use helpers to handle implicit OR in the AWS policy.</span>
+<span class="hljs-comment">#  Below both &apos;actions_match&apos; and &apos;resources_match&apos; must be true.</span>
+allow {
+    actions_match
+    resources_match
+}
+
+<span class="hljs-comment"># actions_match is true if input.action matches one in the list</span>
+actions_match {
+    <span class="hljs-comment"># iterate over the actions in the list</span>
+    actions = [<span class="hljs-string">&quot;s3:List*&quot;</span>,<span class="hljs-string">&quot;s3:Get*&quot;</span>]
+    action = actions[<span class="hljs-number">_</span>]
+    <span class="hljs-comment"># check if input.action matches an action</span>
+    regex.globs_match(input.action, action)
+}
+
+<span class="hljs-comment"># resources_match is true if input.resource matches one in the list</span>
+resources_match {
+    <span class="hljs-comment"># iterate over the resources in the list</span>
+    resources = [<span class="hljs-string">&quot;arn:aws:s3:::confidential-data&quot;</span>,<span class="hljs-string">&quot;arn:aws:s3:::confidential-data/*&quot;</span>]
+    resource = resources[<span class="hljs-number">_</span>]
+    <span class="hljs-comment"># check if input.resource matches a resource</span>
+    regex.globs_match(input.resource, resource)
+}
 </code></pre>
-<blockquote>
-<p>The REPL accepts multi-line input and will change appearance when it detects multi-line input.</p>
-</blockquote>
+<h2 id="xacml">XACML</h2>
+<p>eXtensible Access Control Markup Language (XACML) was designed to express security policies: allow/deny decisions  using attributes of users, resources, actions, and the environment.
+The following policy says that users from the organization Curtiss or Packard who are US or GreatBritain nationals and who work on DetailedDesign or Simulation are permitted access to documents about NavigationSystems.</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Policy</span> <span class="hljs-attr">PolicyId</span>=<span class="hljs-string">&quot;urn:curtiss:ba:taa:taa-1.1&quot;</span> <span class="hljs-attr">RuleCombiningAlgId</span>=<span class="hljs-string">&quot;urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:deny-overrides&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">Description</span>&gt;</span>Policy for Business Authorization category TAA-1.1<span class="hljs-tag">&lt;/<span class="hljs-name">Description</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">Target</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">AnyOf</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">AllOf</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">Match</span>
+         <span class="hljs-attr">MatchId</span>=<span class="hljs-string">&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">AttributeValue</span> <span class="hljs-attr">DataType</span>=<span class="hljs-string">&quot;http://www.w3.org/2001/XMLSchema#string&quot;</span>&gt;</span>NavigationSystem<span class="hljs-tag">&lt;/<span class="hljs-name">AttributeValue</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">AttributeDesignator</span>
+           <span class="hljs-attr">MustBePresent</span>=<span class="hljs-string">&quot;true&quot;</span>
+           <span class="hljs-attr">Category</span>=<span class="hljs-string">&quot;urn:oasis:names:tc:xacml:3.0:attribute-category:resource&quot;</span>
+           <span class="hljs-attr">AttributeId</span>=<span class="hljs-string">&quot;urn:curtiss:names:tc:xacml:1.0:resource:Topics&quot;</span>
+           <span class="hljs-attr">DataType</span>=<span class="hljs-string">&quot;http://www.w3.org/2001/XMLSchema#string&quot;</span>/&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">Match</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">AllOf</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">AnyOf</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">Target</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">Rule</span> <span class="hljs-attr">Effect</span>=<span class="hljs-string">&quot;Permit&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Description</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Target</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">Actions</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">Action</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">ActionMatch</span> <span class="hljs-attr">MatchId</span>=<span class="hljs-string">&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">ActionAttributeDesignator</span>
+              <span class="hljs-attr">AttributeId</span>=<span class="hljs-string">&quot;urn:oasis:names:tc:xacml:1.0:action:action-id&quot;</span>
+              <span class="hljs-attr">DataType</span>=<span class="hljs-string">&quot;http://www.w3.org/2001/XMLSchema#string&quot;</span> /&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">AttributeValue</span> <span class="hljs-attr">DataType</span>=<span class="hljs-string">&quot;http://www.w3.org/2001/XMLSchema#string&quot;</span>&gt;</span>Any<span class="hljs-tag">&lt;/<span class="hljs-name">AttributeValue</span>&gt;</span>
+          <span class="hljs-tag">&lt;/<span class="hljs-name">ActionMatch</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">Action</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">Actions</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">Target</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Condition</span> <span class="hljs-attr">FunctionId</span>=<span class="hljs-string">&quot;urn:oasis:names:tc:xacml:1.0:function:and&quot;</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">Apply</span> <span class="hljs-attr">xsi:type</span>=<span class="hljs-string">&quot;AtLeastMemberOf&quot;</span> <span class="hljs-attr">functionId</span>=<span class="hljs-string">&quot;urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of&quot;</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">Apply</span> <span class="hljs-attr">functionId</span>=<span class="hljs-string">&quot;urn:oasis:names:tc:xacml:1.0:function:string-bag&quot;</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">AttributeValue</span> <span class="hljs-attr">DataType</span>=<span class="hljs-string">&quot;http://www.w3.org/2001/XMLSchema#string&quot;</span>&gt;</span>Curtiss<span class="hljs-tag">&lt;/<span class="hljs-name">AttributeValue</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">AttributeValue</span> <span class="hljs-attr">DataType</span>=<span class="hljs-string">&quot;http://www.w3.org/2001/XMLSchema#string&quot;</span>&gt;</span>Packard<span class="hljs-tag">&lt;/<span class="hljs-name">AttributeValue</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">Apply</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">AttributeDesignator</span> <span class="hljs-attr">AttributeId</span>=<span class="hljs-string">&quot;http://schemas.tscp.org/2012-03/claims/OrganizationID&quot;</span> <span class="hljs-attr">DataType</span>=<span class="hljs-string">&quot;http://www.w3.org/2001/XMLSchema#string&quot;</span> /&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">Apply</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">Apply</span> <span class="hljs-attr">xsi:type</span>=<span class="hljs-string">&quot;AtLeastMemberOf&quot;</span> <span class="hljs-attr">functionId</span>=<span class="hljs-string">&quot;urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of&quot;</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">Apply</span> <span class="hljs-attr">functionId</span>=<span class="hljs-string">&quot;urn:oasis:names:tc:xacml:1.0:function:string-bag&quot;</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">AttributeValue</span> <span class="hljs-attr">DataType</span>=<span class="hljs-string">&quot;http://www.w3.org/2001/XMLSchema#string&quot;</span>&gt;</span>US<span class="hljs-tag">&lt;/<span class="hljs-name">AttributeValue</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">AttributeValue</span> <span class="hljs-attr">DataType</span>=<span class="hljs-string">&quot;http://www.w3.org/2001/XMLSchema#string&quot;</span>&gt;</span>GB<span class="hljs-tag">&lt;/<span class="hljs-name">AttributeValue</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">Apply</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">AttributeDesignator</span> <span class="hljs-attr">AttributeId</span>=<span class="hljs-string">&quot;http://schemas.tscp.org/2012-03/claims/Nationality&quot;</span> <span class="hljs-attr">DataType</span>=<span class="hljs-string">&quot;http://www.w3.org/2001/XMLSchema#string&quot;</span> /&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">Apply</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">Apply</span> <span class="hljs-attr">xsi:type</span>=<span class="hljs-string">&quot;AtLeastMemberOf&quot;</span> <span class="hljs-attr">functionId</span>=<span class="hljs-string">&quot;urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of&quot;</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">Apply</span> <span class="hljs-attr">functionId</span>=<span class="hljs-string">&quot;urn:oasis:names:tc:xacml:1.0:function:string-bag&quot;</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">AttributeValue</span> <span class="hljs-attr">DataType</span>=<span class="hljs-string">&quot;http://www.w3.org/2001/XMLSchema#string&quot;</span>&gt;</span>DetailedDesign<span class="hljs-tag">&lt;/<span class="hljs-name">AttributeValue</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">AttributeValue</span> <span class="hljs-attr">DataType</span>=<span class="hljs-string">&quot;http://www.w3.org/2001/XMLSchema#string&quot;</span>&gt;</span>Simulation<span class="hljs-tag">&lt;/<span class="hljs-name">AttributeValue</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">Apply</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">AttributeDesignator</span> <span class="hljs-attr">AttributeId</span>=<span class="hljs-string">&quot;http://schemas.tscp.org/2012-03/claims/Work-Effort&quot;</span> <span class="hljs-attr">DataType</span>=<span class="hljs-string">&quot;http://www.w3.org/2001/XMLSchema#string&quot;</span> /&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">Apply</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">Apply</span> <span class="hljs-attr">xsi:type</span>=<span class="hljs-string">&quot;AndFunction&quot;</span> <span class="hljs-attr">functionId</span>=<span class="hljs-string">&quot;urn:oasis:names:tc:xacml:1.0:function:and&quot;</span> /&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">Condition</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">Rule</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">Policy</span>&gt;</span>
+</code></pre>
+<p>The same statement is shown below in OPA.  Here the inputs are assumed to be roughly the
+same as for XACML: attributes of users, actions, and resources.</p>
+<pre><code class="lang-ruby">package xacml
+
+<span class="hljs-comment"># input = {</span>
+<span class="hljs-comment">#    user = {&quot;name&quot;: &quot;alice&quot;,</span>
+<span class="hljs-comment">#            &quot;organization&quot;: &quot;Packard&quot;,</span>
+<span class="hljs-comment">#            &quot;nationality&quot;: &quot;GB&quot;,</span>
+<span class="hljs-comment">#            &quot;work_effort&quot;: &quot;DetailedDesign&quot;},</span>
+<span class="hljs-comment">#    resource = {&quot;NavigationSystem&quot;: true},</span>
+<span class="hljs-comment">#    action = {&quot;name&quot;: &quot;read&quot;}</span>
+<span class="hljs-comment"># }</span>
+
+permit {
+    <span class="hljs-comment"># Check that resource has a &quot;NavigationSystem&quot; entry</span>
+    input.resource[<span class="hljs-string">&quot;NavigationSystem&quot;</span>]
+
+    <span class="hljs-comment"># Check that organization is one of the options (underscore implements &quot;any&quot;)</span>
+    org_options = [<span class="hljs-string">&quot;Packard&quot;</span>, <span class="hljs-string">&quot;Curtiss&quot;</span>]
+    input.user.organization = org_options[<span class="hljs-number">_</span>]
+
+    <span class="hljs-comment"># Check that nationality is one of the options (underscore implements &quot;any&quot;)</span>
+    nationality_options = [<span class="hljs-string">&quot;GB&quot;</span>, <span class="hljs-string">&quot;US&quot;</span>]
+    input.user.nationality = nationality_options[<span class="hljs-number">_</span>]
+
+    <span class="hljs-comment"># Check that work_effort is one of the options (underscore implements &quot;any&quot;)</span>
+    work_options = [<span class="hljs-string">&quot;DetailedDesign&quot;</span>, <span class="hljs-string">&quot;Simulation&quot;</span>]
+    input.user.work_effort = work_options[<span class="hljs-number">_</span>]
+}
+</code></pre>
 
                                 
                                 </section>
@@ -2021,12 +2240,12 @@ EOF
 
             
                 
-                <a href="comparison-to-other-systems.html#xacml" class="navigation navigation-prev " aria-label="Previous page: XACML">
+                <a href="faq.html" class="navigation navigation-prev " aria-label="Previous page: FAQ">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="docker-authorization.html" class="navigation navigation-next " aria-label="Next page: Docker Authorization">
+                <a href="comparison-to-other-systems.html#role-based-access-control-rbac" class="navigation navigation-next " aria-label="Next page: RBAC">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -2037,7 +2256,7 @@ EOF
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Get Started","level":"2.1","depth":1,"next":{"title":"Docker Authorization","level":"2.2","depth":1,"path":"docker-authorization.md","ref":"docker-authorization.md","articles":[]},"previous":{"title":"XACML","level":"1.10.4","depth":2,"anchor":"#xacml","path":"comparison-to-other-systems.md","ref":"comparison-to-other-systems.md#xacml","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"get-started.md","mtime":"2018-02-22T21:05:59.195Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-02-22T21:07:13.632Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Comparison to Other Systems","level":"1.10","depth":1,"next":{"title":"RBAC","level":"1.10.1","depth":2,"anchor":"#role-based-access-control-rbac","path":"comparison-to-other-systems.md","ref":"comparison-to-other-systems.md#role-based-access-control-rbac","articles":[]},"previous":{"title":"FAQ","level":"1.9","depth":1,"path":"faq.md","ref":"faq.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"comparison-to-other-systems.md","mtime":"2018-02-22T21:05:59.195Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-02-22T21:07:13.632Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

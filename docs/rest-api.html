@@ -383,19 +383,6 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.5" data-path="how-does-opa-work.html">
-            
-                <a href="how-does-opa-work.html#future-features">
-            
-                    
-                    Future Features
-            
-                </a>
-            
-
-            
-        </li>
-    
 
             </ul>
             
@@ -1372,19 +1359,6 @@
     
         <li class="chapter " data-level="1.5.8" data-path="rest-api.html">
             
-                <a href="rest-api.html#diagnostics">
-            
-                    
-                    Diagnostics
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.5.9" data-path="rest-api.html">
-            
                 <a href="rest-api.html#watches">
             
                     
@@ -1484,7 +1458,52 @@
             
         </li>
     
-        <li class="chapter " data-level="1.7" data-path="security.html">
+        <li class="chapter " data-level="1.7" data-path="monitoring-diagnostics.html">
+            
+                <a href="monitoring-diagnostics.html">
+            
+                    
+                    Monitoring &amp; Diagnostics
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.7.1" data-path="monitoring-diagnostics.html">
+            
+                <a href="monitoring-diagnostics.html#prometheus">
+            
+                    
+                    Prometheus
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7.2" data-path="monitoring-diagnostics.html">
+            
+                <a href="monitoring-diagnostics.html#prometheus">
+            
+                    
+                    Diagnostics
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8" data-path="security.html">
             
                 <a href="security.html">
             
@@ -1498,7 +1517,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.7.1" data-path="security.html">
+        <li class="chapter " data-level="1.8.1" data-path="security.html">
             
                 <a href="security.html#tls-and-https">
             
@@ -1511,7 +1530,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.7.2" data-path="security.html">
+        <li class="chapter " data-level="1.8.2" data-path="security.html">
             
                 <a href="security.html#authentication-and-authorization">
             
@@ -1529,7 +1548,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.8" data-path="faq.html">
+        <li class="chapter " data-level="1.9" data-path="faq.html">
             
                 <a href="faq.html">
             
@@ -1539,6 +1558,77 @@
                 </a>
             
 
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10" data-path="comparison-to-other-systems.html">
+            
+                <a href="comparison-to-other-systems.html">
+            
+                    
+                    Comparison to Other Systems
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.10.1" data-path="comparison-to-other-systems.html">
+            
+                <a href="comparison-to-other-systems.html#role-based-access-control-rbac">
+            
+                    
+                    RBAC
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10.2" data-path="comparison-to-other-systems.html">
+            
+                <a href="comparison-to-other-systems.html#attribute-based-access-control-abac">
+            
+                    
+                    ABAC
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10.3" data-path="comparison-to-other-systems.html">
+            
+                <a href="comparison-to-other-systems.html#amazon-web-services-iam">
+            
+                    
+                    AWS IAM
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10.4" data-path="comparison-to-other-systems.html">
+            
+                <a href="comparison-to-other-systems.html#xacml">
+            
+                    
+                    XACML
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
             
         </li>
     
@@ -2558,6 +2648,7 @@ It is not complete, as further changes to <code>/data/servers</code> would cause
 <li><strong>pretty</strong> - If parameter is <code>true</code>, response will formatted for humans.</li>
 <li><strong>explain</strong> - Return query explanation in addition to result. Values: <strong>full</strong>.</li>
 <li><strong>metrics</strong> - Return query performance metrics in addition to result. See <a href="#performance-metrics">Performance Metrics</a> for more detail.</li>
+<li><strong>instrument</strong> - Instrument query evaluation and return a superset of performance metrics in addition to result. See <a href="#performance-metrics">Performance Metrics</a> for more detail.</li>
 <li><strong>watch</strong> - Set a watch on the data reference if the parameter is present. See <a href="#watches">Watches</a> for more detail.</li>
 </ul>
 <h4 id="status-codes">Status Codes</h4>
@@ -2633,6 +2724,8 @@ allow_request { flag = <span class="hljs-keyword">true</span> }
 <li><strong>pretty</strong> - If parameter is <code>true</code>, response will formatted for humans.</li>
 <li><strong>explain</strong> - Return query explanation in addition to result. Values: <strong>full</strong>.</li>
 <li><strong>metrics</strong> - Return query performance metrics in addition to result. See <a href="#performance-metrics">Performance Metrics</a> for more detail.</li>
+<li><strong>instrument</strong> - Instrument query evaluation and return a superset of performance metrics in addition to result. See <a href="#performance-metrics">Performance Metrics</a> for more detail.</li>
+<li><strong>watch</strong> - Set a watch on the data reference if the parameter is present. See <a href="#watches">Watches</a> for more detail.</li>
 </ul>
 <h4 id="status-codes">Status Codes</h4>
 <ul>
@@ -2749,6 +2842,23 @@ Content-Type: application/json-patch+json
 <li><strong>500</strong> - server error</li>
 </ul>
 <p>The effective path of the JSON Patch operation is obtained by joining the path portion of the URL with the path value from the operation(s) contained in the message body. In all cases, the parent of the effective path MUST refer to an existing document, otherwise the server returns 404. In the case of <strong>remove</strong> and <strong>replace</strong> operations, the effective path MUST refer to an existing document, otherwise the server returns 404.</p>
+<h3 id="delete-a-document"><a name="delete-a-document">Delete a Document</a></h3>
+<pre><code>DELETE /v1/data/{path:.+}
+</code></pre><p>Delete a document.</p>
+<p>The server processes the DELETE method as if the client had sent a PATCH request containing a single remove operation.</p>
+<h4 id="example-request">Example Request</h4>
+<pre><code class="lang-http"><span class="hljs-keyword">DELETE</span> <span class="hljs-string">/v1/data/servers</span> HTTP/1.1
+</code></pre>
+<h4 id="example-response">Example Response</h4>
+<pre><code class="lang-http">HTTP/1.1 <span class="hljs-number">204</span> No Content
+</code></pre>
+<h4 id="status-codes">Status Codes</h4>
+<ul>
+<li><strong>204</strong> - no content (success)</li>
+<li><strong>404</strong> - not found</li>
+<li><strong>500</strong> - server error</li>
+</ul>
+<p>If the path refers to a non-existent document, the server returns 404.</p>
 <h2 id="query-api"><a name="query-api"></a> Query API</h2>
 <h3 id="execute-a-simple-query"><a name="execute-a-simple-query">Execute a Simple Query</a></h3>
 <pre><code>POST /
@@ -2952,11 +3062,15 @@ restarts, a <strong>Redo</strong> Trace Event is emitted.</p>
 }
 </code></pre>
 <h2 id="performance-metrics"><a name="performance-metrics"></a> Performance Metrics</h2>
-<p>OPA can report detailed performance metrics at runtime. Currently, performance metrics can be requested on individual API calls and are returned inline with the API response. To enable performance metric collection on an API call, specify the <code>metrics=true</code> query parameter when executing the API call. Performance metrics are currently supported for the following APIs:</p>
+<p>OPA can report detailed performance metrics at runtime. Performance metrics can
+be requested on individual API calls and are returned inline with the API
+response. To enable performance metric collection on an API call, specify the
+<code>metrics=true</code> query parameter when executing the API call. Performance metrics
+are currently supported for the following APIs:</p>
 <ul>
-<li>Data API GET</li>
-<li>Data API POST</li>
-<li>Query API</li>
+<li>Data API (GET and POST)</li>
+<li>Policy API (all methods)</li>
+<li>Query API (all methods)</li>
 </ul>
 <p>For example:</p>
 <pre><code class="lang-http"><span class="hljs-keyword">POST</span> <span class="hljs-string">/v1/data/example?metrics=true</span> HTTP/1.1
@@ -2987,141 +3101,11 @@ restarts, a <strong>Redo</strong> Trace Event is emitted.</p>
 <li><strong>timer_rego_module_parse_ns</strong>: time taken (in nanoseconds) to parse the input policy module.</li>
 <li><strong>timer_rego_module_compile_ns</strong>: time taken (in nanoseconds) to compile the loaded policy modules.</li>
 </ul>
-<h2 id="diagnostics"><a name="diagnostics"></a> Diagnostics</h2>
-<p>The OPA server has the capability to log and return diagnostics on past requests to the user. By default, the server will not log any diagnostics at all. In order to have the server start logging diagnostic information, the document located at <code>data.system.diagnostics.config</code> (referred to as config below) must be defined. The config must evaluate to an object that is structured as follows:</p>
-<pre><code>{
-    &quot;mode&quot;: &lt;&quot;all&quot;/&quot;on&quot;/&quot;off&quot;&gt;,
-}
-</code></pre><p>An example of a policy that defines a simple diagnostics config that only logs GET requests:</p>
-<pre><code>package system.diagnostics
-
-default config = {&quot;mode&quot;: &quot;off&quot;}
-
-config = {&quot;mode&quot;: &quot;on&quot;} {
-    input.method = &quot;GET&quot;
-}
-</code></pre><p>If the config document does not conform to the structure above, then diagnostics are automatically disabled.</p>
-<p>Whenever a data GET/POST, a POST to <code>/</code> or query GET request is received by the server, it evaluates the config document to determine whether or not diagnostics should be logged. The table below describes the behavior of diagnostics depending on the values of the config fields.</p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Value</th>
-<th>Behavior</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>mode</code></td>
-<td>&quot;off&quot;</td>
-<td>No diagnostics are recorded.</td>
-</tr>
-<tr>
-<td><code>mode</code></td>
-<td>&quot;on&quot;</td>
-<td>Enables collection of inexpensive values. This includes the query, input, result, and performance metrics.</td>
-</tr>
-<tr>
-<td><code>mode</code></td>
-<td>&quot;all&quot;</td>
-<td>All diagnostics are collected. This includes a full trace of the query evaluation.</td>
-</tr>
-</tbody>
-</table>
-<p>In order to allow the config document to make dynamic decisions about whether or not to record diagnostics for a given request, the server will provide a special input document when evaluating it. The input document will contain information from the HTTP request that was issued to the server, of the form:</p>
-<pre><code>{
-    &quot;method&quot;: &lt;HTTP request method&gt;,
-    &quot;path&quot;: &lt;Full HTTP request path&gt;,
-    &quot;body&quot;: &lt;HTTP request body (null if not present or invalid JSON)&gt;,
-
-    # The query parameters in the HTTP request.
-    &quot;params&quot;: {
-        &quot;param0&quot;: [&quot;value0&quot;, &quot;value1&quot;, ...],
-        &quot;param1&quot;: [...],
-        ...
-    },
-
-    # The header fields in the HTTP request.
-    &quot;header&quot;: {
-        &quot;field0&quot;: [&quot;value0&quot;, &quot;value1&quot;, ...],
-        &quot;field1&quot;: [...],
-        ...
-    }
-}
-</code></pre><p>As an example, the request <code>GET /v1/data/servers?watch&amp;pretty=true HTTP/1.1</code> would result in the input document below (the headers will likely depend on the client used to send the request):</p>
-<pre><code>{
-    &quot;method&quot;: &quot;GET&quot;,
-    &quot;path&quot;: &quot;/v1/data/servers&quot;,
-    &quot;body&quot;: null,
-    &quot;params&quot;: {
-      &quot;watch&quot;: [&quot;&quot;],
-      &quot;pretty&quot;: [&quot;true&quot;],
-    },
-
-    &quot;header&quot;: { ... }
-}
-</code></pre><p>Diagnostics may be fetched from the server using the Data GET endpoint. When the server sees a GET request to <code>/v1/data/system/diagnostics</code>, it will not evaluate the document located there, but instead return a list of the diagnostics stored on the server (ordered from oldest to newest). The server will honor the <code>explainMode</code> and <code>pretty</code> parameters from the GET request, but the others will be ignored. The response is of the form:</p>
-<pre><code>{
-  &quot;result&quot;: [
-    {
-      &quot;timestamp&quot;: ...,
-      &quot;query&quot;: ...,
-      &quot;input&quot;: ...,
-      &quot;result&quot;: ...,
-      &quot;error&quot;: ...,
-      &quot;explanation&quot;: ...,
-      &quot;metrics&quot;: ...
-    },
-    ...
-  ]
-}
-</code></pre><table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Always Present</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>timestamp</code></td>
-<td>Yes</td>
-<td>Nanoseconds since the Unix Epoch time</td>
-</tr>
-<tr>
-<td><code>query</code></td>
-<td>Yes</td>
-<td>The query, if the request for the record was a query request. Otherwise the data path from the original request.</td>
-</tr>
-<tr>
-<td><code>input</code></td>
-<td>No</td>
-<td>Input provided to the <code>query</code> at evaluation time.</td>
-</tr>
-<tr>
-<td><code>result</code></td>
-<td>No</td>
-<td>Result of evaluating <code>query</code>. See the <a href="#data-api">Data</a> and <a href="#query-api">Query</a> APIs for detailed descriptions of formats.</td>
-</tr>
-<tr>
-<td><code>error</code></td>
-<td>No</td>
-<td><a href="#errors">Error</a> encountered while evaluating <code>query</code>.</td>
-</tr>
-<tr>
-<td><code>metrics</code></td>
-<td>No</td>
-<td><a href="#performance-metrics">Performance Metrics</a> for <code>query</code>.</td>
-</tr>
-<tr>
-<td><code>explanation</code></td>
-<td>No</td>
-<td><a href="#explanations">Explanation</a> of how <code>result</code> was found.</td>
-</tr>
-</tbody>
-</table>
-<p>The server will only store a finite number of diagnostics. If the server&apos;s diagnostics storage becomes full, it will delete the oldest diagnostic to make room for the new one. The size of the storage may be configured when the server is started.</p>
+<p>OPA also supports query instrumentation. To enable query instrumentation,
+specify the <code>instrument=true</code> query parameter when executing the API call.
+Query instrumentation can help diagnose performance problems, however, it can
+add significant overhead to query evaluation. We recommend leaving query
+instrumentation off unless you are debugging a performance problem.</p>
 <h2 id="watches"><a name="watches"></a> Watches</h2>
 <p>OPA can set watches on queries and report whenever the result of evaluating the query has changed. When a watch is set on a query, the requesting connection will be maintained as the query results are streamed back in HTTP Chunked Encoding format. A notification reflecting a certain change to the query results will be delivered <em>at most once</em>. That is, if a watch is set on <code>data.x</code>, and then multiple writes are made to <code>data.x</code>, say <code>1</code>, <code>2</code> and <code>3</code>, only the notification reflecting <code>data.x=3</code> is always seen eventually (assuming the watch is not ended, there are no connection problems, etc). The notifications reflecting <code>data.x=1</code> and <code>data.x=2</code> <em>might</em> be seen. However, the notifications sent are guaranteed to be in order (<code>data.x=2</code> will always come after <code>data.x=1</code>, if it comes).</p>
 <p>The notification stream will not be delimited by any value; the client is expected to be able to parse JSON values from the stream one by one, recognizing where one ends and the next begins.</p>
@@ -3193,7 +3177,7 @@ config = {&quot;mode&quot;: &quot;on&quot;} {
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"REST API","level":"1.5","depth":1,"next":{"title":"Policy API","level":"1.5.1","depth":2,"anchor":"#policy-api","path":"rest-api.md","ref":"rest-api.md#policy-api","articles":[{"title":"List Policies","level":"1.5.1.1","depth":3,"anchor":"#list-policies","path":"rest-api.md","ref":"rest-api.md#list-policies","articles":[]},{"title":"Get a Policy","level":"1.5.1.2","depth":3,"anchor":"#get-a-policy","path":"rest-api.md","ref":"rest-api.md#get-a-policy","articles":[]},{"title":"Create or Update a Policy","level":"1.5.1.3","depth":3,"anchor":"#create-or-update-a-policy","path":"rest-api.md","ref":"rest-api.md#create-or-update-a-policy","articles":[]},{"title":"Delete a Policy","level":"1.5.1.4","depth":3,"anchor":"#delete-a-policy","path":"rest-api.md","ref":"rest-api.md#delete-a-policy","articles":[]}]},"previous":{"title":"Grammar","level":"1.4.3","depth":2,"anchor":"#grammar","path":"language-reference.md","ref":"language-reference.md#grammar","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"rest-api.md","mtime":"2018-01-18T23:06:09.254Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-01-18T23:07:08.484Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"REST API","level":"1.5","depth":1,"next":{"title":"Policy API","level":"1.5.1","depth":2,"anchor":"#policy-api","path":"rest-api.md","ref":"rest-api.md#policy-api","articles":[{"title":"List Policies","level":"1.5.1.1","depth":3,"anchor":"#list-policies","path":"rest-api.md","ref":"rest-api.md#list-policies","articles":[]},{"title":"Get a Policy","level":"1.5.1.2","depth":3,"anchor":"#get-a-policy","path":"rest-api.md","ref":"rest-api.md#get-a-policy","articles":[]},{"title":"Create or Update a Policy","level":"1.5.1.3","depth":3,"anchor":"#create-or-update-a-policy","path":"rest-api.md","ref":"rest-api.md#create-or-update-a-policy","articles":[]},{"title":"Delete a Policy","level":"1.5.1.4","depth":3,"anchor":"#delete-a-policy","path":"rest-api.md","ref":"rest-api.md#delete-a-policy","articles":[]}]},"previous":{"title":"Grammar","level":"1.4.3","depth":2,"anchor":"#grammar","path":"language-reference.md","ref":"language-reference.md#grammar","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"rest-api.md","mtime":"2018-02-22T21:05:59.195Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-02-22T21:07:13.632Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

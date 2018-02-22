@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Get Started &#xB7; GitBook</title>
+        <title>Monitoring &amp; Diagnostics &#xB7; GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -58,10 +58,10 @@
     <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="docker-authorization.html">
+    <link rel="next" href="monitoring-diagnostics.html">
     
     
-    <link rel="prev" href="comparison-to-other-systems.html">
+    <link rel="prev" href="deployments.html">
     
 
     </head>
@@ -1458,7 +1458,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.7" data-path="monitoring-diagnostics.html">
+        <li class="chapter active" data-level="1.7" data-path="monitoring-diagnostics.html">
             
                 <a href="monitoring-diagnostics.html">
             
@@ -1639,7 +1639,7 @@
         
         
     
-        <li class="chapter active" data-level="2.1" data-path="get-started.html">
+        <li class="chapter " data-level="2.1" data-path="get-started.html">
             
                 <a href="get-started.html">
             
@@ -1747,7 +1747,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".">Get Started</a>
+        <a href=".">Monitoring &amp; Diagnostics</a>
     </h1>
 </div>
 
@@ -1762,238 +1762,146 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="get-started">Get Started</h1>
-<p>The Open Policy Agent (OPA) is an open source, general-purpose policy engine that enables unified, context-aware policy enforcement across the entire stack.</p>
-<p>OPA provides a high-level <strong>declarative language</strong> for authoring policies and
-simple APIs to answer policy queries. Using OPA, you can offload policy
-decisions from your service such as:</p>
-<ul>
-<li>Should this API call be allowed? E.g., <code>true</code> or <code>false</code>.</li>
-<li>How much quota remains for this user? E.g., <code>1048</code>.</li>
-<li>Which hosts can this container be deployed on? E.g., <code>[&quot;host1&quot;, &quot;host40&quot;, ..., &quot;host329&quot;]</code>.</li>
-<li>What updates must be applied to this resource? E.g., <code>{&quot;labels&quot;: {&quot;team&quot;: &quot;products}}</code>.</li>
-</ul>
-<p>This tutorial shows how to get started with OPA using an interactive shell or <a href="https://en.wikipedia.org/wiki/Read&#x2013;eval&#x2013;print_loop" target="_blank">REPL (read-eval-print loop)</a>.</p>
-<h2 id="goals">Goals</h2>
-<p>REPLs are great for learning new languages and running quick experiments. You
-can use OPA&apos;s REPL to experiment with policies and prototype new ones.</p>
-<p>To introduce the REPL, you will use dummy data and an example policy. In English, the policy can be stated as follows:</p>
-<ul>
-<li>Servers that open an unencrypted HTTP port must not be connected to a public network.</li>
-</ul>
-<p>Inside the REPL, you will define rules that codify the policy stated above.</p>
-<p>Once you finish this tutorial, you will be familiar with:</p>
-<ul>
-<li>Running OPA as an interactive shell/REPL.</li>
-<li>Writing ad-hoc queries in <a href="how-do-i-write-policies.html">Rego</a>.</li>
-</ul>
-<h2 id="prerequisites">Prerequisites</h2>
-<p>If this is your first time using OPA, download the latest executable for your system.</p>
-<p>On macOS (64-bit):</p>
-<pre><code class="lang-shell">curl -L -o opa https://github.com/open-policy-agent/opa/releases/download/v0.7.0/opa_darwin_amd64
+                                <h1 id="monitoring-and-diagnostics">Monitoring and Diagnostics</h1>
+<p>This document explains how to monitor OPA and use the diagnostics capabilities
+exposed by the server.</p>
+<h2 id="prometheus"><a name="prometheus"> Prometheus</a></h2>
+<p>OPA exposes an HTTP endpoint that can be used to collect performance metrics
+for all API calls. The Prometheus endpoint is enabled by default when you run
+OPA as a server.</p>
+<p>You can enable metric collection from OPA with the following <code>prometheus.yml</code> config:</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">global_config:</span>
+<span class="hljs-attr">  scrape_interval:</span> <span class="hljs-number">15</span>s
+<span class="hljs-attr">scrape_configs:</span>
+<span class="hljs-attr">  - job_name:</span> <span class="hljs-string">&quot;opa&quot;</span>
+<span class="hljs-attr">    metrics_path:</span> <span class="hljs-string">&quot;/metrics&quot;</span>
+<span class="hljs-attr">    static_configs:</span>
+<span class="hljs-attr">    - targets:</span>
+<span class="hljs-bullet">      -</span> <span class="hljs-string">&quot;localhost:8181&quot;</span>
 </code></pre>
-<p>On Linux (64-bit):</p>
-<pre><code class="lang-shell">curl -L -o opa https://github.com/open-policy-agent/opa/releases/download/v0.7.0/opa_linux_amd64
-</code></pre>
-<blockquote>
-<p>Windows users can obtain the OPA executable from <a href="https://github.com/open-policy-agent/opa/releases" target="_blank">GitHub Releases</a>. The steps below are the same for Windows users except the executable name will be different.</p>
-</blockquote>
-<p>Set permissions on the OPA executable:</p>
-<pre><code class="lang-shell">chmod 755 ./opa
-</code></pre>
-<h2 id="steps">Steps</h2>
-<h3 id="1-make-sure-you-can-run-the-repl-on-your-machine">1. Make sure you can run the REPL on your machine.</h3>
-<pre><code class="lang-shell">./opa run
-</code></pre>
-<p>Without any data, you can experiment with simple expressions to get the hang of it:</p>
-<pre><code class="lang-ruby">&gt; <span class="hljs-keyword">true</span>
-<span class="hljs-keyword">true</span>
-&gt; <span class="hljs-number">3.14</span>
-<span class="hljs-number">3.14</span>
-&gt; [<span class="hljs-string">&quot;hello&quot;</span>, <span class="hljs-string">&quot;world&quot;</span>]
-[
-  <span class="hljs-string">&quot;hello&quot;</span>,
-  <span class="hljs-string">&quot;world&quot;</span>
-]
-</code></pre>
-<p>You can also test simple boolean expressions:</p>
-<pre><code class="lang-ruby">&gt; <span class="hljs-keyword">true</span> = <span class="hljs-keyword">false</span>
-<span class="hljs-keyword">false</span>
-&gt; <span class="hljs-number">3.14</span> &gt; <span class="hljs-number">3</span>
-<span class="hljs-keyword">true</span>
-&gt; <span class="hljs-string">&quot;hello&quot;</span> != <span class="hljs-string">&quot;goodbye&quot;</span>
-<span class="hljs-keyword">true</span>
-</code></pre>
-<p>Most REPLs let you define variables that you can reference later on. OPA allows you to do something similar. For example, you can define a <code>pi</code> constant as follows:</p>
-<pre><code class="lang-ruby">&gt; pi = <span class="hljs-number">3.14</span>
-</code></pre>
-<p>Once &quot;pi&quot; is defined, you query for the value and write expressions in terms of it:</p>
-<pre><code class="lang-ruby">&gt; pi
-<span class="hljs-number">3.14</span>
-&gt; pi &gt; <span class="hljs-number">3</span>
-<span class="hljs-keyword">true</span>
-</code></pre>
-<p>One thing to watch out for in the REPL is that <code>=</code> is used both for assigning variables values and for testing the value of variables. For example <code>p = q</code> sometimes assigns <code>p</code> the value of <code>q</code> and sometimes checks if the values of <code>p</code> and <code>q</code> are the same. The REPL decides between assignment and test based on whether <code>p</code> already has a value or not. If <code>p</code> has a value, <code>p = q</code> is a test (returning <code>true</code> or <code>false</code>), and if <code>p</code> has no value <code>p = q</code> is an assignment. To unset a value for a variable, use the <code>unset</code> command. (This ambiguity is only really an issue in the REPL. When writing policy, the duality of <code>=</code> is actually beneficial.)</p>
-<pre><code class="lang-ruby">&gt; pi = <span class="hljs-number">3</span>
-<span class="hljs-keyword">false</span>
-&gt; unset pi
-&gt; pi = <span class="hljs-number">3</span>
-&gt; pi
-<span class="hljs-number">3</span>
-</code></pre>
-<p>In addition to running queries, the REPL also lets you define rules:</p>
-<pre><code class="lang-ruby">&gt; items = [<span class="hljs-string">&quot;pizza&quot;</span>, <span class="hljs-string">&quot;apples&quot;</span>, <span class="hljs-string">&quot;bread&quot;</span>, <span class="hljs-string">&quot;coffee&quot;</span>]
-&gt; users = {<span class="hljs-string">&quot;bob&quot;</span><span class="hljs-symbol">:</span> {<span class="hljs-string">&quot;likes&quot;</span><span class="hljs-symbol">:</span> [<span class="hljs-number">0</span>, <span class="hljs-number">2</span>]}, <span class="hljs-string">&quot;alice&quot;</span><span class="hljs-symbol">:</span> {<span class="hljs-string">&quot;likes&quot;</span><span class="hljs-symbol">:</span> [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]}}
-&gt; likes[[name, item]] { index = users[name].likes[<span class="hljs-number">_</span>]; item = items[index] }
-</code></pre>
-<p>The likes rule above defines a set of tuples specifying what each user likes.</p>
-<pre><code>&gt; likes[[&quot;alice&quot;, item]] # what does alice like?
-+----------+
-|   item   |
-+----------+
-| &quot;apples&quot; |
-| &quot;bread&quot;  |
-| &quot;coffee&quot; |
-+----------+
-&gt; likes[[name, &quot;bread&quot;]] # who likes bread?
-+---------+
-|  name   |
-+---------+
-| &quot;bob&quot;   |
-| &quot;alice&quot; |
-+---------+
-</code></pre><p>When you enter expressions into the OPA REPL, you are effectively running <em>queries</em>. The REPL output shows the values of variables in the expression that make the query <code>true</code>. If there is no set of variables that would make the query <code>true</code>, the REPL prints <code>false</code>. If there are no variables in the query and the query evaluates successfully, then the REPL just prints <code>true</code>.</p>
-<p>Quit out of the REPL by pressing Control-D or typing <code>exit</code>:</p>
-<pre><code class="lang-ruby">&gt; exit
-Exiting
-</code></pre>
-<h3 id="2-create-a-data-file-and-a-policy-module">2. Create a data file and a policy module.</h3>
-<p>Let&apos;s define a bit of JSON data that will be used in the tutorial:</p>
-<pre><code class="lang-shell">cat &gt;data.json &lt;&lt;EOF
-{
-    &quot;servers&quot;: [
-        {&quot;id&quot;: &quot;s1&quot;, &quot;name&quot;: &quot;app&quot;, &quot;protocols&quot;: [&quot;https&quot;, &quot;ssh&quot;], &quot;ports&quot;: [&quot;p1&quot;, &quot;p2&quot;, &quot;p3&quot;]},
-        {&quot;id&quot;: &quot;s2&quot;, &quot;name&quot;: &quot;db&quot;, &quot;protocols&quot;: [&quot;mysql&quot;], &quot;ports&quot;: [&quot;p3&quot;]},
-        {&quot;id&quot;: &quot;s3&quot;, &quot;name&quot;: &quot;cache&quot;, &quot;protocols&quot;: [&quot;memcache&quot;], &quot;ports&quot;: [&quot;p3&quot;]},
-        {&quot;id&quot;: &quot;s4&quot;, &quot;name&quot;: &quot;dev&quot;, &quot;protocols&quot;: [&quot;http&quot;], &quot;ports&quot;: [&quot;p1&quot;, &quot;p2&quot;]}
-    ],
-    &quot;networks&quot;: [
-        {&quot;id&quot;: &quot;n1&quot;, &quot;public&quot;: false},
-        {&quot;id&quot;: &quot;n2&quot;, &quot;public&quot;: false},
-        {&quot;id&quot;: &quot;n3&quot;, &quot;public&quot;: true}
-    ],
-    &quot;ports&quot;: [
-        {&quot;id&quot;: &quot;p1&quot;, &quot;networks&quot;: [&quot;n1&quot;]},
-        {&quot;id&quot;: &quot;p2&quot;, &quot;networks&quot;: [&quot;n3&quot;]},
-        {&quot;id&quot;: &quot;p3&quot;, &quot;networks&quot;: [&quot;n2&quot;]}
-    ]
-}
-EOF
-</code></pre>
-<p>Also, let&apos;s include a rule that defines a set of servers that are attached to public networks:</p>
-<pre><code class="lang-shell">cat &gt;example.rego &lt;&lt;EOF
-package opa.example
+<h2 id="diagnostics"><a name="diagnostics"> Diagnostics</a></h2>
+<p>The OPA server can record diagnostics on policy queries for debugging purposes.
+The diagnostic configuration is controlled by the
+<code>data.system.diagnostics.config</code> document (referred to simply as &quot;config&quot;
+below).</p>
+<p>The config below enables diagnostics for all POST requests received by OPA:</p>
+<pre><code>package system.diagnostics
 
-import data.servers
-import data.networks
-import data.ports
-
-public_servers[s] {
-    s = servers[_]
-    s.ports[_] = ports[i].id
-    ports[i].networks[_] = networks[j].id
-    networks[j].public = true
+config = {&quot;mode&quot;: &quot;on&quot;} {
+    input.method = &quot;POST&quot;
 }
-EOF
-</code></pre>
-<h3 id="3-run-the-repl-with-the-data-file-and-policy-module-as-input">3. Run the REPL with the data file and policy module as input.</h3>
-<pre><code class="lang-shell">./opa run data.json example.rego
-</code></pre>
-<p>You can now run queries against the various documents:</p>
-<pre><code class="lang-ruby">&gt; data.servers[<span class="hljs-number">_</span>].id
-+--------------------+
-| data.servers[<span class="hljs-number">_</span>].id |
-+--------------------+
-| <span class="hljs-string">&quot;s1&quot;</span>               |
-| <span class="hljs-string">&quot;s2&quot;</span>               |
-| <span class="hljs-string">&quot;s3&quot;</span>               |
-| <span class="hljs-string">&quot;s4&quot;</span>               |
-+--------------------+
-&gt; data.opa.example.public_servers[x]
-+-------------------------------------------------------------------------------+
-|                                       x                                       |
-+-------------------------------------------------------------------------------+
-| {<span class="hljs-string">&quot;id&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;s1&quot;</span></span>,<span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;app&quot;</span></span>,<span class="hljs-string">&quot;ports&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;p1&quot;</span>,<span class="hljs-string">&quot;p2&quot;</span>,<span class="hljs-string">&quot;p3&quot;</span>],<span class="hljs-string">&quot;protocols&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;https&quot;</span>,<span class="hljs-string">&quot;ssh&quot;</span>]} |
-| {<span class="hljs-string">&quot;id&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;s4&quot;</span></span>,<span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;dev&quot;</span></span>,<span class="hljs-string">&quot;ports&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;p1&quot;</span>,<span class="hljs-string">&quot;p2&quot;</span>],<span class="hljs-string">&quot;protocols&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;http&quot;</span>]}             |
-+-------------------------------------------------------------------------------+
-</code></pre>
-<p>One powerful thing about Rego and the REPL is that you can run queries using the same syntax that you would use to lookup values.</p>
-<p>For example if <code>i</code> has value <code>0</code> then <code>data.servers[i]</code> returns the first value in the <code>data.servers</code> array:</p>
-<pre><code class="lang-ruby">&gt; i = <span class="hljs-number">0</span>
-&gt; data.servers[i]
-{
-  <span class="hljs-string">&quot;id&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;s1&quot;</span>,
-  <span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;app&quot;</span>,
-  <span class="hljs-string">&quot;ports&quot;</span><span class="hljs-symbol">:</span> [
-      <span class="hljs-string">&quot;p1&quot;</span>,
-      <span class="hljs-string">&quot;p2&quot;</span>,
-      <span class="hljs-string">&quot;p3&quot;</span>
-  ],
-  <span class="hljs-string">&quot;protocols&quot;</span><span class="hljs-symbol">:</span> [
-      <span class="hljs-string">&quot;https&quot;</span>,
-      <span class="hljs-string">&quot;ssh&quot;</span>
-  ]
-}
-</code></pre>
-<p>That same expression <code>data.servers[i]</code> when <code>i</code> has no value defines a query that returns all the values of <code>i</code> and <code>data.servers[i]</code>:</p>
-<pre><code class="lang-ruby">&gt; unset i
-&gt; data.servers[i]
-+---+-------------------------------------------------------------------------------+
-| i |                                data.servers[i]                                |
-+---+-------------------------------------------------------------------------------+
-| <span class="hljs-number">0</span> | {<span class="hljs-string">&quot;id&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;s1&quot;</span></span>,<span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;app&quot;</span></span>,<span class="hljs-string">&quot;ports&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;p1&quot;</span>,<span class="hljs-string">&quot;p2&quot;</span>,<span class="hljs-string">&quot;p3&quot;</span>],<span class="hljs-string">&quot;protocols&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;https&quot;</span>,<span class="hljs-string">&quot;ssh&quot;</span>]} |
-| <span class="hljs-number">1</span> | {<span class="hljs-string">&quot;id&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;s2&quot;</span></span>,<span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;db&quot;</span></span>,<span class="hljs-string">&quot;ports&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;p3&quot;</span>],<span class="hljs-string">&quot;protocols&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;mysql&quot;</span>]}                  |
-| <span class="hljs-number">2</span> | {<span class="hljs-string">&quot;id&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;s3&quot;</span></span>,<span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;cache&quot;</span></span>,<span class="hljs-string">&quot;ports&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;p3&quot;</span>],<span class="hljs-string">&quot;protocols&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;memcache&quot;</span>]}            |
-| <span class="hljs-number">3</span> | {<span class="hljs-string">&quot;id&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;s4&quot;</span></span>,<span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;dev&quot;</span></span>,<span class="hljs-string">&quot;ports&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;p1&quot;</span>,<span class="hljs-string">&quot;p2&quot;</span>],<span class="hljs-string">&quot;protocols&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;http&quot;</span>]}             |
-+---+-------------------------------------------------------------------------------+
-</code></pre>
-<h3 id="4-import-and-export-documents">4. Import and export documents.</h3>
-<p>The REPL also understands the <a href="how-do-i-write-policies.html#modules">Import and Package</a> directives.</p>
-<pre><code class="lang-ruby">&gt; import data.servers
-&gt; servers[i].ports[<span class="hljs-number">_</span>] = <span class="hljs-string">&quot;p2&quot;</span>; servers[i].id = id
-+---+------+
-| i |  id  |
-+---+------+
-| <span class="hljs-number">0</span> | <span class="hljs-string">&quot;s1&quot;</span> |
-| <span class="hljs-number">3</span> | <span class="hljs-string">&quot;s4&quot;</span> |
-+---+------+
-</code></pre>
-<pre><code class="lang-ruby">&gt; package opa.example
-&gt; public_servers[x].protocols[<span class="hljs-number">_</span>] = <span class="hljs-string">&quot;http&quot;</span>
-+-------------------------------------------------------------------+
-|                                 x                                 |
-+-------------------------------------------------------------------+
-| {<span class="hljs-string">&quot;id&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;s4&quot;</span></span>,<span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;dev&quot;</span></span>,<span class="hljs-string">&quot;ports&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;p1&quot;</span>,<span class="hljs-string">&quot;p2&quot;</span>],<span class="hljs-string">&quot;protocols&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;http&quot;</span>]} |
-+-------------------------------------------------------------------+
-</code></pre>
-<h3 id="5-define-a-rule-to-identify-servers-in-violation-of-our-security-policy">5. Define a rule to identify servers in violation of our security policy.</h3>
-<pre><code class="lang-ruby">&gt; import data.servers
-&gt; violations[s] {
-  s = servers[<span class="hljs-number">_</span>]
-  s.protocols[<span class="hljs-number">_</span>] = <span class="hljs-string">&quot;http&quot;</span>
-  public_servers[s]
-}
-
-&gt; violations[server]
-+-------------------------------------------------------------------+
-|                              server                               |
-+-------------------------------------------------------------------+
-| {<span class="hljs-string">&quot;id&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;s4&quot;</span></span>,<span class="hljs-string">&quot;name&quot;</span><span class="hljs-symbol">:<span class="hljs-string">&quot;dev&quot;</span></span>,<span class="hljs-string">&quot;ports&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;p1&quot;</span>,<span class="hljs-string">&quot;p2&quot;</span>],<span class="hljs-string">&quot;protocols&quot;</span><span class="hljs-symbol">:</span>[<span class="hljs-string">&quot;http&quot;</span>]} |
-+-------------------------------------------------------------------+
-</code></pre>
-<blockquote>
-<p>The REPL accepts multi-line input and will change appearance when it detects multi-line input.</p>
-</blockquote>
+</code></pre><p>The table below summarizes the keys that can be specified in the config:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mode</code></td>
+<td>&quot;off&quot;</td>
+<td>No diagnostics are recorded.</td>
+</tr>
+<tr>
+<td><code>mode</code></td>
+<td>&quot;on&quot;</td>
+<td>Enables collection of inexpensive values. This includes the query, input, result, and performance metrics.</td>
+</tr>
+<tr>
+<td><code>mode</code></td>
+<td>&quot;all&quot;</td>
+<td>All diagnostics are collected. This includes a full trace of the query evaluation.</td>
+</tr>
+</tbody>
+</table>
+<p>OPA provides input to the config (which itself is a policy) so that diagnostics
+can be recorded dynamically. The input document contains the following
+information:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Example</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>method</code></td>
+<td><code>&quot;POST&quot;</code></td>
+<td>HTTP method from OPA API call.</td>
+</tr>
+<tr>
+<td><code>path</code></td>
+<td><code>&quot;/v1/data/authz/allow&quot;</code></td>
+<td>HTTP path from OPA API call.</td>
+</tr>
+<tr>
+<td><code>body</code></td>
+<td><code>{&quot;input&quot;: {&quot;user&quot;: &quot;bob&quot;, &quot;operation&quot;: &quot;read&quot;, &quot;resource&quot;: &quot;bookstore&quot;}}</code></td>
+<td>HTTP message body from OPA API call.</td>
+</tr>
+<tr>
+<td><code>params</code></td>
+<td><code>{&quot;partial&quot;: [&quot;&quot;]}</code></td>
+<td>HTTP query parameters from OPA API call.</td>
+</tr>
+</tbody>
+</table>
+<p>Diagnostics can be queried at <code>/v1/data/system/diagnostics</code>. The response will contain the following fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Always Present</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>timestamp</code></td>
+<td>Yes</td>
+<td>Nanoseconds since the Unix Epoch time</td>
+</tr>
+<tr>
+<td><code>query</code></td>
+<td>Yes</td>
+<td>The query, if the request for the record was a query request. Otherwise the data path from the original request.</td>
+</tr>
+<tr>
+<td><code>input</code></td>
+<td>No</td>
+<td>Input provided to the <code>query</code> at evaluation time.</td>
+</tr>
+<tr>
+<td><code>result</code></td>
+<td>No</td>
+<td>Result of evaluating <code>query</code>. See the <a href="rest-api.html#data-api">Data</a> and <a href="rest-api.html#query-api">Query</a> APIs for detailed descriptions of formats.</td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td>No</td>
+<td><a href="rest-api.html#errors">Error</a> encountered while evaluating <code>query</code>.</td>
+</tr>
+<tr>
+<td><code>metrics</code></td>
+<td>No</td>
+<td><a href="rest-api.html#performance-metrics">Performance Metrics</a> for <code>query</code>.</td>
+</tr>
+<tr>
+<td><code>explanation</code></td>
+<td>No</td>
+<td><a href="rest-api.html#explanations">Explanation</a> of how <code>result</code> was found.</td>
+</tr>
+</tbody>
+</table>
+<p>The server will only store a finite number of diagnostics. If the server&apos;s
+diagnostics storage becomes full, it will delete the oldest diagnostic to make
+room for the new one. The size of the storage may be configured when the server
+is started.</p>
 
                                 
                                 </section>
@@ -2021,12 +1929,12 @@ EOF
 
             
                 
-                <a href="comparison-to-other-systems.html#xacml" class="navigation navigation-prev " aria-label="Previous page: XACML">
+                <a href="deployments.html#kicking-the-tires" class="navigation navigation-prev " aria-label="Previous page: Kicking the Tires">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="docker-authorization.html" class="navigation navigation-next " aria-label="Next page: Docker Authorization">
+                <a href="monitoring-diagnostics.html#prometheus" class="navigation navigation-next " aria-label="Next page: Prometheus">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -2037,7 +1945,7 @@ EOF
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Get Started","level":"2.1","depth":1,"next":{"title":"Docker Authorization","level":"2.2","depth":1,"path":"docker-authorization.md","ref":"docker-authorization.md","articles":[]},"previous":{"title":"XACML","level":"1.10.4","depth":2,"anchor":"#xacml","path":"comparison-to-other-systems.md","ref":"comparison-to-other-systems.md#xacml","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"get-started.md","mtime":"2018-02-22T21:05:59.195Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-02-22T21:07:13.632Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Monitoring & Diagnostics","level":"1.7","depth":1,"next":{"title":"Prometheus","level":"1.7.1","depth":2,"anchor":"#prometheus","path":"monitoring-diagnostics.md","ref":"monitoring-diagnostics.md#prometheus","articles":[]},"previous":{"title":"Kicking the Tires","level":"1.6.2.1","depth":3,"anchor":"#kicking-the-tires","path":"deployments.md","ref":"deployments.md#kicking-the-tires","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"monitoring-diagnostics.md","mtime":"2018-02-22T21:05:59.195Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-02-22T21:07:13.632Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

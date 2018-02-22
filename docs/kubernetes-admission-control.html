@@ -383,19 +383,6 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.5" data-path="how-does-opa-work.html">
-            
-                <a href="how-does-opa-work.html#future-features">
-            
-                    
-                    Future Features
-            
-                </a>
-            
-
-            
-        </li>
-    
 
             </ul>
             
@@ -1372,19 +1359,6 @@
     
         <li class="chapter " data-level="1.5.8" data-path="rest-api.html">
             
-                <a href="rest-api.html#diagnostics">
-            
-                    
-                    Diagnostics
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.5.9" data-path="rest-api.html">
-            
                 <a href="rest-api.html#watches">
             
                     
@@ -1484,7 +1458,52 @@
             
         </li>
     
-        <li class="chapter " data-level="1.7" data-path="security.html">
+        <li class="chapter " data-level="1.7" data-path="monitoring-diagnostics.html">
+            
+                <a href="monitoring-diagnostics.html">
+            
+                    
+                    Monitoring &amp; Diagnostics
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.7.1" data-path="monitoring-diagnostics.html">
+            
+                <a href="monitoring-diagnostics.html#prometheus">
+            
+                    
+                    Prometheus
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7.2" data-path="monitoring-diagnostics.html">
+            
+                <a href="monitoring-diagnostics.html#prometheus">
+            
+                    
+                    Diagnostics
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8" data-path="security.html">
             
                 <a href="security.html">
             
@@ -1498,7 +1517,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.7.1" data-path="security.html">
+        <li class="chapter " data-level="1.8.1" data-path="security.html">
             
                 <a href="security.html#tls-and-https">
             
@@ -1511,7 +1530,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.7.2" data-path="security.html">
+        <li class="chapter " data-level="1.8.2" data-path="security.html">
             
                 <a href="security.html#authentication-and-authorization">
             
@@ -1529,7 +1548,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.8" data-path="faq.html">
+        <li class="chapter " data-level="1.9" data-path="faq.html">
             
                 <a href="faq.html">
             
@@ -1539,6 +1558,77 @@
                 </a>
             
 
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10" data-path="comparison-to-other-systems.html">
+            
+                <a href="comparison-to-other-systems.html">
+            
+                    
+                    Comparison to Other Systems
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.10.1" data-path="comparison-to-other-systems.html">
+            
+                <a href="comparison-to-other-systems.html#role-based-access-control-rbac">
+            
+                    
+                    RBAC
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10.2" data-path="comparison-to-other-systems.html">
+            
+                <a href="comparison-to-other-systems.html#attribute-based-access-control-abac">
+            
+                    
+                    ABAC
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10.3" data-path="comparison-to-other-systems.html">
+            
+                <a href="comparison-to-other-systems.html#amazon-web-services-iam">
+            
+                    
+                    AWS IAM
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10.4" data-path="comparison-to-other-systems.html">
+            
+                <a href="comparison-to-other-systems.html#xacml">
+            
+                    
+                    XACML
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
             
         </li>
     
@@ -1673,54 +1763,69 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="kubernetes-admission-control">Kubernetes Admission Control</h1>
-<p>Kubernetes <a href="https://kubernetes.io/docs/admin/admission-controllers/" target="_blank">Admission Controllers</a> perform <em>semantic validation</em> of resources during create, update, and delete operations. In Kubernetes 1.7, you can use OPA to enforce custom policies without recompiling or reconfiguring the Kubernetes API server by leveraging <a href="https://kubernetes.io/docs/admin/extensible-admission-controllers/#external-admission-webhooks" target="_blank">External Admission Webhooks</a>.</p>
+<p>In Kubernetes, <a href="https://kubernetes.io/docs/admin/admission-controllers/" target="_blank">Admission Controllers</a> enforce semantic validation of objects during create, update, and delete operations. With OPA you can enforce custom policies on Kubernetes objects without recompiling or reconfiguring the Kubernetes API server.</p>
 <h2 id="goals">Goals</h2>
-<p>This tutorial shows how to use OPA to enforce custom policies on resources in
-Kubernetes. For the purpose of this tutorial, you will define a policy that
-prevents users from running <code>kubectl exec</code> on &quot;privileged&quot; containers in the
-&quot;production&quot; namespace.</p>
+<p>This tutorial shows how to enforce custom policies on Kubernetes objects using OPA. In this tutorial, you will define admission control rules that prevent users from creating Kubernetes Ingress objects that violate the following organization policy:</p>
+<ul>
+<li>Ingress hostnames must be whitelisted on the Namespace containing the Ingress.</li>
+<li>Two ingresses in different namespaces must not have the same hostname.</li>
+</ul>
 <h2 id="prerequisites">Prerequisites</h2>
-<p>This tutorial requires a Kubernetes 1.7 (or later) cluster. To test Kubernetes locally, we recommend using <a href="https://kubernetes.io/docs/getting-started-guides/minikube/" target="_blank">minikube</a>. Keep in mind that External Admission Webhook support in Kubernetes is currently in <strong>alpha</strong>.</p>
+<p>This tutorial requires Kubernetes 1.9 or later. To run the tutorial locally, we recommend using <a href="https://kubernetes.io/docs/getting-started-guides/minikube" target="_blank">minikube</a>.</p>
 <h2 id="steps">Steps</h2>
-<h3 id="1-start-kubernetes-with-external-admission-webhooks-enabled">1. Start Kubernetes with External Admission Webhooks enabled</h3>
-<p>External Admission Controllers must be secured with TLS. See <a href="https://github.com/open-policy-agent/kube-mgmt#generating-tls-certificates" target="_blank">Generating TLS Certificates</a> for steps to generate a CA and client/server credentials for test purposes.</p>
-<p>Start minikube with the <code>GenericAdmissionWebhook</code> enabled and include the
-client-side credentials via command line arguments.</p>
-<pre><code class="lang-bash"><span class="hljs-comment"># Set to directory containing generated TLS certificates.</span>
-CERT_DIR=&lt;path/to/directory/containing/certificates&gt;
-
-<span class="hljs-comment"># Set to admission controllers to include. This example uses the default set of</span>
-<span class="hljs-comment"># admission controllers enabled in the Kubernetes API server plus the</span>
-<span class="hljs-comment"># GenericAdmissionWebhook admission controller.</span>
-ADMISSION_CONTROLLERS=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,GenericAdmissionWebhook,ResourceQuota,DefaultTolerationSeconds
-
-minikube start --kubernetes-version v1.7.0 \
-    --extra-config=apiserver.Admission.PluginNames=<span class="hljs-variable">$ADMISSION_CONTROLLERS</span>
-    --extra-config=apiserver.ProxyClientCertFile=<span class="hljs-variable">$CERT_DIR</span>/client.crt
-    --extra-config=apiserver.ProxyClientKeyFile=<span class="hljs-variable">$CERT_DIR</span>/client.key
+<h3 id="1-start-kubernetes-recommended-admisson-controllers-enabled">1. Start Kubernetes recommended Admisson Controllers enabled</h3>
+<p>To implement admission control rules that validate Kubernetes resources during create, update, and delete operations, you must enable the <code>ValidatingAdmissionWebhook</code> when the Kubernetes API server is started. The <a href="https://kubernetes.io/docs/admin/admission-controllers/#is-there-a-recommended-set-of-admission-controllers-to-use" target="_blank">recommended set of admission controllers to enable</a> is defined below.</p>
+<pre><code class="lang-bash">ADMISSION_CONTROLLERS=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota
 </code></pre>
-<blockquote>
-<p><code>minikube</code> automatically mounts your home directory into the VM. Storing the
-TLS certificates under your home directory makes them easy to reference in the
-<code>--extra-config</code> arguments.</p>
-</blockquote>
-<h3 id="1-deploy-opa-on-top-of-kubernetes">1. Deploy OPA on top of Kubernetes</h3>
-<p>First, create a namespace to deploy OPA into.</p>
+<p>Start minikube with these admission controllers enabled:</p>
+<pre><code class="lang-bash">minikube start --kubernetes-version v1.9.0 \
+  --extra-config=apiserver.Admission.PluginNames=<span class="hljs-variable">$ADMISSION_CONTROLLERS</span>
+</code></pre>
+<p>Make sure that the minikube ingress addon is enabled:</p>
+<pre><code class="lang-bash">minikube addons <span class="hljs-built_in">enable</span> ingress
+</code></pre>
+<h3 id="2-create-a-new-namespace-to-deploy-opa-into">2. Create a new Namespace to deploy OPA into</h3>
+<p>When OPA is deployed on top of Kubernetes, policies are automatically loaded out of ConfigMaps in the <code>opa</code> namespace.</p>
 <pre><code class="lang-bash">kubectl create namespace opa
 </code></pre>
-<p>Create a <code>kubectl</code> context for this namespace.</p>
+<p>Configure <code>kubectl</code> to use this namespace:</p>
 <pre><code class="lang-bash">kubectl config <span class="hljs-built_in">set</span>-context opa-tutorial --user minikube --cluster minikube --namespace opa
 kubectl config use-context opa-tutorial
 </code></pre>
-<p>Create a Service to expose the OPA API. The Kubernetes API server will lookup
-the Service and execute webhook requests against it.</p>
-<p><strong>opa-admission-controller-service.yaml</strong>:</p>
+<h3 id="3-deploy-opa-on-top-of-kubernetes">3. Deploy OPA on top of Kubernetes</h3>
+<p>Communication between Kubernetes and OPA must be secured using TLS. To configure TLS, use <code>openssl</code> to create a certificate authority (CA) and certificate/key pair for OPA:</p>
+<pre><code class="lang-bash">openssl genrsa -out ca.key 2048
+openssl req -x509 -new -nodes -key ca.key -days 100000 -out ca.crt -subj <span class="hljs-string">&quot;/CN=admission_ca&quot;</span>
+</code></pre>
+<p>Generate the TLS key and certificate for OPA:</p>
+<pre><code class="lang-bash">cat &gt;server.conf &lt;&lt;EOF
+[req]
+req_extensions = v3_req
+distinguished_name = req_distinguished_name
+[req_distinguished_name]
+[ v3_req ]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+extendedKeyUsage = clientAuth, serverAuth
+EOF
+</code></pre>
+<pre><code class="lang-bash">openssl genrsa -out server.key 2048
+openssl req -new -key server.key -out server.csr -subj <span class="hljs-string">&quot;/CN=opa.opa.svc&quot;</span> -config server.conf
+openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 100000 -extensions v3_req -extfile server.conf
+</code></pre>
+<blockquote>
+<p>Note: the Common Name value you give to openssl MUST match the name of the OPA service created below.</p>
+</blockquote>
+<p>Create a Secret to store the TLS credentials for OPA:</p>
+<pre><code class="lang-bash">kubectl create secret tls opa-server --cert=server.crt --key=server.key
+</code></pre>
+<p>Next, use the file below to deploy OPA as an admission controller.</p>
+<p><strong><a href="https://github.com/open-policy-agent/opa/docs/book/tutorials/kubernetes-admission-control-validation/admission-controller.yaml" target="_blank">admission-controller.yaml</a></strong>:</p>
 <pre><code class="lang-yaml"><span class="hljs-attr">kind:</span> Service
 <span class="hljs-attr">apiVersion:</span> v1
 <span class="hljs-attr">metadata:</span>
 <span class="hljs-attr">  name:</span> opa
 <span class="hljs-attr">spec:</span>
-<span class="hljs-attr">  clusterIP:</span> <span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.222</span>
 <span class="hljs-attr">  selector:</span>
 <span class="hljs-attr">    app:</span> opa
 <span class="hljs-attr">  ports:</span>
@@ -1728,18 +1833,8 @@ the Service and execute webhook requests against it.</p>
 <span class="hljs-attr">    protocol:</span> TCP
 <span class="hljs-attr">    port:</span> <span class="hljs-number">443</span>
 <span class="hljs-attr">    targetPort:</span> <span class="hljs-number">443</span>
-</code></pre>
-<pre><code class="lang-bash">kubectl create <span class="hljs-_">-f</span> opa-admission-controller-service.yaml
-</code></pre>
-<p>The Service&apos;s <code>clusterIP</code> must match the subjectAltName in the server-side TLS
-credentials.</p>
-<p>Next, create Secrets containing the TLS credentials for OPA:</p>
-<pre><code class="lang-bash">kubectl create secret generic opa-ca --from-file=ca.crt
-kubectl create secret tls opa-server --cert=server.crt --key=server.key
-</code></pre>
-<p>Finally, create the Deployment to run OPA as an Admission Controller.</p>
-<p><strong>opa-admission-controller-deployment.yaml</strong>:</p>
-<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> extensions/v1beta1
+<span class="hljs-meta">---</span>
+<span class="hljs-attr">apiVersion:</span> extensions/v1beta1
 <span class="hljs-attr">kind:</span> Deployment
 <span class="hljs-attr">metadata:</span>
 <span class="hljs-attr">  labels:</span>
@@ -1768,144 +1863,208 @@ kubectl create secret tls opa-server --cert=server.crt --key=server.key
 <span class="hljs-attr">              mountPath:</span> /certs
 <span class="hljs-attr">              name:</span> opa-server
 <span class="hljs-attr">        - name:</span> kube-mgmt
-<span class="hljs-attr">          image:</span> openpolicyagent/kube-mgmt:<span class="hljs-number">0.4</span>
+<span class="hljs-attr">          image:</span> openpolicyagent/kube-mgmt:<span class="hljs-number">0.6</span>
 <span class="hljs-attr">          args:</span>
-<span class="hljs-bullet">            -</span> <span class="hljs-string">&quot;--replicate=v1/pods&quot;</span>
-<span class="hljs-bullet">            -</span> <span class="hljs-string">&quot;--register-admission-controller&quot;</span>
-<span class="hljs-bullet">            -</span> <span class="hljs-string">&quot;--admission-controller-ca-cert-file=/certs/ca.crt&quot;</span>
-<span class="hljs-bullet">            -</span> <span class="hljs-string">&quot;--admission-controller-service-name=opa&quot;</span>
-<span class="hljs-bullet">            -</span> <span class="hljs-string">&quot;--admission-controller-service-namespace=$(MY_POD_NAMESPACE)&quot;</span>
-<span class="hljs-attr">          volumeMounts:</span>
-<span class="hljs-attr">            - readOnly:</span> <span class="hljs-literal">true</span>
-<span class="hljs-attr">              mountPath:</span> /certs
-<span class="hljs-attr">              name:</span> opa-ca
-<span class="hljs-attr">          env:</span>
-<span class="hljs-attr">            - name:</span> MY_POD_NAMESPACE
-<span class="hljs-attr">              valueFrom:</span>
-<span class="hljs-attr">                fieldRef:</span>
-<span class="hljs-attr">                  fieldPath:</span> metadata.namespace
+<span class="hljs-bullet">            -</span> <span class="hljs-string">&quot;--replicate-cluster=v1/namespaces&quot;</span>
+<span class="hljs-bullet">            -</span> <span class="hljs-string">&quot;--replicate=extensions/v1beta1/ingresses&quot;</span>
 <span class="hljs-attr">      volumes:</span>
 <span class="hljs-attr">        - name:</span> opa-server
 <span class="hljs-attr">          secret:</span>
 <span class="hljs-attr">            secretName:</span> opa-server
-<span class="hljs-attr">        - name:</span> opa-ca
-<span class="hljs-attr">          secret:</span>
-<span class="hljs-attr">            secretName:</span> opa-ca
+<span class="hljs-meta">---</span>
+<span class="hljs-attr">kind:</span> ConfigMap
+<span class="hljs-attr">apiVersion:</span> v1
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  name:</span> opa-default-system-main
+<span class="hljs-attr">data:</span>
+<span class="hljs-attr">  main:</span> <span class="hljs-string">|
+    package system
+
+    import data.kubernetes.admission
+
+    main = {
+      &quot;apiVersion&quot;: &quot;admission.k8s.io/v1beta1&quot;,
+      &quot;kind&quot;: &quot;AdmissionReview&quot;,
+      &quot;response&quot;: response,
+    }
+
+    default response = {&quot;allowed&quot;: true}
+
+    response = {
+        &quot;allowed&quot;: false,
+        &quot;status&quot;: {
+            &quot;reason&quot;: reason,
+        },
+    } {
+        reason = concat(&quot;, &quot;, admission.deny)
+        reason != &quot;&quot;
+    }</span></code></pre>
+
+<pre><code class="lang-bash">kubectl apply <span class="hljs-_">-f</span> admission-controller.yaml
 </code></pre>
-<pre><code class="lang-bash">kubectl create <span class="hljs-_">-f</span> opa-admission-controller-deployment.yaml
+<p>When OPA starts, the <code>kube-mgmt</code> container will load Kubernetes Namespace and Ingress objects into OPA. You can configure the sidecar to load any kind of Kubernetes object into OPA. The sidecar establishes watches on the Kubernetes API server so that OPA has access to an eventually consistent cache of Kubernetes objects.</p>
+<p>Next, generate the manifest that will be used to register OPA as an admission controller:</p>
+<pre><code class="lang-bash">cat &gt; webhook-configuration.yaml &lt;&lt;EOF
+kind: ValidatingWebhookConfiguration
+apiVersion: admissionregistration.k8s.io/v1beta1
+metadata:
+  name: opa-validating-webhook
+webhooks:
+  - name: validating-webhook.openpolicyagent.org
+    rules:
+      - operations: [<span class="hljs-string">&quot;CREATE&quot;</span>, <span class="hljs-string">&quot;UPDATE&quot;</span>]
+        apiGroups: [<span class="hljs-string">&quot;*&quot;</span>]
+        apiVersions: [<span class="hljs-string">&quot;*&quot;</span>]
+        resources: [<span class="hljs-string">&quot;*&quot;</span>]
+    clientConfig:
+      caBundle: $(base64 ca.crt)
+      service:
+        namespace: opa
+        name: opa
+EOF
 </code></pre>
-<p>When OPA starts, the sidecar (<code>kube-mgmt</code>) will register it as an External
-Admission Controller. To verify that registration succeeded, run <code>kubectl proxy</code>
-in another terminal and then query the Kubernetes API for the list of External
-Admission Controllers.</p>
-<pre><code class="lang-bash">curl localhost:8001/apis/admissionregistration.k8s.io/v1alpha1/externaladmissionhookconfigurations
+<p>The generated configuration file inclues a base64 encoded representation of the CA certificate so that TLS connections can be established between the Kubernetes API server and OPA.</p>
+<p>Finally, register OPA as and admission controller:</p>
+<pre><code class="lang-bash">kubectl apply <span class="hljs-_">-f</span> webhook-configuration.yaml
 </code></pre>
-<p>Finally, you can follow the OPA logs to see the webhook requests being issued
-by the Kubernetes API server:</p>
+<p>You can follow the OPA logs to see the webhook requests being issued by the Kubernetes API server:</p>
 <pre><code>kubectl logs -l app=opa -c opa
-</code></pre><h3 id="2-define-a-policy-and-load-it-into-opa-via-kubernetes">2. Define a policy and load it into OPA via Kubernetes</h3>
-<p>To test admission control, create a policy that restricts exec access on
-privileged pods:</p>
-<p><strong>privileged-exec.rego</strong>:</p>
-<pre><code class="lang-ruby">package system
+</code></pre><h3 id="4-define-a-policy-and-load-it-into-opa-via-kubernetes">4. Define a policy and load it into OPA via Kubernetes</h3>
+<p>To test admission control, create a policy that restricts the hostnames that an ingress can use (<a href="https://github.com/open-policy-agent/opa/docs/book/tutorials/kubernetes-admission-control-validation/ingress-whitelist.rego" target="_blank">ingress-whitelist.rego</a>):</p>
+<pre><code class="lang-ruby">package kubernetes.admission
 
-import data.kubernetes.break_glass
+import data.kubernetes.namespaces
 
-main = {
-    <span class="hljs-string">&quot;apiVersion&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;admission.k8s.io/v1alpha1&quot;</span>,
-    <span class="hljs-string">&quot;kind&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-string">&quot;AdmissionReview&quot;</span>,
-    <span class="hljs-string">&quot;status&quot;</span><span class="hljs-symbol">:</span> status,
+deny[msg] {
+    input.request.kind.kind = <span class="hljs-string">&quot;Ingress&quot;</span>
+    input.request.operation = <span class="hljs-string">&quot;CREATE&quot;</span>
+    host = input.request.object.spec.rules[<span class="hljs-number">_</span>].host
+    <span class="hljs-keyword">not</span> fqdn_matches_any(host, valid_ingress_hosts)
+    msg = sprintf(<span class="hljs-string">&quot;invalid ingress host %q&quot;</span>, [host])
 }
 
-default status = {<span class="hljs-string">&quot;allowed&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-keyword">true</span>}
-
-status = {
-    <span class="hljs-string">&quot;allowed&quot;</span><span class="hljs-symbol">:</span> <span class="hljs-keyword">false</span>,
-    <span class="hljs-string">&quot;status&quot;</span><span class="hljs-symbol">:</span> {
-        <span class="hljs-string">&quot;reason&quot;</span><span class="hljs-symbol">:</span> reason,
-    },
-} {
-    concat(<span class="hljs-string">&quot;, &quot;</span>, blacklist, reason)
-    reason != <span class="hljs-string">&quot;&quot;</span>
+valid_ingress_hosts = {host |
+    whitelist = namespaces[input.request.namespace].metadata.annotations[<span class="hljs-string">&quot;ingress-whitelist&quot;</span>]
+    hosts = split(whitelist, <span class="hljs-string">&quot;,&quot;</span>)
+    host = hosts[<span class="hljs-number">_</span>]
 }
 
-blacklist[<span class="hljs-string">&quot;cannot exec into privileged container in production namespace&quot;</span>] {
-    input.spec.operation = <span class="hljs-string">&quot;CONNECT&quot;</span>
-    input.spec.namespace = <span class="hljs-string">&quot;production&quot;</span>
-    is_privileged(input.spec.namespace, input.spec.name, <span class="hljs-keyword">true</span>)
-    <span class="hljs-keyword">not</span> break_glass
+fqdn_matches_any(str, patterns) {
+    fqdn_matches(str, patterns[<span class="hljs-number">_</span>])
 }
 
-is_privileged(namespace, name) {
-    pod = data.kubernetes.pods[namespace][name]
-    container = pod.spec.containers[<span class="hljs-number">_</span>]
-    container.securityContext.privileged
+fqdn_matches(str, pattern) {
+    pattern_parts = split(pattern, <span class="hljs-string">&quot;.&quot;</span>)
+    pattern_parts[<span class="hljs-number">0</span>] = <span class="hljs-string">&quot;*&quot;</span>
+    str_parts = split(str, <span class="hljs-string">&quot;.&quot;</span>)
+    n_pattern_parts = count(pattern_parts)
+    n_str_parts = count(str_parts)
+    suffix = trim(pattern, <span class="hljs-string">&quot;*.&quot;</span>)
+    endswith(str, suffix)
+}
+
+fqdn_matches(str, pattern) {
+    <span class="hljs-keyword">not</span> contains(pattern, <span class="hljs-string">&quot;*&quot;</span>)
+    str = pattern
 }
 </code></pre>
+
 <p>Store the policy in Kubernetes as a ConfigMap.</p>
-<pre><code class="lang-bash">kubectl create configmap privileged-exec --from-file=privileged-exec.rego
+<pre><code class="lang-bash">kubectl create configmap ingress-whitelist --from-file=ingress-whitelist.rego
 </code></pre>
-<p>The OPA sidecar will notice the ConfigMap and automatically load the contained
-policy into OPA.</p>
-<h3 id="3-exercise-the-policy">3. Exercise the policy</h3>
-<p>To verify that your policy is working, create separate test Pods in the <code>production</code> namespace.</p>
-<p><strong>nginx-pod.yaml</strong>:</p>
-<pre><code class="lang-yaml"><span class="hljs-attr">kind:</span> Pod
-<span class="hljs-attr">version:</span> v1
+<p>The OPA sidecar will notice the ConfigMap and automatically load the policy into OPA.</p>
+<h3 id="5-exercise-the-policy">5. Exercise the policy</h3>
+<p>Create two new namespaces to test the Ingress policy.</p>
+<p><strong>qa-namespace.yaml</strong>:</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> v1
+<span class="hljs-attr">kind:</span> Namespace
 <span class="hljs-attr">metadata:</span>
-<span class="hljs-attr">  name:</span> nginx
-<span class="hljs-attr">  labels:</span>
-<span class="hljs-attr">    app:</span> nginx
-<span class="hljs-attr">spec:</span>
-<span class="hljs-attr">  containers:</span>
-<span class="hljs-attr">  - image:</span> nginx
-<span class="hljs-attr">    name:</span> nginx
+<span class="hljs-attr">  annotations:</span>
+<span class="hljs-attr">    ingress-whitelist:</span> <span class="hljs-string">&quot;*.qa.acmecorp.com,*.internal.acmecorp.com&quot;</span>
+<span class="hljs-attr">  name:</span> qa
 </code></pre>
-<p><strong>nginx-privileged-pod.yaml</strong>:</p>
-<pre><code class="lang-yaml"><span class="hljs-attr">kind:</span> Pod
-<span class="hljs-attr">version:</span> v1
+<p><strong>production-namespace.yaml</strong>:</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> v1
+<span class="hljs-attr">kind:</span> Namespace
 <span class="hljs-attr">metadata:</span>
-<span class="hljs-attr">  name:</span> nginx-privileged
-<span class="hljs-attr">  labels:</span>
-<span class="hljs-attr">    app:</span> nginx
+<span class="hljs-attr">  annotations:</span>
+<span class="hljs-attr">    ingress-whitelist:</span> <span class="hljs-string">&quot;*.acmecorp.com&quot;</span>
+<span class="hljs-attr">  name:</span> production
+</code></pre>
+<pre><code class="lang-bash">kubectl create <span class="hljs-_">-f</span> qa-namespace.yaml
+kubectl create <span class="hljs-_">-f</span> production-namespace.yaml
+</code></pre>
+<p>Next, define two Ingress objects. One of the Ingress objects will be permitted
+and the other will be rejected.</p>
+<p><strong>ingress-ok.yaml</strong>:</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> extensions/v1beta1
+<span class="hljs-attr">kind:</span> Ingress
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  name:</span> ingress-ok
 <span class="hljs-attr">spec:</span>
-<span class="hljs-attr">  containers:</span>
-<span class="hljs-attr">  - image:</span> nginx
-<span class="hljs-attr">    name:</span> nginx
-<span class="hljs-attr">    securityContext:</span>
-<span class="hljs-attr">      privileged:</span> <span class="hljs-literal">true</span>
+<span class="hljs-attr">  rules:</span>
+<span class="hljs-attr">  - host:</span> signin.acmecorp.com
+<span class="hljs-attr">    http:</span>
+<span class="hljs-attr">      paths:</span>
+<span class="hljs-attr">      - backend:</span>
+<span class="hljs-attr">          serviceName:</span> nginx
+<span class="hljs-attr">          servicePort:</span> <span class="hljs-number">80</span>
 </code></pre>
-<pre><code class="lang-bash">kubectl create namespace production
-kubectl -n production create <span class="hljs-_">-f</span> nginx-pod.yaml
-kubectl -n production create <span class="hljs-_">-f</span> nginx-privileged-pod.yaml
+<p><strong>ingress-bad.yaml</strong>:</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> extensions/v1beta1
+<span class="hljs-attr">kind:</span> Ingress
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  name:</span> ingress-bad
+<span class="hljs-attr">spec:</span>
+<span class="hljs-attr">  rules:</span>
+<span class="hljs-attr">  - host:</span> acmecorp.com
+<span class="hljs-attr">    http:</span>
+<span class="hljs-attr">      paths:</span>
+<span class="hljs-attr">      - backend:</span>
+<span class="hljs-attr">          serviceName:</span> nginx
+<span class="hljs-attr">          servicePort:</span> <span class="hljs-number">80</span>
 </code></pre>
-<p>Verify that you can exec into non-privileged container:</p>
-<pre><code>kubectl -n production exec -i -t nginx bash
-</code></pre><p>Verify that you cannot exec into the privileged container:</p>
-<pre><code>kubectl -n production exec -i -t nginx-privileged bash
-</code></pre><h3 id="4-modify-the-policy-and-exercise-the-changes">4. Modify the policy and exercise the changes</h3>
-<p>OPA allows you to modify policies on-the-fly without recompiling any of the
-services that offload policy decisions to it.</p>
-<p>The original policy you created denies <code>kubectl exec</code> access unless the
-<code>data.kubernetes.break_glass</code> value is <em>defined</em> (and not false). If you create
-a new policy that defines this value, <code>kubectl exec</code> access will be granted.</p>
-<p><strong>break-glass.rego</strong>:</p>
-<pre><code class="lang-ruby">package kubernetes
+<p>Finally, try to create both Ingress objects:</p>
+<pre><code class="lang-bash">kubectl create <span class="hljs-_">-f</span> ingress-ok.yaml -n production
+kubectl create <span class="hljs-_">-f</span> ingress-bad.yaml -n qa
+</code></pre>
+<p>The second Ingress is rejected because it&apos;s hostname does not match the whitelist in the <code>qa</code> namespace.</p>
+<h3 id="6-modify-the-policy-and-exercise-the-changes">6. Modify the policy and exercise the changes</h3>
+<p>OPA allows you to modify policies on-the-fly without recompiling any of the services that offload policy decisions to it.</p>
+<p>To enforce the second half of the policy from the start of this tutorial you can load another policy into OPA that rejects Ingress objects in different namespaces from sharing the same hostname.</p>
+<p><a href="https://github.com/open-policy-agent/opa/docs/book/tutorials/kubernetes-admission-control-validation/ingress-conflicts.rego" target="_blank">ingress-conflicts.rego</a>:</p>
+<pre><code class="lang-ruby">package kubernetes.admission
 
-break_glass = <span class="hljs-keyword">true</span>
+import data.kubernetes.ingresses
+
+deny[msg] {
+    input.request.kind.kind = <span class="hljs-string">&quot;Ingress&quot;</span>
+    input.request.operation = <span class="hljs-string">&quot;CREATE&quot;</span>
+    host = input.request.object.spec.rules[<span class="hljs-number">_</span>].host
+    ingress = ingresses[other_ns][other_ingress]
+    other_ns != input.request.namespace
+    ingress.spec.rules[<span class="hljs-number">_</span>].host = host
+    msg = sprintf(<span class="hljs-string">&quot;invalid ingress host %q (conflicts with %v/%v)&quot;</span>, [host, other_ns, other_ingress])
+}
 </code></pre>
-<pre><code class="lang-bash">kubectl create configmap <span class="hljs-built_in">break</span>-glass --from-file=<span class="hljs-built_in">break</span>-glass.rego
+
+<pre><code class="lang-bash">kubectl create configmap ingress-conflicts --from-file=ingress-conflicts.rego
 </code></pre>
 <p>The OPA sidecar annotates ConfigMaps containing policies to indicate if they
 were installed successfully. Verify the ConfigMap was installed successfully.</p>
-<pre><code>kubectl get configmap break-glass -o yaml
-</code></pre><p>Test that <code>kubectl exec</code> access has been granted.</p>
-<pre><code class="lang-bash">kubectl -n production <span class="hljs-built_in">exec</span> -i -t nginx-privileged bash
+<pre><code>kubectl get configmap ingress-conflicts -o yaml
+</code></pre><p>Test that you cannot create an Ingress in another namespace with the same hostname as the one created earlier.</p>
+<p><strong>staging-namespace.yaml</strong>:</p>
+<pre><code>apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    ingress-whitelist: &quot;*.acmecorp.com&quot;
+  name: staging
+</code></pre><pre><code class="lang-bash">kubectl create <span class="hljs-_">-f</span> staging-namespace.yaml
 </code></pre>
-<p>Finally, delete the <code>break-glass</code> policy now that calm has been restored.</p>
-<pre><code class="lang-bash">kubectl delete configmap <span class="hljs-built_in">break</span>-glass
+<pre><code class="lang-bash">kubectl create <span class="hljs-_">-f</span> ingress-ok.yaml -n staging
 </code></pre>
-<p><code>kubectl exec</code> will no longer be able to access the privileged Pod in the production.</p>
 <h2 id="wrap-up">Wrap Up</h2>
 <p>Congratulations for finishing the tutorial!</p>
 <p>This tutorial showed how you can leverage OPA to enforce admission control
@@ -1958,7 +2117,7 @@ satisfy changing operational requirements.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Kubernetes Admission Control","level":"2.5","depth":1,"next":{"title":"Terraform Testing","level":"2.6","depth":1,"path":"terraform.md","ref":"terraform.md","articles":[]},"previous":{"title":"SSH and sudo Authorization","level":"2.4","depth":1,"path":"ssh-and-sudo-authorization.md","ref":"ssh-and-sudo-authorization.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"kubernetes-admission-control.md","mtime":"2018-01-18T23:06:09.254Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-01-18T23:07:08.484Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Kubernetes Admission Control","level":"2.5","depth":1,"next":{"title":"Terraform Testing","level":"2.6","depth":1,"path":"terraform.md","ref":"terraform.md","articles":[]},"previous":{"title":"SSH and sudo Authorization","level":"2.4","depth":1,"path":"ssh-and-sudo-authorization.md","ref":"ssh-and-sudo-authorization.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["header","addcssjs","collapsible-menu","custom-favicon","ga","-fontsettings"],"pluginsConfig":{"collapsible-menu":{},"search":{},"layout":{"headerPath":"layouts/header.html"},"addcssjs":{"css":[],"js":["js/custom.js"]},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"header":{},"highlight":{},"favicon":"images/favicon.png","custom-favicon":{},"ga":{"configuration":"auto","token":"UA-84550302-1"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"kubernetes-admission-control.md","mtime":"2018-02-22T21:05:59.195Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-02-22T21:07:13.632Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
