@@ -27,6 +27,7 @@ jobs:
       - run:
           name: Push Docker Image
           command: |
+            make image
             make push
 workflows:
   version: 2
