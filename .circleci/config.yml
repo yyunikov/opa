@@ -11,11 +11,18 @@ jobs:
       - image: circleci/golang:1.9
     steps:
       - checkout
-      - setup_remote_docker
       - run:
-          name: Compile and Run Tests
+          name: Install dependencies
           command: |
-            make
+            make deps
+      - run:
+          name: Compile
+          command: |
+            make build
+      - run:
+          name: Run Tests
+          command: |
+            make test
       - run:
           name: Push Docker Image
           command: |
