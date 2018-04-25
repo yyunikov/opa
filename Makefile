@@ -13,7 +13,7 @@ DISABLE_CGO := CGO_ENABLED=0
 
 BIN := opa_$(GOOS)_$(GOARCH)
 
-REPOSITORY := openpolicyagent
+REPOSITORY := verygood
 IMAGE := $(REPOSITORY)/opa
 
 BUILD_COMMIT := $(shell ./build/get-build-commit.sh)

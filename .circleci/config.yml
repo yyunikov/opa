@@ -1,0 +1,31 @@
+version: 2
+
+job-defaults: &job-defaults
+  working_directory: &working_directory
+    /go/src/github.com/open-policy-agent/opa/
+
+jobs:
+  build:
+    <<: *job-defaults
+    docker:
+      - image: circleci/golang:1.9
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            make deps
+      - run:
+          name: Compile
+          command: |
+            make build
+      - run:
+          name: Run Tests
+          command: |
+            make test
+
+workflows:
+  version: 2
+  test_and_build:
+    jobs:
+      - build
